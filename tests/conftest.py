@@ -3,16 +3,25 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
-from edge.models import NodeConfig
+from edge.hysteresis import HysteresisEngine
+from edge.models import EdgeConfig, NodeConfig
+from edge.publisher import NullPublisher
+from edge.scenarios import ScenarioController, load_scenario
+from edge.storage import BufferStore
 
-# Telemetry delivery is logged at INFO in production; make it visible to
-# caplog in tests that do not need to change the global logging configuration.
+# Telemetry delivery and runtime orchestration are logged at INFO in
+# production; make them visible to caplog in tests that need the markers.
 logging.getLogger("edge.publisher").setLevel(logging.INFO)
+logging.getLogger("edge.runtime").setLevel(logging.INFO)
 
 NODE_A = NodeConfig("node-a", 27.7172, 85.3240, 1001, 500, 0.0)
+DEMO_SCENARIO = Path(__file__).resolve().parents[1] / "scenarios" / "demo.json"
+FIRST_TS_MS = 1_700_000_000_000
 
 
 class FakeClock:
@@ -108,4 +117,59 @@ def fake_client_factory():
         return client
 
     factory.clients = clients  # type: ignore[attr-defined]
+    return factory
+
+
+class FailingPublisher(NullPublisher):
+    """Log-only sink whose publish attempts always fail (network error)."""
+
+    def publish_batch(self, batch: list[dict]) -> bool:
+        logger = logging.getLogger(__name__)
+        logger.warning("NETWORK_FAILURE: node=%s injected failure", self.node_id)
+        return False
+
+
+@pytest.fixture
+def failing_publisher():
+    """A publisher that fails node-b while the other nodes still succeed."""
+    return FailingPublisher("node-b")
+
+
+@pytest.fixture
+def expected_first_ts(monkeypatch):
+    """Freeze the sensors' epoch clock so replayed rows keep their first ts."""
+    monkeypatch.setattr(
+        "edge.sensors.time",
+        SimpleNamespace(time=lambda: FIRST_TS_MS / 1000.0),
+    )
+    return FIRST_TS_MS
+
+
+@pytest.fixture
+def build_runtime(request, tmp_path, fake_clock, expected_first_ts):
+    """Return a factory building deterministic runtimes stopped after the test."""
+    from edge.runtime import EdgeRuntime
+
+    def factory(path=tmp_path, clock=fake_clock):
+        config = EdgeConfig(db_path=path / "edge.db", tick_seconds=5.0)
+        controller = ScenarioController(load_scenario(DEMO_SCENARIO), now_fn=clock)
+        store = BufferStore(config.db_path, config.buffer_max_rows, config.batch_size)
+        publishers = {
+            node.node_id: NullPublisher(node.node_id) for node in config.nodes
+        }
+        engines = {
+            node.node_id: HysteresisEngine(
+                flow_zero_sustained_s=config.flow_zero_sustained_s,
+                node_inactive_s=config.node_inactive_s,
+                derivative_window_s=config.derivative_window_s,
+                fault_samples=config.validity_fault_samples,
+            )
+            for node in config.nodes
+        }
+        runtime = EdgeRuntime(
+            config, controller, store, publishers, engines, now_fn=clock
+        )
+        request.addfinalizer(lambda: (runtime.stop(), store.close()))
+        return runtime
+
     return factory

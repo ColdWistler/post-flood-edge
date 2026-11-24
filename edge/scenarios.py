@@ -25,6 +25,9 @@ class ScenarioController:
         now_fn: Callable[[], float] = time.monotonic,
     ) -> None:
         self._phases: list[dict[str, Any]] = list(scenario["phases"])
+        # Retain the scenario's per-node demo constants for the runtime so it
+        # does not have to duplicate amplitudes and onset offsets in code.
+        self.nodes: list[dict[str, Any]] = list(scenario.get("nodes", []))
         if not self._phases:
             raise ValueError("scenario has no phases")
         self._durations = [float(phase["duration_s"]) for phase in self._phases]
