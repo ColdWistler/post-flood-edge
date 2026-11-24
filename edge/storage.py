@@ -96,15 +96,47 @@ class BufferStore:
                 (node_id,),
             ).fetchone()[0]
 
-    def claim(self) -> list[tuple[str, list[dict]]]:
-        """Mark the oldest pending rows inflight and group them by node id."""
+    def claim(
+        self,
+        exclude_nodes: set[str] | None = None,
+        per_node_limit: int | None = None,
+    ) -> list[tuple[str, list[dict]]]:
+        """Mark pending rows inflight and group them by node id.
+
+        ``exclude_nodes`` leaves a node's rows pending (e.g. while its
+        publisher is suspended); ``per_node_limit`` stops one backlogged node
+        from consuming the whole global batch. Both default to ``None`` for
+        the original oldest-first claim behavior.
+        """
+        params: list[Any] = []
+        conditions = ["status='pending'"]
+        if exclude_nodes:
+            placeholders = ",".join("?" for _ in exclude_nodes)
+            conditions.append(
+                f"json_extract(payload, '$.values.node_id') NOT IN ({placeholders})"
+            )
+            params.extend(sorted(exclude_nodes))
+        where = " AND ".join(conditions)
+        if per_node_limit is not None:
+            sql = (
+                "SELECT id, timestamp, payload FROM ("
+                "SELECT id, timestamp, payload, "
+                "ROW_NUMBER() OVER ("
+                "PARTITION BY json_extract(payload,'$.values.node_id') "
+                "ORDER BY timestamp, id) AS rn "
+                f"FROM telemetry_buffer WHERE {where}"
+                ") WHERE rn <= ? ORDER BY timestamp, id LIMIT ?"
+            )
+            params.extend([per_node_limit, self.batch_size])
+        else:
+            sql = (
+                "SELECT id, timestamp, payload FROM telemetry_buffer "
+                f"WHERE {where} ORDER BY timestamp, id LIMIT ?"
+            )
+            params.append(self.batch_size)
         with self._lock:
             with self._conn:
-                claimed = self._conn.execute(
-                    "SELECT id, timestamp, payload FROM telemetry_buffer "
-                    "WHERE status='pending' ORDER BY timestamp, id LIMIT ?",
-                    (self.batch_size,),
-                ).fetchall()
+                claimed = self._conn.execute(sql, params).fetchall()
                 self._conn.executemany(
                     "UPDATE telemetry_buffer SET status='inflight' WHERE id=?",
                     [(row_id,) for row_id, _, _ in claimed],

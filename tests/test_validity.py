@@ -58,3 +58,40 @@ def test_invalid_channel_logs_validity_marker_with_channel(caplog):
 def test_out_of_range_channels_flag_saturation(channel, bad):
     _, flags = ValidityGates().check({**BASE, channel: bad}, [])
     assert "SATURATION" in flags
+
+
+def _frozen_history(channel: str, value: float) -> list[dict]:
+    """Nine samples where only ``channel`` is frozen; other channels vary."""
+    return [
+        {
+            **{key: val + i * 0.01 for key, val in BASE.items() if key != channel},
+            channel: value,
+        }
+        for i in range(9)
+    ]
+
+
+def test_stuck_exempt_skips_stuck_gate_for_that_channel_only():
+    frozen = {**BASE, "flow_lpm": 0.0}
+    _, flags = ValidityGates().check(
+        frozen, _frozen_history("flow_lpm", 0.0), stuck_exempt={"flow_lpm"}
+    )
+    assert flags == []
+
+
+def test_stuck_exempt_does_not_suppress_other_gates_on_exempt_channel():
+    g = ValidityGates()
+    saturated = {**BASE, "flow_lpm": 501.0}
+    _, flags = g.check(
+        saturated, _frozen_history("flow_lpm", 501.0), stuck_exempt={"flow_lpm"}
+    )
+    assert "SATURATION" in flags
+    assert "STUCK" not in flags
+
+    endpoint = {**BASE, "ph": 14.0}
+    _, flags = g.check(
+        endpoint, _frozen_history("ph", 14.0), stuck_exempt={"ph"}
+    )
+    assert "OPEN_SHORT" in flags
+    assert "STUCK" not in flags
+

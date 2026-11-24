@@ -177,7 +177,15 @@ class EdgeRuntime:
         event_active = float(raw.values.get("event_u", 0.0)) > 0.0
         history = self._raw_history[node_id]
         check_history = history if event_active or stuck_injected else []
-        clean, flags = self.validators[node_id].check(raw.values, check_history)
+        # A scheduled interruption forces flow to zero on purpose; it is an
+        # expected value, not a frozen sensor. An injected stuck fault still
+        # freezes the other channels, so their STUCK flags remain active.
+        stuck_exempt: set[str] | None = None
+        if self.scenario.phase == "supply_interruption" and not stuck_injected:
+            stuck_exempt = {"flow_lpm"}
+        clean, flags = self.validators[node_id].check(
+            raw.values, check_history, stuck_exempt=stuck_exempt
+        )
         if flags:
             logger.info("VALIDITY: node=%s flags=%s", node_id, ",".join(flags))
         if check_history is history:
@@ -269,7 +277,17 @@ class EdgeRuntime:
         """Claim pending rows and publish each node's batch independently."""
         if self.outage_active:
             return
-        for node_id, rows in self.store.claim():
+        suspended = {
+            node_id
+            for node_id, pub in self.publishers.items()
+            if getattr(pub, "_retries_suspended", False)
+        }
+        for node_id in sorted(suspended):
+            logger.warning("AUTH_FAILURE: node=%s retries suspended", node_id)
+        per_node_limit = max(1, self.store.batch_size // max(1, len(self.publishers)))
+        for node_id, rows in self.store.claim(
+            exclude_nodes=suspended, per_node_limit=per_node_limit
+        ):
             if self._replay_pending:
                 logger.info("REPLAY: node=%s rows=%d", node_id, len(rows))
             publisher = self.publishers.get(node_id)

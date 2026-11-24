@@ -47,6 +47,26 @@ class BlockingPublisher(NullPublisher):
         super().disconnect()
 
 
+class SuspendedFailingPublisher(NullPublisher):
+    """Auth-suspended sink that also fails every publish attempt."""
+
+    def __init__(self, node_id: str = "node-a") -> None:
+        super().__init__(node_id)
+        self._retries_suspended = True
+
+    def publish_batch(self, batch: list[dict]) -> bool:
+        if self._retries_suspended:
+            return False
+        return super().publish_batch(batch)
+
+
+class NetworkFailingPublisher(NullPublisher):
+    """Network-failed sink without auth suspension."""
+
+    def publish_batch(self, batch: list[dict]) -> bool:
+        return False
+
+
 def test_outage_buffers_then_replays_with_original_timestamps(
     tmp_path, fake_clock, expected_first_ts, build_runtime
 ):
@@ -85,6 +105,59 @@ def test_auth_failure_keeps_buffering(tmp_path, fake_clock, build_runtime, caplo
     assert rt.store.depth("node-b") == 0
 
 
+def test_suspended_node_does_not_starve_other_nodes_delivery(
+    tmp_path, fake_clock, build_runtime
+):
+    rt = build_runtime(tmp_path, fake_clock)
+    bad = SuspendedFailingPublisher("node-a")
+    rt.publishers["node-a"] = bad
+    batch_size = rt.store.batch_size
+
+    for _ in range(batch_size + 5):
+        fake_clock.advance(5)
+        before = len(rt.published)
+        rt.step_once()
+        for node_id in ("node-b", "node-c"):
+            per_tick = [row for row in rt.published[before:]
+                        if row["node_id"] == node_id]
+            assert per_tick and all(row["acked"] for row in per_tick)
+            assert rt.store.depth(node_id) == 0
+
+    assert rt.store.depth("node-a") > batch_size
+    assert all(not row["acked"] for row in rt.published if row["node_id"] == "node-a")
+
+    rt.handle_command("a")
+    assert bad._retries_suspended is False
+    for _ in range(batch_size):
+        fake_clock.advance(5)
+        rt.step_once()
+    assert rt.store.depth("node-a") == 0
+    assert any(
+        row["node_id"] == "node-a" and row["acked"] for row in rt.published
+    )
+
+
+def test_failed_node_cap_keeps_other_nodes_delivering(
+    tmp_path, fake_clock, build_runtime
+):
+    rt = build_runtime(tmp_path, fake_clock)
+    rt.publishers["node-a"] = NetworkFailingPublisher("node-a")
+    batch_size = rt.store.batch_size
+
+    for _ in range(batch_size + 5):
+        fake_clock.advance(5)
+        before = len(rt.published)
+        rt.step_once()
+        for node_id in ("node-b", "node-c"):
+            per_tick = [row for row in rt.published[before:]
+                        if row["node_id"] == node_id]
+            assert per_tick and all(row["acked"] for row in per_tick)
+            assert rt.store.depth(node_id) == 0
+
+    assert rt.store.depth("node-a") > batch_size
+    assert all(not row["acked"] for row in rt.published if row["node_id"] == "node-a")
+
+
 def test_validity_fault_wiring(tmp_path, fake_clock, build_runtime, caplog):
     rt = build_runtime(tmp_path, fake_clock)
     rt.handle_command("f")
@@ -117,6 +190,52 @@ def test_sensors_receive_cumulative_time_across_phase_changes(
     assert [phase for phase, _ in seen] == ["baseline", "silt_intrusion"]
     assert seen[1][1] - seen[0][1] == pytest.approx(10.0)
     assert rt.scenario.elapsed_s == pytest.approx(10.0)
+
+
+def test_natural_supply_interruption_has_no_stuck_fault_and_major_alarm(
+    tmp_path, fake_clock, build_runtime
+):
+    rt = build_runtime(tmp_path, fake_clock)
+    rt.handle_command("i")
+    for _ in range(15):                 # 75 s inside the 120 s interruption phase
+        fake_clock.advance(5)
+        rt.step_once()
+
+    rows = [row for row in rt.published if row["node_id"] in rt.publishers]
+    assert len(rows) == 15 * len(rt.publishers)
+    assert all(row["values"]["flow_lpm"] == 0.0 for row in rows)
+    assert all("STUCK" not in row["values"]["validity_flags"] for row in rows)
+    assert all("Sensor Fault" not in row["values"]["active_alarms"] for row in rows)
+    assert all(row["values"]["severity"] != "Fault" for row in rows)
+    assert all("Supply Interruption" in row["values"]["active_alarms"] for row in rows[-3:])
+    assert any(
+        row["values"]["severity"] == "Major"
+        and "Supply Interruption" in row["values"]["active_alarms"]
+        for row in rows
+    )
+
+
+def test_injected_stuck_fault_during_supply_interruption_still_faults(
+    tmp_path, fake_clock, build_runtime
+):
+    rt = build_runtime(tmp_path, fake_clock)
+    rt.handle_command("i")
+    for _ in range(5):
+        fake_clock.advance(5)
+        rt.step_once()
+    rt.handle_command("f")
+    for _ in range(6):
+        fake_clock.advance(5)
+        rt.step_once()
+
+    assert rt.scenario.phase == "supply_interruption"
+    fault_rows = [
+        row for row in rt.published
+        if row["node_id"] == "node-a" and row["values"]["severity"] == "Fault"
+    ]
+    assert fault_rows
+    assert all("STUCK" in row["values"]["validity_flags"] for row in fault_rows)
+    assert all("Sensor Fault" in row["values"]["active_alarms"] for row in fault_rows)
 
 
 def test_baseline_without_fault_has_no_spurious_stuck_flags(

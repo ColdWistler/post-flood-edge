@@ -40,14 +40,17 @@ class FakeClock:
 class FakeMqttClient:
     """In-memory stand-in for a paho client; no broker or paho install needed."""
 
-    def __init__(self, callback_api_version=None) -> None:
+    def __init__(self, callback_api_version=None, events=None) -> None:
         self.callback_api_version = callback_api_version
         self.tls_kwargs: dict = {}
         self.username: str | None = None
         self.password: str | None = None
         self.connect_args: tuple | None = None
+        self.reconnect_delays: list[tuple[float, float]] = []
         self.loop_started = False
+        self.loop_stopped = False
         self.disconnected = False
+        self._events = [] if events is None else events
         self.published: list[tuple[str, str, int]] = []
         self.wait_timeouts: list[float] = []
         self.is_published_calls = 0
@@ -65,11 +68,19 @@ class FakeMqttClient:
     def connect(self, host: str, port: int = 1883) -> None:
         self.connect_args = (host, port)
 
+    def reconnect_delay_set(self, min_delay: float, max_delay: float) -> None:
+        self.reconnect_delays.append((min_delay, max_delay))
+
     def loop_start(self) -> None:
         self.loop_started = True
 
+    def loop_stop(self) -> None:
+        self.loop_stopped = True
+        self._events.append(("loop_stop", id(self)))
+
     def disconnect(self) -> None:
         self.disconnected = True
+        self._events.append(("disconnect", id(self)))
 
     def publish(self, topic: str, payload: str, qos: int = 0) -> "FakeMessage":
         self.published.append((topic, payload, qos))
@@ -110,13 +121,16 @@ def fake_clock() -> FakeClock:
 def fake_client_factory():
     """Return a factory that records every fake client it creates."""
     clients: list[FakeMqttClient] = []
+    events: list[tuple[str, int]] = []
 
     def factory(callback_api_version=None) -> FakeMqttClient:
-        client = FakeMqttClient(callback_api_version=callback_api_version)
+        client = FakeMqttClient(callback_api_version=callback_api_version, events=events)
         clients.append(client)
+        events.append(("created", id(client)))
         return client
 
     factory.clients = clients  # type: ignore[attr-defined]
+    factory.events = events  # type: ignore[attr-defined]
     return factory
 
 

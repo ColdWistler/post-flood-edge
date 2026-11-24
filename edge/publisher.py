@@ -89,6 +89,22 @@ class MqttPublisher:
             )
             return False
 
+        if self._client is not None:
+            previous = self._client
+            self._client = None
+            for method_name in ("loop_stop", "disconnect"):
+                method = getattr(previous, method_name, None)
+                if callable(method):
+                    try:
+                        method()
+                    except Exception as exc:
+                        logger.warning(
+                            "NETWORK_FAILURE: node=%s old client %s error=%s",
+                            self.node_id,
+                            method_name,
+                            exc,
+                        )
+
         try:
             factory = self._client_factory
             try:
@@ -104,6 +120,9 @@ class MqttPublisher:
                 from paho.mqtt.client import Client as factory
             client = factory(callback_api_version=callback_api_version)
             self._client = client
+            client.reconnect_delay_set(
+                min_delay=_MIN_BACKOFF_S, max_delay=_MAX_BACKOFF_S
+            )
             client.tls_set(ca_certs=self.ca_cert or None)
             client.username_pw_set(self.token, None)
             client.on_connect = self._on_connect

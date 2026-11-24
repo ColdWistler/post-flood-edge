@@ -45,8 +45,17 @@ class ValidityGates:
         self.fault_samples = fault_samples
         self._last_valid: dict[str, float] = {}
 
-    def check(self, values: dict, history: list[dict]) -> tuple[dict, list[str]]:
-        """Return a copy of ``values`` with invalid channels substituted."""
+    def check(
+        self,
+        values: dict,
+        history: list[dict],
+        stuck_exempt: set[str] | None = None,
+    ) -> tuple[dict, list[str]]:
+        """Return a copy of ``values`` with invalid channels substituted.
+
+        ``stuck_exempt`` suppresses only the STUCK gate for named channels:
+        range, endpoint and sanity checks still apply to them.
+        """
         clean = dict(values)
         flags: list[str] = []
         impossible_ph_tds = self._has_impossible_ph_tds(values)
@@ -63,7 +72,9 @@ class ValidityGates:
                 flag = "OPEN_SHORT"
             elif impossible_ph_tds and channel == "ph":
                 flag = "SANITY"
-            elif self._is_stuck(channel, raw, history):
+            elif channel not in (stuck_exempt or ()) and self._is_stuck(
+                channel, raw, history
+            ):
                 flag = "STUCK"
             else:
                 self._last_valid[channel] = float(raw)

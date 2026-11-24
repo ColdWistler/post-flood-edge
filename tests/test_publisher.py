@@ -200,3 +200,24 @@ def test_disconnect_stops_loop_connection_state(fake_client_factory):
     p.disconnect()
     assert p._client.disconnected is True
     assert p.is_connected is False
+
+
+def test_connect_sets_paho_reconnect_delay_bounds(fake_client_factory):
+    p = MqttPublisher("node-a", "host", "tok", client_factory=fake_client_factory)
+    assert p.connect() is True
+    assert p._client.reconnect_delays == [(1.0, 60.0)]
+
+
+def test_reconnect_stops_old_client_before_creating_new_one(fake_client_factory):
+    p = MqttPublisher("node-a", "host", "tok", client_factory=fake_client_factory)
+    assert p.connect() is True
+    old = p._client
+    assert p.connect() is True
+    new = p._client
+
+    assert new is not old
+    assert old.loop_stopped is True
+    assert old.disconnected is True
+    events = fake_client_factory.events
+    assert events.index(("loop_stop", id(old))) < events.index(("disconnect", id(old)))
+    assert events.index(("disconnect", id(old))) < events.index(("created", id(new)))

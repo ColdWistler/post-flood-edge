@@ -189,3 +189,53 @@ def test_buffered_rows_survive_close_and_reopen(tmp_path):
         (1000, "node-a")
     ]
     reopened.close()
+
+
+def test_claim_excludes_named_nodes_without_losing_their_rows(tmp_path):
+    s = BufferStore(tmp_path / "exclude.db", max_rows=100, batch_size=5)
+    for ts in range(1, 13):
+        node_id = "node-a" if ts <= 6 else "node-b"
+        s.enqueue(Reading(node_id, ts, {"node_id": node_id}))
+
+    claimed = s.claim(exclude_nodes={"node-a"})
+    assert [(node, [r["ts"] for r in group]) for node, group in claimed] == [
+        ("node-b", [7, 8, 9, 10, 11])
+    ]
+    s.ack(claimed[0][1])
+    assert s.depth("node-a") == 6
+    assert s._conn.execute(
+        "SELECT status FROM telemetry_buffer "
+        "WHERE json_extract(payload, '$.values.node_id')='node-a' "
+        "GROUP BY status"
+    ).fetchall() == [("pending",)]
+
+    # Excluded rows remain pending, keeping their original order for later claims.
+    resumed = s.claim()
+    assert [(node, [r["ts"] for r in group]) for node, group in resumed] == [
+        ("node-a", [1, 2, 3, 4, 5])
+    ]
+    s.ack(resumed[0][1])
+    assert [r["ts"] for _, group in s.claim() for r in group] == [6, 12]
+
+
+def test_claim_per_node_cap_keeps_oldest_rows_and_global_limit(tmp_path):
+    s = BufferStore(tmp_path / "cap.db", max_rows=100, batch_size=4)
+    for ts in range(1, 16):
+        node_id = "node-a" if ts <= 10 else "node-b"
+        s.enqueue(Reading(node_id, ts, {"node_id": node_id}))
+
+    first = s.claim(per_node_limit=2)
+    assert [(node, [r["ts"] for r in group]) for node, group in first] == [
+        ("node-a", [1, 2]),
+        ("node-b", [11, 12]),
+    ]
+    s.ack([r for _, group in first for r in group])
+
+    second = s.claim(per_node_limit=2)
+    assert [(node, [r["ts"] for r in group]) for node, group in second] == [
+        ("node-a", [3, 4]),
+        ("node-b", [13, 14]),
+    ]
+    s.ack([r for _, group in second for r in group])
+
+    assert [r["ts"] for _, group in s.claim(per_node_limit=2) for r in group] == [5, 6, 15]
