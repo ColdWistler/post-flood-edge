@@ -1,0 +1,15 @@
+{
+  "phases": [
+    {"name": "baseline", "duration_s": 60},
+    {"name": "silt_intrusion", "duration_s": 240},
+    {"name": "supply_interruption", "duration_s": 120},
+    {"name": "recovery", "duration_s": 180}
+  ],
+  "nodes": [
+    {"node_id": "node-a", "amplitude": 500, "onset_offset_s": 0},
+    {"node_id": "node-b", "amplitude": 825, "onset_offset_s": 20},
+    {"node_id": "node-c", "amplitude": 1250, "onset_offset_s": 40}
+  ],
+  "tau_rise_s": 10,
+  "tau_wash_s": 120
+}

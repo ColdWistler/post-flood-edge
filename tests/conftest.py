@@ -15,6 +15,19 @@ logging.getLogger("edge.publisher").setLevel(logging.INFO)
 NODE_A = NodeConfig("node-a", 27.7172, 85.3240, 1001, 500, 0.0)
 
 
+class FakeClock:
+    """Callable monotonic clock that only moves when advance() is called."""
+
+    def __init__(self, start: float = 1000.0) -> None:
+        self._now = float(start)
+
+    def __call__(self) -> float:
+        return self._now
+
+    def advance(self, seconds: float) -> None:
+        self._now += float(seconds)
+
+
 class FakeMqttClient:
     """In-memory stand-in for a paho client; no broker or paho install needed."""
 
@@ -76,6 +89,12 @@ class FakeMessage:
     def is_published(self) -> bool:
         self._client.is_published_calls += 1
         return self._client.ack_ok
+
+
+@pytest.fixture
+def fake_clock() -> FakeClock:
+    """Deterministic now_fn for timeline, pacing and outage tests."""
+    return FakeClock()
 
 
 @pytest.fixture
