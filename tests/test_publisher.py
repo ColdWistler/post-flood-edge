@@ -23,6 +23,16 @@ def test_auth_failure_suspends_retries_and_logs(fake_client_factory, caplog):
     assert "AUTH_FAILURE" in caplog.text
 
 
+def test_auth_reason_code_135_suspends_retries(fake_client_factory, caplog):
+    p = MqttPublisher("node-a", "host", "bad", client_factory=fake_client_factory)
+    p.connect()
+    p._client.fire_connect(135)
+    assert p.is_connected is False
+    assert p._retries_suspended is True
+    assert "AUTH_FAILURE" in caplog.text
+    assert "NETWORK_FAILURE" not in caplog.text
+
+
 def test_network_failure_logs_and_backs_off(fake_client_factory, caplog):
     p = MqttPublisher("node-a", "host", "tok", client_factory=fake_client_factory)
     p.connect()
@@ -71,13 +81,22 @@ def test_connect_configures_tls_auth_host_and_loop(fake_client_factory):
     assert fake.loop_started is True
 
 
+def test_connect_passes_callback_api_version(fake_client_factory):
+    p = MqttPublisher("node-a", "host", "tok", client_factory=fake_client_factory)
+    p.connect()
+    # paho 2.0 requires this argument; 2.1+ default to a deprecated API version.
+    assert p._client.callback_api_version == "VERSION1"
+
+
 def test_connect_without_ca_cert_uses_system_trust(fake_client_factory):
     p = MqttPublisher("node-a", "host", "tok", client_factory=fake_client_factory)
     p.connect()
     assert p._client.tls_kwargs == {"ca_certs": None}
 
 
-def test_publish_batch_sends_json_telemetry_with_qos_and_waits(fake_client_factory):
+def test_publish_batch_sends_json_telemetry_with_qos_and_waits(
+    fake_client_factory, caplog
+):
     p = MqttPublisher("node-a", "host", "tok", client_factory=fake_client_factory)
     p.connect()
     p._client.fire_connect(0)
@@ -96,6 +115,22 @@ def test_publish_batch_sends_json_telemetry_with_qos_and_waits(fake_client_facto
         {"ts": row["ts"], "values": row["values"]} for row in batch
     ]
     assert p._client.wait_timeouts == [10]
+    assert p._client.is_published_calls == 1
+    assert "PUBLISH node=node-a rows=2" in caplog.text
+
+
+def test_fake_wait_for_publish_matches_paho_contract(fake_client_factory):
+    client = fake_client_factory()
+    info = client.publish("topic", "[]", qos=1)
+
+    client.ack_ok = False
+    assert info.wait_for_publish(timeout=10) is None
+    assert info.is_published() is False
+
+    client.ack_ok = True
+    assert info.wait_for_publish(timeout=10) is None
+    assert info.is_published() is True
+    assert client.wait_timeouts == [10, 10]
 
 
 def test_network_failures_double_backoff_and_cap_at_60(fake_client_factory):
@@ -135,7 +170,7 @@ def test_suspended_auth_skips_publish_until_retry_auth(fake_client_factory):
     assert len(fake_client_factory.clients) == 2
 
 
-def test_publish_timeout_fails_and_logs_network_failure(fake_client_factory, caplog):
+def test_missing_puback_fails_and_logs_network_failure(fake_client_factory, caplog):
     p = MqttPublisher("node-a", "host", "tok", client_factory=fake_client_factory)
     p.connect()
     p._client.fire_connect(0)
@@ -143,6 +178,9 @@ def test_publish_timeout_fails_and_logs_network_failure(fake_client_factory, cap
 
     assert p.publish_batch([{"id": 1, "ts": 1, "values": {}}]) is False
     assert "NETWORK_FAILURE" in caplog.text
+    assert "PUBLISH" not in caplog.text
+    assert p._client.wait_timeouts == [10]
+    assert p._client.is_published_calls == 1
     assert p._backoff_s == 2.0
 
 

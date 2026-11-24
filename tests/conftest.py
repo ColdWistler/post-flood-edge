@@ -18,7 +18,8 @@ NODE_A = NodeConfig("node-a", 27.7172, 85.3240, 1001, 500, 0.0)
 class FakeMqttClient:
     """In-memory stand-in for a paho client; no broker or paho install needed."""
 
-    def __init__(self) -> None:
+    def __init__(self, callback_api_version=None) -> None:
+        self.callback_api_version = callback_api_version
         self.tls_kwargs: dict = {}
         self.username: str | None = None
         self.password: str | None = None
@@ -27,6 +28,7 @@ class FakeMqttClient:
         self.disconnected = False
         self.published: list[tuple[str, str, int]] = []
         self.wait_timeouts: list[float] = []
+        self.is_published_calls = 0
         self.ack_ok = True
         self.on_connect = None
         self.on_disconnect = None
@@ -63,15 +65,17 @@ class FakeMqttClient:
 
 
 class FakeMessage:
-    """paho-style MQTTMessageInfo whose PUBACK wait can be forced to fail."""
+    """paho-style MQTTMessageInfo: waiting never raises; PUBACK state is queried."""
 
     def __init__(self, client: FakeMqttClient) -> None:
         self._client = client
 
     def wait_for_publish(self, timeout: float | None = None) -> None:
         self._client.wait_timeouts.append(timeout)
-        if not self._client.ack_ok:
-            raise ValueError("PUBACK timed out")
+
+    def is_published(self) -> bool:
+        self._client.is_published_calls += 1
+        return self._client.ack_ok
 
 
 @pytest.fixture
@@ -79,8 +83,8 @@ def fake_client_factory():
     """Return a factory that records every fake client it creates."""
     clients: list[FakeMqttClient] = []
 
-    def factory() -> FakeMqttClient:
-        client = FakeMqttClient()
+    def factory(callback_api_version=None) -> FakeMqttClient:
+        client = FakeMqttClient(callback_api_version=callback_api_version)
         clients.append(client)
         return client
 
