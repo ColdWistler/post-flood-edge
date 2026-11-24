@@ -52,7 +52,9 @@ class BufferStore:
                 while total >= self.max_rows:
                     victim = self._conn.execute(
                         "SELECT id, timestamp FROM telemetry_buffer "
-                        "WHERE status='pending' ORDER BY timestamp, id LIMIT 1"
+                        "WHERE status IN ('pending','synced') "
+                        "ORDER BY CASE WHEN status='pending' THEN 0 ELSE 1 END, "
+                        "timestamp, id LIMIT 1"
                     ).fetchone()
                     if victim is None:
                         logger.warning(

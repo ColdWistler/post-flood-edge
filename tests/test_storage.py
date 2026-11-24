@@ -10,6 +10,12 @@ from edge.storage import BufferStore
 READING = Reading("node-a", 1000, {"node_id": "node-a", "ph": 7.2})
 
 
+def _ack_new(store: BufferStore, ts_ms: int) -> None:
+    """Enqueue one reading and immediately acknowledge it as synced."""
+    store.enqueue(replace(READING, ts_ms=ts_ms))
+    store.ack(store.claim()[0][1])
+
+
 def test_wal_enabled_and_write_before_publish(tmp_path):
     s = BufferStore(tmp_path / "a.db", max_rows=100, batch_size=10)
     assert s._conn.execute("PRAGMA journal_mode").fetchone()[0] == "wal"
@@ -99,8 +105,78 @@ def test_drop_new_when_no_pending_rows_can_be_evicted(tmp_path, caplog):
     assert len(s.claim()[0][1]) == 2
     s.enqueue(replace(READING, ts_ms=3))
     assert "DROP NEW" in caplog.text
+    assert "EVICT" not in caplog.text
     assert s.depth() == 2
     assert [r["ts"] for _, group in s.claim() for r in group] == []
+
+
+def test_synced_history_is_evicted_when_all_rows_are_acked(tmp_path, caplog):
+    s = BufferStore(tmp_path / "j.db", max_rows=2, batch_size=10)
+    _ack_new(s, 1)
+    oldest_id = s._conn.execute("SELECT id FROM telemetry_buffer").fetchone()[0]
+    _ack_new(s, 2)
+    caplog.clear()
+    s.enqueue(replace(READING, ts_ms=3))
+    rows = s._conn.execute(
+        "SELECT id, timestamp, status FROM telemetry_buffer ORDER BY timestamp"
+    ).fetchall()
+    assert [(ts, status) for _, ts, status in rows] == [(2, "synced"), (3, "pending")]
+    assert all(row_id != oldest_id for row_id, _, _ in rows)
+    assert "EVICT" in caplog.text
+    assert "DROP NEW" not in caplog.text
+    assert s.depth() == 1
+    assert [r["ts"] for _, group in s.claim() for r in group] == [3]
+
+
+def test_pending_victim_precedes_synced_and_synced_is_next(tmp_path, caplog):
+    s = BufferStore(tmp_path / "k.db", max_rows=3, batch_size=10)
+    _ack_new(s, 1)
+    _ack_new(s, 2)
+    s.enqueue(replace(READING, ts_ms=3))
+    pending_id = s._conn.execute(
+        "SELECT id FROM telemetry_buffer WHERE status='pending'"
+    ).fetchone()[0]
+
+    s.enqueue(replace(READING, ts_ms=4))
+    # The pending row is evicted even though the synced ts=1 row is older.
+    assert s._conn.execute(
+        "SELECT id FROM telemetry_buffer WHERE id=?", (pending_id,)
+    ).fetchone() is None
+    assert s._conn.execute(
+        "SELECT timestamp FROM telemetry_buffer WHERE status='synced' ORDER BY timestamp"
+    ).fetchall() == [(1,), (2,)]
+    assert s._conn.execute(
+        "SELECT timestamp FROM telemetry_buffer WHERE status='pending'"
+    ).fetchall() == [(4,)]
+
+    # With no pending rows left, the next overflow must evict oldest synced history.
+    s.ack(s.claim()[0][1])
+    caplog.clear()
+    s.enqueue(replace(READING, ts_ms=5))
+    assert s._conn.execute(
+        "SELECT timestamp, status FROM telemetry_buffer ORDER BY timestamp"
+    ).fetchall() == [(2, "synced"), (4, "synced"), (5, "pending")]
+    assert "EVICT" in caplog.text
+    assert "DROP NEW" not in caplog.text
+    assert s.depth() == 1
+
+
+def test_inflight_row_is_never_evicted_when_synced_history_exists(tmp_path, caplog):
+    s = BufferStore(tmp_path / "l.db", max_rows=2, batch_size=10)
+    s.enqueue(replace(READING, ts_ms=1))
+    inflight_id = s.claim()[0][1][0]["id"]
+    _ack_new(s, 2)
+    caplog.clear()
+    s.enqueue(replace(READING, ts_ms=3))
+    assert s._conn.execute(
+        "SELECT status FROM telemetry_buffer WHERE id=?", (inflight_id,)
+    ).fetchone() == ("inflight",)
+    assert s._conn.execute(
+        "SELECT timestamp, status FROM telemetry_buffer ORDER BY timestamp"
+    ).fetchall() == [(1, "inflight"), (3, "pending")]
+    assert "EVICT" in caplog.text
+    assert "DROP NEW" not in caplog.text
+    assert s.depth() == 2
 
 
 def test_buffered_rows_survive_close_and_reopen(tmp_path):
