@@ -153,4 +153,6 @@ not end-to-end MQTT latency.
 
 Again: this repository only produces this contract and the telemetry that satisfies
 it. ThingsBoard setup is out of scope here and remains the Cloud Track's
-responsibility.
+responsibility. The remaining server-side work — provisioning, dashboard widgets,
+alarm rules, the WQI rule chain, benchmarking and manuscript deliverables — is
+itemised with owners and exact thresholds in `cloud/README.md`.
