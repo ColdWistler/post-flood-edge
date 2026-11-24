@@ -30,6 +30,17 @@ def test_coupled_intrusion_moves_all_parameters():
     assert peak["ph"] >= 6.2
 
 
+def test_phase_change_continues_cumulative_washout():
+    sim = SensorSimulator(NODE_A, 5.0, 0.0, random.Random(1))
+    early = sim.sample("silt_intrusion", 10).values
+    peak = sim.sample("silt_intrusion", 60).values
+    later = sim.sample("recovery", 120).values
+    assert later["turbidity_ntu"] < peak["turbidity_ntu"]
+    assert early["event_u"] < peak["event_u"]
+    assert 0 < later["event_u"] < peak["event_u"]
+    assert later["flow_lpm"] <= 18  # no new transient when the phase changes
+
+
 def test_supply_interruption_sets_flow_zero():
     v = SensorSimulator(NODE_A, 5.0, 0.0, random.Random(1)).sample("supply_interruption", 10).values
     assert v["flow_lpm"] == 0.0

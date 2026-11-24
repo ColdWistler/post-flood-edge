@@ -40,7 +40,11 @@ class SensorSimulator:
         self.rng = random.Random(node.seed) if rng is None else rng
 
     def sample(self, phase: str, elapsed_s: float) -> Reading:
-        """Return one reading; ``elapsed_s`` is seconds since the current phase began."""
+        """Return one reading; ``elapsed_s`` is cumulative seconds since simulation start.
+
+        It is deliberately not phase-local time: event rise, washout, the flow
+        transient and the diurnal cycle must continue across phase changes.
+        """
         dt_s = elapsed_s - self.node.onset_offset_s
         event_active = phase != "baseline" and dt_s >= 0.0
         event_u = 0.0
