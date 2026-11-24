@@ -136,10 +136,20 @@ Validity failures log `VALIDITY:`, and fault transitions/injection log `FAULT:`.
   logs `OUTAGE: END`, then `REPLAY: node=... rows=...` and drains buffered batches with
   their original timestamps.
 - Buffer capacity is `EDGE_BUFFER_MAX_ROWS` (default 6048 rows). At capacity, oldest
-  pending rows are evicted first with an `EVICT:` log; if none are pending, the new
-  reading is dropped with a distinct log line.
+  `pending` rows are evicted first with an `EVICT:` log; if none are pending, oldest
+  `synced` rows are evicted. The new reading is dropped with a distinct log line only
+  when neither pending nor synced rows exist to evict.
 - Structured log markers are `STATE`, `BUFFER`, `OUTAGE`, `PUBLISH`, `EVICT`,
   `BACKOFF`, `AUTH_FAILURE`, `NETWORK_FAILURE`, `REPLAY`, `VALIDITY` and `FAULT`.
+
+## Batch-size benchmark evidence
+
+`python tools/benchmark_batch_size.py` times 500 rows per batch size (1, 10, 25, 50,
+100, 200) through the complete store-and-forward path: `BufferStore.enqueue()` →
+`claim()` → `NullPublisher.publish_batch()` → `ack()`. Each size uses a fresh database,
+one-time setup is excluded, and results go to `tools/batch_results.csv` with columns
+`batch_size,rows_per_second,elapsed_s`. These are broker-free host throughput figures,
+not end-to-end MQTT latency.
 
 Again: this repository only produces this contract and the telemetry that satisfies
 it. ThingsBoard setup is out of scope here and remains the Cloud Track's

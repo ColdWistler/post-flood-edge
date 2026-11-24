@@ -29,10 +29,11 @@ def benchmark_batch_size(
     sizes=(1, 10, 25, 50, 100, 200),
     rows_per_size=500,
 ) -> list[dict]:
-    """Time the drain of ``rows_per_size`` buffered rows at each batch size.
+    """Time the full store-and-forward path for ``rows_per_size`` rows per size.
 
-    Each size gets its own database file derived from ``db_path``; only the
-    claim/publish/ack path is timed, not the setup enqueues.
+    Each size gets its own database file derived from ``db_path``. The timer
+    covers every enqueue plus the claim/publish/ack drain; database setup and
+    file cleanup happen outside the timer.
     """
     if rows_per_size <= 0:
         raise ValueError("rows_per_size must be positive")
@@ -51,6 +52,7 @@ def benchmark_batch_size(
         store = BufferStore(run_db, max_rows=rows_per_size, batch_size=size)
         publisher = NullPublisher("node-a")
         try:
+            started = time.perf_counter()
             for index in range(rows_per_size):
                 store.enqueue(
                     {
@@ -62,7 +64,6 @@ def benchmark_batch_size(
                     }
                 )
 
-            started = time.perf_counter()
             while True:
                 batches = store.claim()
                 if not batches:

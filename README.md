@@ -56,7 +56,7 @@ Commands are read from stdin while the simulator runs. Phase keys log a
 | `f` / `F` | Inject / clear a stuck-sensor fault on `node-a` |
 | `a` | Retry authentication for all publishers |
 | `p` | Pause / resume sampling |
-| `q` | Quit and flush on shutdown |
+| `q` | Quit; stops threads and closes the store without a final publish, so pending rows stay in `edge.db` |
 | `h` | Log the help line |
 
 ## Module and owner map
@@ -97,7 +97,9 @@ and end-to-end runtime behaviour without network access.
 python tools/benchmark_batch_size.py
 ```
 
-This drains 500 buffered rows through `NullPublisher` at batch sizes 1, 10, 25, 50,
-100 and 200, then writes `tools/batch_results.csv` with the columns
+For each batch size (1, 10, 25, 50, 100, 200), this times 500 rows through the full
+store-and-forward path: `enqueue()` into SQLite → `claim()` → `NullPublisher.publish_batch()`
+→ `ack()`. Database setup is excluded from the timer and each size uses a fresh database.
+It writes `tools/batch_results.csv` with the columns
 `batch_size,rows_per_second,elapsed_s`. The committed CSV is a sample result; rerun
 the script on the target hardware for manuscript numbers.
