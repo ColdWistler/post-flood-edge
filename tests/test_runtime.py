@@ -527,3 +527,26 @@ def test_cli_main_writes_log_and_exits_on_q(tmp_path, monkeypatch):
         "--log-level", "INFO",
     ]) == 0
     assert (tmp_path / "logs" / "edge.log").is_file()
+
+
+def test_build_session_returns_connected_parts(monkeypatch, tmp_path):
+    from edge import cli
+
+    args = cli.build_parser().parse_args([
+        "--dry-run", "--tick-seconds", "0.05",
+        "--db", str(tmp_path / "session.db"), "--log-level", "INFO",
+    ])
+    session = cli.build_session(args, console_handler=False)
+    try:
+        assert session.runtime.config.db_path == tmp_path / "session.db"
+        assert set(session.publishers) == {"node-a", "node-b", "node-c"}
+        assert set(session.engines) == set(session.publishers)
+        assert session.runtime.store is session.store
+    finally:
+        session.runtime.stop()
+        for publisher in session.publishers.values():
+            publisher.disconnect()
+        session.store.close()
+        for handler in session.handlers:
+            logging.getLogger().removeHandler(handler)
+            handler.close()
