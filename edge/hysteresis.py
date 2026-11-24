@@ -40,12 +40,14 @@ def _number(values: dict, key: str) -> float | None:
 
 @dataclass
 class _Debounce:
-    """Latch that needs ``samples`` breaches to raise and that many clears to reset.
+    """Latch driven by consecutive qualifying samples, not accumulated ones.
 
-    A sample outside both the raise and clear conditions sits in the rule's
-    deadband and leaves the latch untouched. The count is capped so an
-    arbitrarily long breach still clears after exactly ``samples`` clean
-    samples.
+    While inactive, a breach increments the counter and any non-breach resets
+    it; at ``samples`` breaches the latch raises and the same counter becomes
+    the clear counter. While active, a clear-eligible sample increments that
+    counter and any deadband or renewed breach resets it; at ``samples``
+    clears the latch falls back to inactive. Deadband samples therefore hold
+    the current state without advancing progress toward a change.
     """
 
     samples: int
@@ -57,15 +59,20 @@ class _Debounce:
             raise ValueError("samples must be at least 1")
 
     def observe(self, breached: bool, cleared: bool) -> bool:
-        if breached:
-            self.count = min(self.count + 1, self.samples)
-        elif cleared:
-            self.count -= 1
-            if self.count <= 0:
+        if not self.active:
+            self.count = self.count + 1 if breached else 0
+            if self.count >= self.samples:
+                self.active = True
                 self.count = 0
+        elif cleared:
+            self.count += 1
+            if self.count >= self.samples:
                 self.active = False
-        if self.count >= self.samples:
-            self.active = True
+                self.count = 0
+        else:
+            # Deadband or renewed breach: the alarm holds, but clear progress
+            # must restart from the next consecutive clear-eligible sample.
+            self.count = 0
         return self.active
 
 

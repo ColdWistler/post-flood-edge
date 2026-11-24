@@ -161,3 +161,58 @@ def test_fault_outweighs_critical_and_alarms_are_sorted():
     assert sev == "Fault"
     assert alarms == sorted(alarms)
     assert "Sensor Fault" in alarms and "Gross Contamination" in alarms
+
+
+def test_ph_non_consecutive_breaches_do_not_raise():
+    e = HysteresisEngine()
+    for t, ph in enumerate([8.7, 8.4, 8.7, 8.4, 8.7]):
+        e.note_activity(t)
+        _, alarms = e.evaluate({**BASE, "ph": ph}, t)
+        assert "pH Out of Range" not in alarms
+
+
+def test_severe_ph_non_consecutive_breaches_do_not_raise():
+    e = HysteresisEngine()
+    for t, ph in enumerate([9.2, 8.9, 9.2, 8.9, 9.2]):
+        e.note_activity(t)
+        _, alarms = e.evaluate({**BASE, "ph": ph}, t)
+        assert "Severe pH Persistence" not in alarms
+
+
+def test_consecutive_breaches_still_raise():
+    e = HysteresisEngine()
+    for t, ph in enumerate([8.7, 8.7, 8.7]):
+        e.note_activity(t)
+        _, alarms = e.evaluate({**BASE, "ph": ph}, t)
+    assert "pH Out of Range" in alarms
+
+    severe = HysteresisEngine()
+    for t, ph in enumerate([9.2, 9.2, 9.2]):
+        severe.note_activity(t)
+        _, alarms = severe.evaluate({**BASE, "ph": ph}, t)
+    assert "Severe pH Persistence" in alarms
+
+
+def test_active_ph_holds_through_deadband_and_needs_consecutive_clears():
+    e = HysteresisEngine()
+    for t in [0, 1, 2]:
+        e.note_activity(t)
+        _, alarms = e.evaluate({**BASE, "ph": 8.7}, t)
+    assert "pH Out of Range" in alarms
+
+    e.note_activity(3)
+    _, alarms = e.evaluate({**BASE, "ph": 8.0}, 3)
+    assert "pH Out of Range" in alarms
+
+    e.note_activity(4)
+    _, alarms = e.evaluate({**BASE, "ph": 8.4}, 4)  # 8.3–8.5 hold region
+    assert "pH Out of Range" in alarms
+
+    for t in [5, 6]:
+        e.note_activity(t)
+        _, alarms = e.evaluate({**BASE, "ph": 8.0}, t)
+        assert "pH Out of Range" in alarms
+
+    e.note_activity(7)
+    _, alarms = e.evaluate({**BASE, "ph": 8.0}, 7)
+    assert "pH Out of Range" not in alarms
