@@ -1,5 +1,88 @@
 """Shared pytest fixtures for the edge simulator tests."""
 
+from __future__ import annotations
+
+import logging
+
+import pytest
+
 from edge.models import NodeConfig
 
+# Telemetry delivery is logged at INFO in production; make it visible to
+# caplog in tests that do not need to change the global logging configuration.
+logging.getLogger("edge.publisher").setLevel(logging.INFO)
+
 NODE_A = NodeConfig("node-a", 27.7172, 85.3240, 1001, 500, 0.0)
+
+
+class FakeMqttClient:
+    """In-memory stand-in for a paho client; no broker or paho install needed."""
+
+    def __init__(self) -> None:
+        self.tls_kwargs: dict = {}
+        self.username: str | None = None
+        self.password: str | None = None
+        self.connect_args: tuple | None = None
+        self.loop_started = False
+        self.disconnected = False
+        self.published: list[tuple[str, str, int]] = []
+        self.wait_timeouts: list[float] = []
+        self.ack_ok = True
+        self.on_connect = None
+        self.on_disconnect = None
+
+    def tls_set(self, **kwargs) -> None:
+        self.tls_kwargs = kwargs
+
+    def username_pw_set(self, username: str, password: str | None) -> None:
+        self.username = username
+        self.password = password
+
+    def connect(self, host: str, port: int = 1883) -> None:
+        self.connect_args = (host, port)
+
+    def loop_start(self) -> None:
+        self.loop_started = True
+
+    def disconnect(self) -> None:
+        self.disconnected = True
+
+    def publish(self, topic: str, payload: str, qos: int = 0) -> "FakeMessage":
+        self.published.append((topic, payload, qos))
+        return FakeMessage(self)
+
+    def fire_connect(self, rc: int) -> None:
+        """Invoke the registered connection callback with a broker return code."""
+        assert self.on_connect is not None
+        self.on_connect(self, None, {}, rc)
+
+    def fire_disconnect(self, rc: int = 0) -> None:
+        """Invoke the registered disconnection callback."""
+        assert self.on_disconnect is not None
+        self.on_disconnect(self, None, rc)
+
+
+class FakeMessage:
+    """paho-style MQTTMessageInfo whose PUBACK wait can be forced to fail."""
+
+    def __init__(self, client: FakeMqttClient) -> None:
+        self._client = client
+
+    def wait_for_publish(self, timeout: float | None = None) -> None:
+        self._client.wait_timeouts.append(timeout)
+        if not self._client.ack_ok:
+            raise ValueError("PUBACK timed out")
+
+
+@pytest.fixture
+def fake_client_factory():
+    """Return a factory that records every fake client it creates."""
+    clients: list[FakeMqttClient] = []
+
+    def factory() -> FakeMqttClient:
+        client = FakeMqttClient()
+        clients.append(client)
+        return client
+
+    factory.clients = clients  # type: ignore[attr-defined]
+    return factory
