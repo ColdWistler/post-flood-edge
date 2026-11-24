@@ -48,6 +48,11 @@ class ScenarioController:
         """Seconds spent in the current phase (resets on every transition)."""
         return self._now_fn() - self.phase_start
 
+    @property
+    def duration_s(self) -> float:
+        """Seconds allocated to the current phase in the scenario timeline."""
+        return float(self._durations[self._index])
+
     def tick(self) -> str:
         """Advance to the phase due now, logging transitions and looping."""
         elapsed = self.elapsed_s

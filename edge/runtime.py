@@ -102,6 +102,29 @@ class EdgeRuntime:
         """Cumulative seconds since simulation start, never phase-local."""
         return max(0.0, float(self._now_fn()) - self._start_s)
 
+    def view_state(self) -> dict[str, Any]:
+        """Read-only snapshot of the demo state for the terminal UI."""
+        return {
+            "phase": self.scenario.phase,
+            "phase_elapsed_s": self.scenario.elapsed_s,
+            "phase_duration_s": self.scenario.duration_s,
+            "elapsed_s": self.elapsed_s,
+            "outage_active": self.outage_active,
+            "paused": self.paused,
+            "transport": "MQTT" if self.config.use_mqtt else "DRY-RUN",
+            "last_values": {
+                node_id: dict(values) for node_id, values in self._last_values.items()
+            },
+            "node_state": {
+                node_id: dict(state) for node_id, state in self.node_state.items()
+            },
+            "depths": {
+                node_id: self.store.depth(node_id) for node_id in self.publishers
+            },
+            "total_depth": self.store.depth(),
+            "published": len(self.published),
+        }
+
     def start(self) -> None:
         """Start one sampling thread per node plus the flush/timeline thread."""
         if self.threads:

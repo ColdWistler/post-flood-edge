@@ -377,6 +377,19 @@ def test_telemetry_contract_keys_and_per_node_depth(tmp_path, fake_clock, build_
         assert row["acked"] is True
 
 
+def test_view_state_returns_independent_copies(build_runtime):
+    runtime = build_runtime()
+    runtime.step_once()
+    view = runtime.view_state()
+    assert view["phase"] == "baseline"
+    assert view["phase_duration_s"] == 60.0
+    assert view["transport"] == "DRY-RUN"
+    assert set(view["last_values"]) == {"node-a", "node-b", "node-c"}
+    assert view["published"] == len(runtime.published)
+    view["last_values"]["node-a"]["ph"] = -999
+    assert runtime.view_state()["last_values"]["node-a"]["ph"] != -999
+
+
 def test_phase_commands_force_scenario_phase(tmp_path, fake_clock, build_runtime):
     rt = build_runtime(tmp_path, fake_clock)
     for key, phase in (("b", "baseline"), ("s", "silt_intrusion"),

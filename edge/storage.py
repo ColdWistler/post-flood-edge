@@ -96,6 +96,18 @@ class BufferStore:
                 (node_id,),
             ).fetchone()[0]
 
+    def status_counts(self) -> dict[str, int]:
+        """Count buffered rows per delivery status, filling absent keys with 0."""
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT status, COUNT(*) FROM telemetry_buffer GROUP BY status"
+            ).fetchall()
+        counts = {"pending": 0, "inflight": 0, "synced": 0}
+        for status, count in rows:
+            if status in counts:
+                counts[status] = int(count)
+        return counts
+
     def claim(
         self,
         exclude_nodes: set[str] | None = None,

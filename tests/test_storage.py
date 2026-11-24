@@ -179,6 +179,15 @@ def test_inflight_row_is_never_evicted_when_synced_history_exists(tmp_path, capl
     assert s.depth() == 2
 
 
+def test_status_counts_reports_all_three_statuses(tmp_path):
+    store = BufferStore(tmp_path / "counts.db", 100, 10)
+    try:
+        store.enqueue({"ts": 1, "values": {"node_id": "node-a"}})
+        assert store.status_counts() == {"pending": 1, "inflight": 0, "synced": 0}
+    finally:
+        store.close()
+
+
 def test_buffered_rows_survive_close_and_reopen(tmp_path):
     path = tmp_path / "i.db"
     s = BufferStore(path, max_rows=100, batch_size=10)
