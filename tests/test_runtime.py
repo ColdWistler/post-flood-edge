@@ -5,13 +5,46 @@ from __future__ import annotations
 import io
 import logging
 import sys
+import threading
 from pathlib import Path
 
 import pytest
 
+from edge import cli as cli_module
 from edge.cli import main as cli_main
+from edge.dsp import brown_wqi
+from edge.publisher import NullPublisher
+from edge.runtime import EdgeRuntime
+from edge.storage import BufferStore
 
 DEMO_SCENARIO = Path(__file__).resolve().parents[1] / "scenarios" / "demo.json"
+REQUIRED_TELEMETRY_KEYS = {
+    "node_id", "ph", "turbidity_ntu", "tds_ppm", "water_temp_c", "flow_lpm",
+    "latitude", "longitude", "ph_25", "wqi", "wqi_band", "severity",
+    "active_alarms", "buffer_depth", "node_inactive", "validity_flags",
+    "sensor_fault",
+}
+
+
+class BlockingPublisher(NullPublisher):
+    """Sink whose publish blocks until released, recording cleanup ordering."""
+
+    def __init__(self, node_id: str = "node-a") -> None:
+        super().__init__(node_id)
+        self.entered = threading.Event()
+        self.release = threading.Event()
+        self.events: list[str] = []
+
+    def publish_batch(self, batch: list[dict]) -> bool:
+        self.entered.set()
+        if not self.release.wait(timeout=10):
+            return False
+        self.events.append("published")
+        return True
+
+    def disconnect(self) -> None:
+        self.events.append("disconnect")
+        super().disconnect()
 
 
 def test_outage_buffers_then_replays_with_original_timestamps(
@@ -148,6 +181,24 @@ def test_power_off_raises_node_inactive_and_power_on_recovers(tmp_path, fake_clo
     assert last_node_a["values"]["node_inactive"] is False
 
 
+def test_power_off_as_first_action_publishes_complete_telemetry(
+    tmp_path, fake_clock, build_runtime
+):
+    rt = build_runtime(tmp_path, fake_clock)
+    rt.handle_command("k")              # no powered-on sample has happened yet
+    rt.step_once()
+
+    rows = [row for row in rt.published if row["node_id"] == "node-a"]
+    assert rows
+    values = rows[0]["values"]
+    assert REQUIRED_TELEMETRY_KEYS <= values.keys()
+    wqi, band = brown_wqi(
+        values["ph_25"], values["turbidity_ntu"], values["tds_ppm"]
+    )
+    assert values["wqi"] == pytest.approx(wqi)
+    assert values["wqi_band"] == band
+
+
 def test_auth_retry_resumes_publishing_and_drains_buffer(tmp_path, fake_clock, build_runtime):
     rt = build_runtime(tmp_path, fake_clock)
     rt.publishers["node-a"]._retries_suspended = True
@@ -223,6 +274,114 @@ def test_start_stop_joins_all_threads(tmp_path, fake_clock, build_runtime):
     assert all(thread.is_alive() for thread in rt.threads)
     rt.stop()
     assert all(not thread.is_alive() for thread in rt.threads)
+
+
+def test_stop_waits_for_blocked_flush_before_returning(
+    tmp_path, fake_clock, build_runtime
+):
+    rt = build_runtime(tmp_path, fake_clock)
+    blocker = BlockingPublisher()
+    rt.publishers["node-a"] = blocker
+    rt.config.tick_seconds = 0.01
+    stop_done = threading.Event()
+    try:
+        rt.start()
+        assert blocker.entered.wait(timeout=5)
+
+        def do_stop() -> None:
+            rt.stop()
+            stop_done.set()
+
+        stopper = threading.Thread(target=do_stop, name="test-stop")
+        stopper.start()
+        assert not stop_done.wait(0.2)   # stop() is still waiting on the flush
+        assert "published" not in blocker.events
+        assert "disconnect" not in blocker.events
+
+        blocker.release.set()
+        assert stop_done.wait(timeout=5)
+        stopper.join(timeout=1)
+        assert "published" in blocker.events
+        assert all(not thread.is_alive() for thread in rt.threads)
+    finally:
+        blocker.release.set()
+        rt.stop()
+
+
+def test_cli_cleanup_waits_for_blocked_flush(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    blocker = BlockingPublisher()
+    stores: list[BufferStore] = []
+    stop_entered = threading.Event()
+
+    class TrackingStore(BufferStore):
+        def close(self) -> None:
+            self.closed = True
+            super().close()
+
+    def store_factory(*args, **kwargs):
+        store = TrackingStore(*args, **kwargs)
+        store.closed = False
+        stores.append(store)
+        return store
+
+    class TrackingRuntime(EdgeRuntime):
+        def stop(self) -> None:
+            stop_entered.set()
+            super().stop()
+
+    class GatedStdin(io.StringIO):
+        def readline(self) -> str:
+            assert blocker.entered.wait(timeout=10)
+            return "q\n"
+
+    monkeypatch.setattr(cli_module, "BufferStore", store_factory)
+    monkeypatch.setattr(cli_module, "EdgeRuntime", TrackingRuntime)
+    monkeypatch.setattr(
+        cli_module,
+        "_build_publishers",
+        lambda node_ids, use_mqtt, config: {
+            node_id: (
+                blocker
+                if node_id == "node-a"
+                else NullPublisher(node_id)
+            )
+            for node_id in node_ids
+        },
+    )
+    monkeypatch.setattr(sys, "stdin", GatedStdin())
+
+    results: list[int] = []
+
+    def run_cli() -> None:
+        results.append(
+            cli_main([
+                "--scenario", str(DEMO_SCENARIO),
+                "--dry-run",
+                "--tick-seconds", "0.05",
+                "--db", str(tmp_path / "cli-slow.db"),
+                "--log-level", "INFO",
+            ])
+        )
+
+    cli_thread = threading.Thread(target=run_cli, name="test-cli")
+    cli_thread.start()
+    try:
+        assert blocker.entered.wait(timeout=10)
+        assert stop_entered.wait(timeout=10)
+        assert "published" not in blocker.events
+        assert "disconnect" not in blocker.events
+        assert stores and stores[0].closed is False
+
+        blocker.release.set()
+        cli_thread.join(timeout=10)
+        assert results == [0]
+        assert "published" in blocker.events
+        assert blocker.events.index("published") < blocker.events.index("disconnect")
+        assert stores[0].closed is True
+    finally:
+        blocker.release.set()
+        cli_thread.join(timeout=10)
 
 
 def test_cli_main_writes_log_and_exits_on_q(tmp_path, monkeypatch):

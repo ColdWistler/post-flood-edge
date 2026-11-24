@@ -125,10 +125,15 @@ class EdgeRuntime:
         logger.info("STATE: runtime started nodes=%s", ",".join(self.publishers))
 
     def stop(self) -> None:
-        """Signal every loop to stop and wait for the threads to exit."""
+        """Signal every loop to stop and wait for all of them to exit.
+
+        Publish batches can block for the full PUBACK timeout (10 s), so a
+        bounded join could return while a flush thread still owns the store
+        and publishers. Callers may therefore clean up only after stop().
+        """
         self._stop_event.set()
         for thread in self.threads:
-            thread.join(timeout=5.0)
+            thread.join()
         logger.info("STATE: runtime stopped")
 
     def _sampling_loop(self, node_id: str, tick: float) -> None:
@@ -195,7 +200,8 @@ class EdgeRuntime:
 
     def _buffer_inactive_status(self, node_id: str, now: float) -> None:
         """Keep publishing status for a powered-off node without sampling it."""
-        fallback = {
+        ts_ms = int(time.time() * 1000)
+        raw = {
             "node_id": node_id,
             "latitude": self.node_configs[node_id].latitude,
             "longitude": self.node_configs[node_id].longitude,
@@ -205,9 +211,14 @@ class EdgeRuntime:
             "water_temp_c": 20.0,
             "flow_lpm": 12.0,
         }
-        values = dict(self._last_values.get(node_id, fallback))
+        # Derive ph_25/wqi/wqi_band with the same DSP function as live samples.
+        # Empty filters avoid polluting the per-node Hampel windows with a
+        # synthetic status reading.
+        processed = process_reading(
+            Reading(node_id=node_id, ts_ms=ts_ms, values=raw), {}
+        )
+        values = dict(self._last_values.get(node_id, processed.values))
         severity, alarms = self.engines[node_id].evaluate(values, now, [])
-        ts_ms = int(time.time() * 1000)
         self._buffer(node_id, ts_ms, values, severity, alarms, [])
         self._log_severity(node_id, severity)
 
