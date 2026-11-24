@@ -6,6 +6,7 @@ import math
 import random
 import time
 
+from .dsp import ambient_tds
 from .models import NodeConfig, Reading
 
 _TAU_RISE_S = 10.0
@@ -14,7 +15,6 @@ _DAY_S = 86_400.0
 _TDS_COUPLING_PPM_PER_NTU = 0.45
 _PH_DROP = 0.90
 _PH_FLOOR = 6.2
-_TDS_ALPHA_PER_C = 0.02
 _FLOW_TRANSIENT_MIN_LPM = 2.0
 _FLOW_TRANSIENT_MAX_LPM = 4.0
 _FLOW_TRANSIENT_S = 10.0
@@ -65,8 +65,7 @@ class SensorSimulator:
         ph = max(_PH_FLOOR, 7.2 - _PH_DROP * (1.0 - math.exp(-event_u / 150.0)))
         turbidity = turbidity_base + event_u
         tds_25 = tds_25_base + _TDS_COUPLING_PPM_PER_NTU * event_u
-        # Task 3 moves this conversion into dsp.ambient_tds() so it has one home.
-        tds_ambient = tds_25 * (1.0 + _TDS_ALPHA_PER_C * (temp_c - 25.0))
+        tds_ambient = ambient_tds(tds_25, temp_c)
 
         if event_active and dt_s <= _FLOW_TRANSIENT_S:
             flow += self.rng.uniform(_FLOW_TRANSIENT_MIN_LPM, _FLOW_TRANSIENT_MAX_LPM)
