@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import json
 import logging
-import uuid
 from typing import Any, Callable, Protocol
 
 logger = logging.getLogger(__name__)
 
 _TELEMETRY_TOPIC = "v1/devices/me/telemetry"
 _PUBACK_TIMEOUT_S = 10
+# ThingsBoard Cloud closes MQTT connections for telemetry payloads above ~2 KiB.
+# Stay below that ceiling while still batching rows in one logical flush.
+_MAX_PAYLOAD_BYTES = 1800
 _AUTH_RC = 5
 _NOT_AUTHORIZED_RC = 135  # paho v2 reason-code value for the same auth refusal
 _CALLBACK_API_VERSION1 = "VERSION1"  # fallback for injected clients without paho
@@ -119,14 +121,13 @@ class MqttPublisher:
                 callback_api_version = _CALLBACK_API_VERSION1
             if factory is None:
                 from paho.mqtt.client import Client as factory
-            # paho's empty default client id collides across the three node
-            # clients (and with stale sessions from earlier runs), so the broker
-            # kicks connections with rc=7. Use a fresh, short id per connection.
-            # Reconnection is owned by the runtime's backoff loop, not paho's
-            # automatic reconnect, which otherwise restarts the kick cycle.
+            # A stable, per-node MQTT client id avoids session takeovers when all
+            # three virtual nodes publish through the same ThingsBoard tenant.
+            # Reconnection stays with the runtime's backoff loop; paho's automatic
+            # reconnect would repeatedly restart the takeover/kick cycle.
             client = factory(
                 callback_api_version=callback_api_version,
-                client_id=f"pf-{self.node_id}-{uuid.uuid4().hex[:6]}",
+                client_id=f"post-flood-{self.node_id}",
                 reconnect_on_failure=False,
             )
             self._client = client
@@ -149,7 +150,33 @@ class MqttPublisher:
     def disconnect(self) -> None:
         self.is_connected = False
         if self._client is not None:
+            stop = getattr(self._client, "loop_stop", None)
+            if callable(stop):
+                stop()
             self._client.disconnect()
+
+    @staticmethod
+    def _payload_chunks(batch: list[dict]) -> list[str]:
+        """Serialise rows into PUBACK-acknowledged packets below the broker cap."""
+        items = [
+            json.dumps({"ts": row["ts"], "values": row["values"]}, separators=(",", ":"))
+            for row in batch
+        ]
+        chunks: list[list[str]] = []
+        current: list[str] = []
+        current_size = 2  # enclosing brackets of the JSON array
+        for item in items:
+            addition = len(item) + (1 if current else 0)
+            if current and current_size + addition > _MAX_PAYLOAD_BYTES:
+                chunks.append(current)
+                current = []
+                current_size = 2
+                addition = len(item)
+            current.append(item)
+            current_size += addition
+        if current:
+            chunks.append(current)
+        return ["[" + ",".join(chunk) + "]" for chunk in chunks]
 
     def publish_batch(self, batch: list[dict]) -> bool:
         """Publish one node's rows and wait for PUBACK before acknowledging."""
@@ -160,20 +187,19 @@ class MqttPublisher:
             self._network_failure("publish while disconnected")
             return False
 
-        payload = json.dumps(
-            [{"ts": row["ts"], "values": row["values"]} for row in batch]
-        )
-        try:
-            info = self._client.publish(_TELEMETRY_TOPIC, payload, qos=1)
-            info.wait_for_publish(timeout=_PUBACK_TIMEOUT_S)
-            # paho returns silently on timeout; only is_published() proves PUBACK.
-            acked = info.is_published()
-        except Exception as exc:
-            self._network_failure(f"publish error={exc}")
-            return False
-        if not acked:
-            self._network_failure("PUBACK not received")
-            return False
+        payloads = self._payload_chunks(batch)
+        for payload in payloads:
+            try:
+                info = self._client.publish(_TELEMETRY_TOPIC, payload, qos=1)
+                info.wait_for_publish(timeout=_PUBACK_TIMEOUT_S)
+                # paho returns silently on timeout; only is_published() proves PUBACK.
+                acked = info.is_published()
+            except Exception as exc:
+                self._network_failure(f"publish error={exc}")
+                return False
+            if not acked:
+                self._network_failure("PUBACK not received")
+                return False
 
         ts = [row["ts"] for row in batch]
         logger.info("PUBLISH node=%s rows=%d ts=%s", self.node_id, len(batch), ts)

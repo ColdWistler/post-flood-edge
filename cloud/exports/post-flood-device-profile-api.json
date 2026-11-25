@@ -1,0 +1,40 @@
+{
+  "id": {
+    "entityType": "DEVICE_PROFILE",
+    "id": "8a3d0f50-e893-11f1-bf0c-b971e756f4e3"
+  },
+  "createdTime": 1795585580229,
+  "tenantId": {
+    "entityType": "TENANT",
+    "id": "621f6930-d8d7-11f1-a2b8-99b86090d117"
+  },
+  "name": "Post-Flood Water Source",
+  "description": "Three virtual post-flood water-source nodes; MQTT/TLS telemetry. Alarm rules are maintained by Sambid's cloud workstream.",
+  "image": null,
+  "type": "DEFAULT",
+  "transportType": "DEFAULT",
+  "provisionType": "DISABLED",
+  "defaultRuleChainId": null,
+  "defaultDashboardId": null,
+  "defaultQueueName": null,
+  "provisionDeviceKey": "[REDACTED]",
+  "firmwareId": null,
+  "softwareId": null,
+  "defaultEdgeRuleChainId": null,
+  "externalId": null,
+  "version": 1,
+  "default": false,
+  "profileData": {
+    "configuration": {
+      "type": "DEFAULT"
+    },
+    "transportConfiguration": {
+      "type": "DEFAULT"
+    },
+    "provisionConfiguration": {
+      "type": "DISABLED",
+      "provisionDeviceSecret": "[REDACTED]"
+    },
+    "alarms": []
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "name": "Gross Contamination",
+  "type": "ALARM",
+  "configuration": {
+    "type": "ALARM",
+    "arguments": {
+      "turbidity_ntu": {
+        "refEntityKey": {
+          "key": "turbidity_ntu",
+          "type": "TS_LATEST"
+        }
+      }
+    },
+    "createRules": {
+      "CRITICAL": {
+        "condition": {
+          "type": "SIMPLE",
+          "expression": {
+            "type": "SIMPLE",
+            "filters": [
+              {
+                "argument": "turbidity_ntu",
+                "valueType": "NUMERIC",
+                "operation": "AND",
+                "predicates": [
+                  {
+                    "type": "NUMERIC",
+                    "operation": "GREATER",
+                    "value": {
+                      "staticValue": 200
+                    }
+                  }
+                ]
+              }
+            ],
+            "operation": "AND"
+          },
+          "schedule": {
+            "staticValue": {
+              "type": "ANY_TIME"
+            }
+          }
+        },
+        "alarmDetails": ""
+      }
+    },
+    "clearRule": {
+      "condition": {
+        "type": "SIMPLE",
+        "expression": {
+          "type": "SIMPLE",
+          "filters": [
+            {
+              "argument": "turbidity_ntu",
+              "valueType": "NUMERIC",
+              "operation": "AND",
+              "predicates": [
+                {
+                  "type": "NUMERIC",
+                  "operation": "LESS",
+                  "value": {
+                    "staticValue": 150
+                  }
+                }
+              ]
+            }
+          ],
+          "operation": "AND"
+        },
+        "schedule": {
+          "staticValue": {
+            "type": "ANY_TIME"
+          }
+        }
+      },
+      "alarmDetails": ""
+    },
+    "propagate": false,
+    "propagateToOwner": false,
+    "propagateToOwnerHierarchy": false,
+    "propagateToTenant": false,
+    "propagateRelationTypes": []
+  },
+  "additionalInfo": {
+    "description": "Server-side copy of the edge rule: turbidity_ntu > 200 clears below 150."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "generated_at": "2026-11-25T17:37:32",
+  "mode": "apply",
+  "window": {
+    "start_ms": 1795607091933,
+    "end_ms": 1795607268807
+  },
+  "rows_read": 530,
+  "outages_observed": 0,
+  "metrics": {
+    "buffer_flush_throughput_rps": {
+      "value": null,
+      "unit": "rows/s",
+      "samples": 0,
+      "note": "no replay batches found in the edge log"
+    },
+    "recovery_time_s": {
+      "value": null,
+      "unit": "s",
+      "samples": 0,
+      "note": "no replay window found in the edge log"
+    },
+    "end_to_end_latency_ms": {
+      "value": {
+        "count": 528,
+        "mean": 1457.1723484848485,
+        "median": 1444.0,
+        "p95": 2364.5499999999993,
+        "max": 2939.0
+      },
+      "unit": "ms",
+      "samples": 528,
+      "note": "server_received_ms minus original telemetry ts (NTP-synced clocks)"
+    },
+    "message_delivery_ratio_pct": {
+      "value": 99.62264150943396,
+      "unit": "%",
+      "samples": 528,
+      "note": "local generated rows whose original ts appears in ThingsBoard ph telemetry"
+    },
+    "alarm_activation_delay_ms": {
+      "value": {
+        "count": 18,
+        "mean": 1329.2222222222222,
+        "median": 1288.5,
+        "p95": 2239.3499999999995,
+        "max": 2519.0
+      },
+      "unit": "ms",
+      "samples": 18,
+      "note": "edge alarm transition to matching ThingsBoard alarm creation"
+    },
+    "locally_synced_pct": {
+      "value": 99.62264150943396,
+      "unit": "%",
+      "samples": 528,
+      "note": "edge PUBACK-confirmed rows / generated rows (no broker required)"
+    },
+    "data_loss": {
+      "value": {
+        "rows": 2,
+        "pct": 0.37735849056603776
+      },
+      "unit": "rows",
+      "samples": 530,
+      "note": "generated rows absent from ThingsBoard after full sync"
+    }
+  },
+  "notes": [
+    "no completed OUTAGE START/END pair found in the edge log"
+  ]
+}

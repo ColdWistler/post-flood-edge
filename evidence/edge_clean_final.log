@@ -1,0 +1,534 @@
+2026-11-25 17:29:50,368 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 17:29:50,934 INFO edge.runtime STATE: runtime started nodes=node-a,node-b,node-c
+2026-11-25 17:29:50,939 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 17:29:51,494 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 17:29:52,274 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607091935]
+2026-11-25 17:29:52,276 INFO edge.runtime BUFFER: total=2 per_node={'node-a': 1, 'node-b': 0, 'node-c': 1}
+2026-11-25 17:29:53,556 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607091933, 1795607093000]
+2026-11-25 17:29:53,832 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607091936, 1795607093001]
+2026-11-25 17:29:54,109 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607092997]
+2026-11-25 17:29:54,111 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:29:55,389 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607093999, 1795607095000]
+2026-11-25 17:29:55,668 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607094002, 1795607095004]
+2026-11-25 17:29:55,944 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607094003, 1795607095005]
+2026-11-25 17:29:55,945 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:29:57,222 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607096003]
+2026-11-25 17:29:57,501 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607096006]
+2026-11-25 17:29:57,776 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607096008]
+2026-11-25 17:29:57,778 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:29:59,056 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607097004, 1795607098006]
+2026-11-25 17:29:59,334 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607097008, 1795607098010]
+2026-11-25 17:29:59,610 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607097010, 1795607098011]
+2026-11-25 17:29:59,612 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:00,888 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607099008, 1795607100010]
+2026-11-25 17:30:01,167 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607099012, 1795607100014]
+2026-11-25 17:30:01,442 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607099013, 1795607100015]
+2026-11-25 17:30:01,444 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:02,722 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607101012, 1795607102014]
+2026-11-25 17:30:03,001 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607101015, 1795607102017]
+2026-11-25 17:30:03,277 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607101016, 1795607102019]
+2026-11-25 17:30:03,279 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:04,558 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607103016, 1795607104018]
+2026-11-25 17:30:04,836 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607103019, 1795607104021]
+2026-11-25 17:30:05,114 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607103020, 1795607104022]
+2026-11-25 17:30:05,116 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:06,393 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607105020, 1795607106023]
+2026-11-25 17:30:06,672 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607105024, 1795607106025]
+2026-11-25 17:30:06,948 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607105024, 1795607106026]
+2026-11-25 17:30:06,951 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:30:08,228 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607107025]
+2026-11-25 17:30:08,506 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607107027]
+2026-11-25 17:30:08,782 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607107028]
+2026-11-25 17:30:08,783 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:10,093 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607108027, 1795607109029]
+2026-11-25 17:30:10,371 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607108029, 1795607109031]
+2026-11-25 17:30:10,647 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607108030, 1795607109032]
+2026-11-25 17:30:10,649 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:11,927 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607110032, 1795607111034]
+2026-11-25 17:30:12,206 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607110033, 1795607111035]
+2026-11-25 17:30:12,482 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607110035, 1795607111036]
+2026-11-25 17:30:12,483 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:13,762 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607112036, 1795607113039]
+2026-11-25 17:30:14,040 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607112037, 1795607113040]
+2026-11-25 17:30:14,317 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607112038, 1795607113041]
+2026-11-25 17:30:14,319 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:15,597 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607114041, 1795607115044]
+2026-11-25 17:30:15,876 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607114042, 1795607115045]
+2026-11-25 17:30:16,151 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607114043, 1795607115046]
+2026-11-25 17:30:16,153 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:17,432 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607116047, 1795607117049]
+2026-11-25 17:30:17,710 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607116048, 1795607117051]
+2026-11-25 17:30:17,986 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607116049, 1795607117052]
+2026-11-25 17:30:17,987 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:30:19,264 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607118051]
+2026-11-25 17:30:19,542 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607118052]
+2026-11-25 17:30:19,817 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607118054]
+2026-11-25 17:30:19,819 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:21,096 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607119053, 1795607120056]
+2026-11-25 17:30:21,374 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607119054, 1795607120057]
+2026-11-25 17:30:21,651 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607119055, 1795607120058]
+2026-11-25 17:30:21,653 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:22,932 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607121057, 1795607122059]
+2026-11-25 17:30:23,210 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607121059, 1795607122061]
+2026-11-25 17:30:23,486 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607121060, 1795607122062]
+2026-11-25 17:30:23,488 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:24,766 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607123062, 1795607124064]
+2026-11-25 17:30:25,043 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607123063, 1795607124066]
+2026-11-25 17:30:25,321 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607123064, 1795607124067]
+2026-11-25 17:30:25,323 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:26,601 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607125066, 1795607126069]
+2026-11-25 17:30:26,876 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607125068, 1795607126071]
+2026-11-25 17:30:27,155 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607125069, 1795607126072]
+2026-11-25 17:30:27,189 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:28,467 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607127071, 1795607128074]
+2026-11-25 17:30:28,743 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607127072, 1795607128076]
+2026-11-25 17:30:29,022 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607127074, 1795607128077]
+2026-11-25 17:30:29,023 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:30:30,300 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607129076]
+2026-11-25 17:30:30,576 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607129078]
+2026-11-25 17:30:30,856 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607129079]
+2026-11-25 17:30:30,858 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:32,136 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607130078, 1795607131080]
+2026-11-25 17:30:32,412 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607130080, 1795607131082]
+2026-11-25 17:30:32,691 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607130081, 1795607131083]
+2026-11-25 17:30:32,693 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:33,972 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607132082, 1795607133084]
+2026-11-25 17:30:34,248 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607132084, 1795607133086]
+2026-11-25 17:30:34,526 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607132085, 1795607133088]
+2026-11-25 17:30:34,528 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:35,805 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607134086, 1795607135087]
+2026-11-25 17:30:36,080 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607134087, 1795607135089]
+2026-11-25 17:30:36,361 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607134090, 1795607135092]
+2026-11-25 17:30:36,363 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:37,641 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607136089, 1795607137091]
+2026-11-25 17:30:37,917 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607136091, 1795607137093]
+2026-11-25 17:30:38,196 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607136094, 1795607137095]
+2026-11-25 17:30:38,198 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:39,476 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607138094, 1795607139095]
+2026-11-25 17:30:39,750 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607138095, 1795607139096]
+2026-11-25 17:30:40,026 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607138097, 1795607139098]
+2026-11-25 17:30:40,028 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:30:41,306 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607140098]
+2026-11-25 17:30:41,582 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607140099]
+2026-11-25 17:30:41,860 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607140100]
+2026-11-25 17:30:41,861 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:43,140 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607141099, 1795607142101]
+2026-11-25 17:30:43,417 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607141100, 1795607142102]
+2026-11-25 17:30:43,696 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607141101, 1795607142104]
+2026-11-25 17:30:43,698 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:44,975 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607143104, 1795607144106]
+2026-11-25 17:30:45,252 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607143105, 1795607144107]
+2026-11-25 17:30:45,531 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607143106, 1795607144108]
+2026-11-25 17:30:45,563 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:46,841 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607145109, 1795607146113]
+2026-11-25 17:30:47,119 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607145111, 1795607146114]
+2026-11-25 17:30:47,396 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607145112, 1795607146115]
+2026-11-25 17:30:47,397 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:48,674 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607147116, 1795607148119]
+2026-11-25 17:30:48,953 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607147117, 1795607148121]
+2026-11-25 17:30:49,229 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607147118, 1795607148123]
+2026-11-25 17:30:49,230 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:50,231 INFO edge.scenarios STATE: baseline -> silt_intrusion
+2026-11-25 17:30:50,508 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607149121, 1795607150123]
+2026-11-25 17:30:50,787 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607149123, 1795607150124]
+2026-11-25 17:30:51,777 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607149125, 1795607150127]
+2026-11-25 17:30:51,778 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:53,055 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607151125, 1795607152506]
+2026-11-25 17:30:53,333 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607151127, 1795607152505]
+2026-11-25 17:30:53,609 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607151128, 1795607152505]
+2026-11-25 17:30:53,610 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:54,511 INFO edge.runtime STATE: node=node-c severity=Critical
+2026-11-25 17:30:54,511 INFO edge.runtime STATE: node=node-b severity=Critical
+2026-11-25 17:30:54,512 INFO edge.runtime STATE: node=node-a severity=Critical
+2026-11-25 17:30:54,886 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607153506, 1795607154509]
+2026-11-25 17:30:55,160 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607153507, 1795607154509]
+2026-11-25 17:30:55,438 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607153507, 1795607154510]
+2026-11-25 17:30:55,439 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:30:56,715 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607155511]
+2026-11-25 17:30:56,991 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607155512]
+2026-11-25 17:30:57,268 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607155512]
+2026-11-25 17:30:57,268 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:30:58,545 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607156513, 1795607157515]
+2026-11-25 17:30:58,822 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607156514, 1795607157516]
+2026-11-25 17:30:59,099 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607156514, 1795607157516]
+2026-11-25 17:30:59,100 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:00,374 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607158517, 1795607159519]
+2026-11-25 17:31:00,522 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:00,523 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:00,523 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:31:00,524 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:31:00,652 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607158518, 1795607159520]
+2026-11-25 17:31:00,931 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607158518, 1795607159521]
+2026-11-25 17:31:00,932 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:01,525 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:01,526 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:01,526 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:31:01,526 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:31:02,218 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607160522, 1795607161525]
+2026-11-25 17:31:02,493 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607160522, 1795607161525]
+2026-11-25 17:31:02,528 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:02,529 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:02,531 WARNING edge.runtime FAULT: node=node-c severity=Fault
+2026-11-25 17:31:02,769 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607160523, 1795607161526]
+2026-11-25 17:31:02,770 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:03,532 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:03,533 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:04,048 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607162527, 1795607163530]
+2026-11-25 17:31:04,325 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607162528, 1795607163531]
+2026-11-25 17:31:04,535 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:04,535 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:04,599 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607162528, 1795607163532]
+2026-11-25 17:31:04,600 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:05,537 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:05,538 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:05,878 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607164533, 1795607165536]
+2026-11-25 17:31:06,154 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607164534, 1795607165536]
+2026-11-25 17:31:06,430 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607164535, 1795607165537]
+2026-11-25 17:31:06,431 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:31:06,540 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:06,541 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:07,544 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:07,545 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:07,707 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607166539]
+2026-11-25 17:31:07,983 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607166539]
+2026-11-25 17:31:08,258 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607166540]
+2026-11-25 17:31:08,259 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:08,547 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:08,547 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:09,537 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607167542, 1795607168545]
+2026-11-25 17:31:09,549 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:09,550 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:09,812 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607167543, 1795607168546]
+2026-11-25 17:31:10,087 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607167544, 1795607168547]
+2026-11-25 17:31:10,087 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:10,552 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:10,560 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:11,367 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607169548, 1795607170551]
+2026-11-25 17:31:11,553 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.33 substituted=6.33
+2026-11-25 17:31:11,553 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:31:11,562 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:11,562 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:11,643 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607169548, 1795607170551]
+2026-11-25 17:31:11,918 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607169549, 1795607170552]
+2026-11-25 17:31:11,918 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:12,555 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.33 substituted=6.33
+2026-11-25 17:31:12,556 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:31:12,563 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:12,564 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:13,196 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607171553, 1795607172555]
+2026-11-25 17:31:13,470 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607171553, 1795607172555]
+2026-11-25 17:31:13,557 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.33 substituted=6.33
+2026-11-25 17:31:13,558 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:31:13,559 WARNING edge.runtime FAULT: node=node-b severity=Fault
+2026-11-25 17:31:13,565 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:13,565 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:13,745 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607171561, 1795607172563]
+2026-11-25 17:31:13,746 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:14,566 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:14,566 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:15,023 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607173557, 1795607174559]
+2026-11-25 17:31:15,296 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607173557, 1795607174560]
+2026-11-25 17:31:15,567 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:15,568 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:15,572 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607173565, 1795607174566]
+2026-11-25 17:31:15,572 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:16,564 INFO edge.runtime STATE: node=node-b severity=Critical
+2026-11-25 17:31:16,569 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:16,569 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:16,850 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607175560, 1795607176562]
+2026-11-25 17:31:17,126 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607175561, 1795607176562]
+2026-11-25 17:31:17,401 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607175567, 1795607176569]
+2026-11-25 17:31:17,401 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:31:17,570 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:17,570 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:18,571 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:18,572 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:18,678 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607177563]
+2026-11-25 17:31:18,954 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607177564]
+2026-11-25 17:31:19,229 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607177570]
+2026-11-25 17:31:19,230 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:19,573 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:19,573 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:20,507 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607178565, 1795607179567]
+2026-11-25 17:31:20,575 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:20,575 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:20,782 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607178566, 1795607179567]
+2026-11-25 17:31:21,058 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607178571, 1795607179573]
+2026-11-25 17:31:21,058 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:21,577 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:21,577 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:22,336 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607180568, 1795607181570]
+2026-11-25 17:31:22,578 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:22,578 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:22,611 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607180569, 1795607181571]
+2026-11-25 17:31:22,886 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607180574, 1795607181576]
+2026-11-25 17:31:22,887 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:23,574 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.34 substituted=6.34
+2026-11-25 17:31:23,575 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:31:23,580 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:23,580 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:24,164 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607182571, 1795607183573]
+2026-11-25 17:31:24,440 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607182572, 1795607183574]
+2026-11-25 17:31:24,583 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:24,583 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:24,715 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607182578, 1795607183580]
+2026-11-25 17:31:24,716 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:25,584 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:25,585 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:25,997 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607184575, 1795607185577]
+2026-11-25 17:31:26,278 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607184576, 1795607185577]
+2026-11-25 17:31:26,553 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607184583, 1795607185584]
+2026-11-25 17:31:26,554 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:31:26,586 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:31:26,586 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:27,831 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607186578]
+2026-11-25 17:31:28,106 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607186579]
+2026-11-25 17:31:28,380 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607186586]
+2026-11-25 17:31:28,382 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:29,590 INFO edge.runtime STATE: node=node-c severity=Critical
+2026-11-25 17:31:29,659 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607187580, 1795607188581]
+2026-11-25 17:31:29,934 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607187581, 1795607188582]
+2026-11-25 17:31:30,209 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607187587, 1795607188588]
+2026-11-25 17:31:30,220 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:31,498 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607189583, 1795607190584]
+2026-11-25 17:31:31,773 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607189584, 1795607190585]
+2026-11-25 17:31:32,048 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607189589, 1795607190591]
+2026-11-25 17:31:32,049 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:33,326 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607191587, 1795607192588]
+2026-11-25 17:31:33,601 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607191587, 1795607192588]
+2026-11-25 17:31:33,876 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607191592, 1795607192593]
+2026-11-25 17:31:33,877 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:35,155 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607193590, 1795607194591]
+2026-11-25 17:31:35,431 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607193590, 1795607194592]
+2026-11-25 17:31:35,706 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607193594, 1795607194595]
+2026-11-25 17:31:35,706 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:36,597 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:36,597 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:36,984 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607195593, 1795607196594]
+2026-11-25 17:31:37,259 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607195593, 1795607196595]
+2026-11-25 17:31:37,534 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607195596, 1795607196597]
+2026-11-25 17:31:37,535 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:31:37,598 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:37,599 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:38,600 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:38,600 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:38,601 WARNING edge.runtime FAULT: node=node-c severity=Fault
+2026-11-25 17:31:38,814 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607197596]
+2026-11-25 17:31:39,090 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607197597]
+2026-11-25 17:31:39,365 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607197598]
+2026-11-25 17:31:39,365 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:39,602 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:39,602 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:40,603 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:40,603 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:40,643 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607198598, 1795607199600]
+2026-11-25 17:31:40,919 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607198599, 1795607199600]
+2026-11-25 17:31:41,194 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607198600, 1795607199602]
+2026-11-25 17:31:41,194 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:41,605 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:41,605 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:42,473 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607200601, 1795607201603]
+2026-11-25 17:31:42,607 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:42,607 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:42,749 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607200602, 1795607201604]
+2026-11-25 17:31:43,023 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607200603, 1795607201605]
+2026-11-25 17:31:43,024 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:43,609 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:43,609 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:44,300 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607202604, 1795607203605]
+2026-11-25 17:31:44,577 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607202606, 1795607203608]
+2026-11-25 17:31:44,610 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:44,611 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:44,852 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607202607, 1795607203609]
+2026-11-25 17:31:44,853 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:45,612 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:45,612 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:46,131 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607204606, 1795607205607]
+2026-11-25 17:31:46,408 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607204610, 1795607205612]
+2026-11-25 17:31:46,614 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:46,615 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:46,683 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607204610, 1795607205612]
+2026-11-25 17:31:46,684 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:47,616 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:47,617 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:47,961 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607206608, 1795607207608]
+2026-11-25 17:31:48,237 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607206614, 1795607207616]
+2026-11-25 17:31:48,513 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607206614, 1795607207616]
+2026-11-25 17:31:48,513 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:31:48,618 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:48,619 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:49,771 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:49,772 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:49,791 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607208609]
+2026-11-25 17:31:50,066 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607208618]
+2026-11-25 17:31:50,339 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607208618]
+2026-11-25 17:31:50,340 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:50,774 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:50,774 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:51,618 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607209610, 1795607210611]
+2026-11-25 17:31:51,775 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:51,775 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:51,893 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607209742, 1795607210743]
+2026-11-25 17:31:52,168 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607209771, 1795607210773]
+2026-11-25 17:31:52,168 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:52,777 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:52,777 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:53,450 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607211612, 1795607212613]
+2026-11-25 17:31:53,725 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607211744, 1795607212746]
+2026-11-25 17:31:53,780 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:53,780 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:54,000 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607211775, 1795607212777]
+2026-11-25 17:31:54,000 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:54,782 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:54,782 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:55,276 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607213614, 1795607214615]
+2026-11-25 17:31:55,552 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607213747, 1795607214748]
+2026-11-25 17:31:55,783 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:31:55,783 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:31:55,826 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607213779, 1795607214781]
+2026-11-25 17:31:55,827 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:31:57,105 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607215615, 1795607216616]
+2026-11-25 17:31:57,381 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607215749, 1795607216750]
+2026-11-25 17:31:57,656 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607215783, 1795607216784]
+2026-11-25 17:31:57,656 INFO edge.runtime BUFFER: total=1 per_node={'node-a': 1, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:31:58,788 INFO edge.runtime STATE: node=node-c severity=Critical
+2026-11-25 17:31:58,934 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607217617, 1795607218618]
+2026-11-25 17:31:59,208 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607217751]
+2026-11-25 17:31:59,483 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607217786]
+2026-11-25 17:31:59,483 INFO edge.runtime BUFFER: total=2 per_node={'node-a': 0, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:00,759 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607218752, 1795607219753]
+2026-11-25 17:32:01,034 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607218787, 1795607219788]
+2026-11-25 17:32:01,310 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607219619]
+2026-11-25 17:32:01,311 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:02,589 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607220620, 1795607221621]
+2026-11-25 17:32:02,866 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607220754, 1795607221756]
+2026-11-25 17:32:03,140 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607220789, 1795607221791]
+2026-11-25 17:32:03,140 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:04,417 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607222622, 1795607223624]
+2026-11-25 17:32:04,692 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607222757, 1795607223758]
+2026-11-25 17:32:04,973 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607222792, 1795607223794]
+2026-11-25 17:32:04,974 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:05,796 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:32:05,796 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:06,251 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607224625, 1795607225626]
+2026-11-25 17:32:06,525 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607224759, 1795607225761]
+2026-11-25 17:32:06,797 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:32:06,797 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:06,800 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607224795, 1795607225796]
+2026-11-25 17:32:06,801 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:07,799 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:32:07,800 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:07,800 WARNING edge.runtime FAULT: node=node-c severity=Fault
+2026-11-25 17:32:08,078 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607226627, 1795607227628]
+2026-11-25 17:32:08,353 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607226762, 1795607227763]
+2026-11-25 17:32:08,628 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607226797, 1795607227799]
+2026-11-25 17:32:08,629 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:32:08,801 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:32:08,801 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:09,802 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:32:09,803 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:09,905 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607228629]
+2026-11-25 17:32:10,180 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607228765]
+2026-11-25 17:32:10,454 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607228801]
+2026-11-25 17:32:10,455 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:10,804 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:32:10,805 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:11,733 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607229630, 1795607230631]
+2026-11-25 17:32:11,806 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:32:11,806 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:12,008 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607229766, 1795607230767]
+2026-11-25 17:32:12,283 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607229802, 1795607230804]
+2026-11-25 17:32:12,284 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:13,561 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607231632, 1795607232633]
+2026-11-25 17:32:13,837 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607231769, 1795607232770]
+2026-11-25 17:32:14,111 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607231806, 1795607232807]
+2026-11-25 17:32:14,112 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:14,810 INFO edge.runtime STATE: node=node-c severity=Critical
+2026-11-25 17:32:15,390 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607233634, 1795607234635]
+2026-11-25 17:32:15,665 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607233771, 1795607234772]
+2026-11-25 17:32:15,938 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607233808, 1795607234810]
+2026-11-25 17:32:15,939 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:17,216 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607235636, 1795607236637]
+2026-11-25 17:32:17,491 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607235773, 1795607236774]
+2026-11-25 17:32:17,767 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607235811, 1795607236812]
+2026-11-25 17:32:17,767 INFO edge.runtime BUFFER: total=1 per_node={'node-a': 1, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:32:19,044 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607237638, 1795607238639]
+2026-11-25 17:32:19,326 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607237776]
+2026-11-25 17:32:19,600 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607237813]
+2026-11-25 17:32:19,601 INFO edge.runtime BUFFER: total=2 per_node={'node-a': 0, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:20,876 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607238777, 1795607239778]
+2026-11-25 17:32:21,150 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607238814, 1795607239815]
+2026-11-25 17:32:21,427 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607239640]
+2026-11-25 17:32:21,428 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:21,817 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.33 substituted=6.33
+2026-11-25 17:32:21,818 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:22,704 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607240641, 1795607241642]
+2026-11-25 17:32:22,819 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.33 substituted=6.33
+2026-11-25 17:32:22,819 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:22,980 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607240778, 1795607241779]
+2026-11-25 17:32:23,254 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607240816, 1795607241817]
+2026-11-25 17:32:23,255 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:23,821 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.33 substituted=6.33
+2026-11-25 17:32:23,821 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:32:23,822 WARNING edge.runtime FAULT: node=node-c severity=Fault
+2026-11-25 17:32:24,532 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607242644, 1795607243645]
+2026-11-25 17:32:24,808 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607242780, 1795607243782]
+2026-11-25 17:32:25,083 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607242819, 1795607243820]
+2026-11-25 17:32:25,083 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:26,359 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607244646, 1795607245647]
+2026-11-25 17:32:26,635 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607244783, 1795607245784]
+2026-11-25 17:32:26,826 INFO edge.runtime STATE: node=node-c severity=Critical
+2026-11-25 17:32:26,909 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607244822, 1795607245824]
+2026-11-25 17:32:26,910 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:28,188 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607246648, 1795607247649]
+2026-11-25 17:32:28,463 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607246785, 1795607247786]
+2026-11-25 17:32:28,738 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607246825, 1795607247826]
+2026-11-25 17:32:28,738 INFO edge.runtime BUFFER: total=1 per_node={'node-a': 1, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:32:30,016 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607248650, 1795607249651]
+2026-11-25 17:32:30,291 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607248787]
+2026-11-25 17:32:30,565 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607248827]
+2026-11-25 17:32:30,566 INFO edge.runtime BUFFER: total=2 per_node={'node-a': 0, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:31,842 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607249788, 1795607250789]
+2026-11-25 17:32:32,116 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607249828, 1795607250830]
+2026-11-25 17:32:32,392 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607250652]
+2026-11-25 17:32:32,393 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:33,669 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607251653, 1795607252654]
+2026-11-25 17:32:33,944 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607251790, 1795607252791]
+2026-11-25 17:32:34,218 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607251831, 1795607252832]
+2026-11-25 17:32:34,219 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:35,496 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607253655, 1795607254656]
+2026-11-25 17:32:35,773 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607253792, 1795607254793]
+2026-11-25 17:32:36,047 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607253833, 1795607254835]
+2026-11-25 17:32:36,048 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:37,324 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607255657, 1795607256657]
+2026-11-25 17:32:37,599 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607255794, 1795607256796]
+2026-11-25 17:32:37,874 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607255836, 1795607256837]
+2026-11-25 17:32:37,875 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:39,152 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607257659, 1795607258659]
+2026-11-25 17:32:39,429 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607257796, 1795607258797]
+2026-11-25 17:32:39,704 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607257839, 1795607258841]
+2026-11-25 17:32:39,704 INFO edge.runtime BUFFER: total=1 per_node={'node-a': 1, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:32:40,982 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607259660, 1795607260661]
+2026-11-25 17:32:41,257 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795607259798]
+2026-11-25 17:32:41,532 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795607259842]
+2026-11-25 17:32:41,532 INFO edge.runtime BUFFER: total=2 per_node={'node-a': 0, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:41,663 INFO edge.runtime STATE: node=node-a severity=Warning
+2026-11-25 17:32:42,809 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607260799, 1795607261800]
+2026-11-25 17:32:43,083 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607260843, 1795607261844]
+2026-11-25 17:32:43,360 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795607261662]
+2026-11-25 17:32:43,360 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:44,637 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607262664, 1795607263664]
+2026-11-25 17:32:44,913 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607262801, 1795607263802]
+2026-11-25 17:32:45,187 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607262845, 1795607263847]
+2026-11-25 17:32:45,188 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:46,466 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607264665, 1795607265666]
+2026-11-25 17:32:46,739 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607264803, 1795607265804]
+2026-11-25 17:32:47,013 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607264848, 1795607265850]
+2026-11-25 17:32:47,061 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:32:48,339 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795607266667, 1795607267668]
+2026-11-25 17:32:48,615 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795607266805, 1795607267806]
+2026-11-25 17:32:48,889 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795607266851, 1795607267959]
+2026-11-25 17:32:48,890 INFO edge.runtime BUFFER: total=2 per_node={'node-a': 1, 'node-b': 1, 'node-c': 0}
+2026-11-25 17:32:48,952 INFO edge.runtime STATE: QUIT requested
+2026-11-25 17:32:48,953 INFO __main__ STATE: CLI exiting
+2026-11-25 17:32:48,953 INFO edge.runtime STATE: runtime stopped

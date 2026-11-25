@@ -40,6 +40,7 @@ _LOG_RE = re.compile(
     r"(?P<level>[A-Z]+) (?P<name>\S+) (?P<msg>.*)$"
 )
 _PUBLISH_RE = re.compile(r"PUBLISH node=(\S+) rows=(\d+)")
+_REPLAY_RE = re.compile(r"REPLAY: node=(\S+) rows=(\d+)")
 _BUFFER_TOTAL_RE = re.compile(r"BUFFER: total=(\d+)")
 
 
@@ -162,20 +163,29 @@ def replay_metrics(events: list[LogEvent]) -> list[dict[str, Any]]:
     for outage in outages:
         if outage["end"] is None:
             continue
-        rows = 0
+        replay_rows = 0
+        publish_rows = 0
         last_publish: float | None = None
         drained_at: float | None = None
         for event in outage["tail"]:
             if event.at < outage["end"]:
                 continue
+            replayed = _REPLAY_RE.search(event.message)
+            if replayed:
+                replay_rows += int(replayed.group(2))
             published = _PUBLISH_RE.search(event.message)
             if published:
-                rows += int(published.group(2))
+                publish_rows += int(published.group(2))
                 last_publish = event.at
             buffered = _BUFFER_TOTAL_RE.search(event.message)
             if buffered and int(buffered.group(1)) == 0:
                 drained_at = event.at
                 break
+        # REPLAY rows are the exact buffered count logged at claim time. PUBLISH
+        # rows also include live samples taken during the drain, so they are only
+        # a fallback for older logs that predate the REPLAY marker.
+        rows = replay_rows if replay_rows else publish_rows
+        count_source = "REPLAY" if replay_rows else "PUBLISH"
         finished = drained_at if drained_at is not None else last_publish
         if finished is None:
             continue
@@ -184,6 +194,7 @@ def replay_metrics(events: list[LogEvent]) -> list[dict[str, Any]]:
             {
                 "recovery_s": seconds,
                 "rows": rows,
+                "row_count_source": count_source,
                 "throughput_rps": rows / seconds if seconds > 0 else None,
                 "fully_drained": drained_at is not None,
                 "started_at": outage["start"],
@@ -267,7 +278,7 @@ class ThingsBoardClient:
         return identifier.get("id") if isinstance(identifier, dict) else None
 
     def timeseries(
-        self, device_uuid: str, keys: str, start_ms: int, end_ms: int, limit: int = 100000
+        self, device_uuid: str, keys: str, start_ms: int, end_ms: int, limit: int = 50000
     ) -> dict[str, list[dict[str, Any]]]:
         """Fetch raw (non-aggregated) telemetry for one device."""
         query = urllib.parse.urlencode(
@@ -276,7 +287,9 @@ class ThingsBoardClient:
                 "startTs": start_ms,
                 "endTs": end_ms,
                 "limit": limit,
-                "agg": "none",
+                # ThingsBoard's enum is case-sensitive; lowercase "none" is
+                # rejected with HTTP 400 on current Cloud tenants.
+                "agg": "NONE",
             }
         )
         data = self.request(
@@ -287,8 +300,44 @@ class ThingsBoardClient:
             return {}
         return {key: value for key, value in data.items() if isinstance(value, list)}
 
-    def alarms(self, start_ms: int, end_ms: int) -> list[dict[str, Any]] | None:
-        """Query alarm history; return ``None`` if the endpoint is unavailable."""
+    def alarms(
+        self,
+        start_ms: int,
+        end_ms: int,
+        device_ids: dict[str, str] | None = None,
+    ) -> list[dict[str, Any]] | None:
+        """Query alarm history; return ``None`` if every endpoint is unavailable.
+
+        Current Cloud tenants expose per-device alarms as
+        ``GET /api/alarm/DEVICE/{uuid}``; older releases accept the tenant-wide
+        ``/api/alarm/search`` POST. Try both so the benchmark degrades cleanly.
+        """
+        results: list[dict[str, Any]] = []
+        if device_ids:
+            for identifier in device_ids.values():
+                query = urllib.parse.urlencode(
+                    {
+                        "pageSize": 5000,
+                        "page": 0,
+                        "startTime": start_ms,
+                        "endTime": end_ms,
+                    }
+                )
+                try:
+                    result = self.request(
+                        "GET", f"/api/alarm/DEVICE/{identifier}?{query}"
+                    )
+                except (urllib.error.HTTPError, urllib.error.URLError, OSError, ValueError):
+                    continue
+                if isinstance(result, dict):
+                    results.extend(
+                        item for item in result.get("data", []) if isinstance(item, dict)
+                    )
+                elif isinstance(result, list):
+                    results.extend(item for item in result if isinstance(item, dict))
+            if results:
+                return results
+
         body = {
             "startTime": start_ms,
             "endTime": end_ms,
@@ -298,13 +347,13 @@ class ThingsBoardClient:
         }
         try:
             result = self.request("POST", "/api/alarm/search", body)
-        except (urllib.error.URLError, OSError, ValueError):
+        except (urllib.error.HTTPError, urllib.error.URLError, OSError, ValueError):
             query = urllib.parse.urlencode(
                 {"startTime": start_ms, "endTime": end_ms, "pageSize": 5000, "page": 0}
             )
             try:
                 result = self.request("GET", "/api/alarm?" + query)
-            except (urllib.error.URLError, OSError, ValueError):
+            except (urllib.error.HTTPError, urllib.error.URLError, OSError, ValueError):
                 return None
         if isinstance(result, dict):
             return [item for item in result.get("data", []) if isinstance(item, dict)]
@@ -393,7 +442,7 @@ def cloud_metrics(
     ratio = 100.0 * len(confirmed) / len(generated) if generated else None
     loss = len(generated) - len(confirmed)
 
-    alarms = client.alarms(start_ms, end_ms) if device_ids else None
+    alarms = client.alarms(start_ms, end_ms, device_ids) if device_ids else None
     delays: list[float] = []
     if alarms is not None:
         by_key: dict[tuple[str, str], list[int]] = {}
@@ -468,6 +517,11 @@ def build_report(
         reports.append("no completed OUTAGE START/END pair found in the edge log")
     if measurements and not any(item["fully_drained"] for item in measurements):
         reports.append("no BUFFER: total=0 line after replay; recovery time uses last PUBLISH")
+    if any(item["row_count_source"] == "PUBLISH" for item in measurements):
+        reports.append(
+            "REPLAY row counts missing; throughput fell back to PUBLISH rows, "
+            "which may include live samples taken during the drain"
+        )
 
     metrics: dict[str, Any] = {
         "buffer_flush_throughput_rps": (

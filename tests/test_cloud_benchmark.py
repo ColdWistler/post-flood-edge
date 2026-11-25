@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import urllib.error
 from pathlib import Path
 
 import pytest
@@ -48,9 +49,25 @@ def test_replay_metrics_from_log_events():
     results = benchmark.replay_metrics(events)
     assert len(results) == 1
     assert results[0]["recovery_s"] == pytest.approx(3.0)
-    assert results[0]["rows"] == 25
-    assert results[0]["throughput_rps"] == pytest.approx(25 / 3)
+    # REPLAY is the exact buffered count. The two PUBLISH lines total 25 rows
+    # because live samples published during the drain are included there.
+    assert results[0]["rows"] == 20
+    assert results[0]["row_count_source"] == "REPLAY"
+    assert results[0]["throughput_rps"] == pytest.approx(20 / 3)
     assert results[0]["fully_drained"] is True
+
+
+def test_replay_metrics_falls_back_to_publish_rows_for_older_logs():
+    base = 1_700_000_000.0
+    events = [
+        LogEvent(base, "WARNING", "edge.runtime", "OUTAGE: START; continuing local sampling"),
+        LogEvent(base + 1, "WARNING", "edge.runtime", "OUTAGE: END; draining buffered rows"),
+        LogEvent(base + 2, "INFO", "edge.publisher", "PUBLISH node=node-a rows=12 ts=[1]"),
+        LogEvent(base + 3, "INFO", "edge.runtime", "BUFFER: total=0 per_node={}"),
+    ]
+    result = benchmark.replay_metrics(events)[0]
+    assert result["rows"] == 12
+    assert result["row_count_source"] == "PUBLISH"
 
 
 def test_alarm_transitions_are_per_node_and_only_on_rise():
@@ -116,7 +133,7 @@ class FakeClient:
     def timeseries(self, device_uuid: str, keys: str, start_ms: int, end_ms: int):
         return self.series.get(device_uuid, {})
 
-    def alarms(self, start_ms: int, end_ms: int):
+    def alarms(self, start_ms: int, end_ms: int, device_ids=None):
         return [
             {
                 "type": "High Turbidity",
@@ -152,3 +169,28 @@ def test_write_outputs_creates_csv_json_and_svg(tmp_path: Path):
 def test_client_requires_credentials():
     with pytest.raises(ValueError):
         ThingsBoardClient("", "")
+
+
+def test_alarms_uses_per_device_endpoint_on_current_tenants(monkeypatch):
+    client = ThingsBoardClient("https://tb.example", "jwt")
+    calls: list[str] = []
+
+    def fake_request(method, path, payload=None):
+        calls.append(path)
+        if "/api/alarm/DEVICE/" in path:
+            return {
+                "data": [
+                    {
+                        "type": "High Turbidity",
+                        "originator": {"entityType": "DEVICE", "id": "uuid-a"},
+                        "createdTime": 260,
+                    }
+                ]
+            }
+        raise urllib.error.HTTPError(path, 405, "no", {}, None)
+
+    monkeypatch.setattr(client, "request", fake_request)
+    alarms = client.alarms(0, 1000, {"node-a": "uuid-a"})
+    assert alarms is not None
+    assert alarms[0]["type"] == "High Turbidity"
+    assert calls == ["/api/alarm/DEVICE/uuid-a?pageSize=5000&page=0&startTime=0&endTs=1000".replace("endTs", "endTime")]

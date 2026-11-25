@@ -1,0 +1,93 @@
+{
+  "name": "High TDS",
+  "type": "ALARM",
+  "configuration": {
+    "type": "ALARM",
+    "arguments": {
+      "tds_ppm": {
+        "refEntityKey": {
+          "key": "tds_ppm",
+          "type": "TS_LATEST"
+        }
+      }
+    },
+    "createRules": {
+      "CRITICAL": {
+        "condition": {
+          "type": "REPEATING",
+          "expression": {
+            "type": "SIMPLE",
+            "filters": [
+              {
+                "argument": "tds_ppm",
+                "valueType": "NUMERIC",
+                "operation": "AND",
+                "predicates": [
+                  {
+                    "type": "NUMERIC",
+                    "operation": "GREATER",
+                    "value": {
+                      "staticValue": 500
+                    }
+                  }
+                ]
+              }
+            ],
+            "operation": "AND"
+          },
+          "schedule": {
+            "staticValue": {
+              "type": "ANY_TIME"
+            }
+          },
+          "count": {
+            "staticValue": 3
+          }
+        },
+        "alarmDetails": ""
+      }
+    },
+    "clearRule": {
+      "condition": {
+        "type": "REPEATING",
+        "expression": {
+          "type": "SIMPLE",
+          "filters": [
+            {
+              "argument": "tds_ppm",
+              "valueType": "NUMERIC",
+              "operation": "AND",
+              "predicates": [
+                {
+                  "type": "NUMERIC",
+                  "operation": "LESS",
+                  "value": {
+                    "staticValue": 450
+                  }
+                }
+              ]
+            }
+          ],
+          "operation": "AND"
+        },
+        "schedule": {
+          "staticValue": {
+            "type": "ANY_TIME"
+          }
+        },
+        "count": {
+          "staticValue": 3
+        }
+      },
+      "alarmDetails": ""
+    },
+    "propagate": false,
+    "propagateToOwner": false,
+    "propagateToOwnerHierarchy": false,
+    "propagateToTenant": false,
+    "propagateRelationTypes": []
+  },
+  "additionalInfo": {
+    "description": "Three-sample debounce: tds_ppm > 500 clears below 450."
+  }
+}

@@ -4,8 +4,8 @@ Python edge half of the ITS67404 Assessment Task 3 prototype: three virtual ESP3
 water-source nodes generate coupled contamination telemetry, process it locally and
 store every reading in SQLite before an optional MQTT/TLS publish. The cloud side is
 a separate track: `cloud/` holds **importable configuration templates** and measurement
-tools, but this repository never provisions a live ThingsBoard instance (no devices,
-dashboards, alarm rules or rule chains are created here).
+tools. Nothing is provisioned by default; live tenant changes require an explicit
+`--apply` or `--device-setup` with credentials supplied by the user.
 
 ## Quickstart
 
@@ -75,16 +75,24 @@ Commands are read from stdin while the simulator runs. Phase keys log a
 | `tools/benchmark_batch_size.py` | Store-and-forward batch-size throughput measurement for the manuscript | Edge Track; results consumed by Cloud Track benchmarking |
 | `INTEGRATION.md` | Cloud handoff contract | Edge → Cloud Track |
 | `docs/DEMO_RUNBOOK.md` | 15-minute demonstration script mapped to the rubric | Both tracks |
-| `cloud/artifacts/` | Device profile (all nine alarms in the native Alarm Rules tab), devices, native-widget dashboard and WQI rule chain templates | Cloud Track |
+| `docs/APPENDIX_A.md` | Individual task allocation matrix for the implementation ZIP | Both tracks |
+| `docs/HANDOFF.md` | Continuation guide: setup, bugs/fixes, benchmarks, evidence and open items | Both tracks |
+| `docs/TENANT_CHECKLIST.md` | Manual tenant steps for dashboard, profile, inactivity attribute, rule chain and evidence | Cloud Track |
+| `cloud/artifacts/` | Device profile, nine per-rule Alarm `CalculatedField` import files, devices, verified-importable Cloud dashboard and WQI rule chain templates | Cloud Track |
 | `cloud/provision.py`, `cloud/benchmark.py` | REST provisioning helper and Task 3 metric measurement | Cloud Track |
-| `cloud/MANUSCRIPT.md` | Manuscript/demo deliverable placeholders | Both tracks |
+| `cloud/MANUSCRIPT.md` | Cloud Track manuscript sections with final measured values and log-derived figure references | Both tracks |
+| `paper/` | Standalone IEEEtran source, final PDF and evidence-derived figures | Both tracks |
+| `tools/build_paper_figures.py` | Regenerates manuscript figures from saved logs and benchmark outputs | Both tracks |
+| `tools/build_submission_zip.py` | Assembles the group submission ZIP and rejects secrets | Both tracks |
+| `evidence/` | Tenant captures, saved console logs and benchmark outputs included in the ZIP | Both tracks |
 | `tests/` | pytest suite; no broker required | Both tracks |
 
 Cloud Track owners (Anushree: ThingsBoard provisioning/dashboard; Sambid: alarm rules,
 rule chain and broader benchmarking) import the templates into their own instance.
 `python -m cloud.provision --dry-run` and `python -m cloud.benchmark` are broker-free;
-`--apply` needs a real ThingsBoard instance and credentials. Nothing here provisions
-or configures ThingsBoard automatically.
+`--apply` imports the committed artifacts and `--device-setup` creates the profile and
+devices. Both live modes need a real ThingsBoard instance and user-supplied
+credentials. Nothing here provisions or configures ThingsBoard automatically.
 
 ## Tests
 
@@ -109,3 +117,33 @@ store-and-forward path: `enqueue()` into SQLite → `claim()` → `NullPublisher
 It writes `tools/batch_results.csv` with the columns
 `batch_size,rows_per_second,elapsed_s`. The committed CSV is a sample result; rerun
 the script on the target hardware for manuscript numbers.
+
+## Agent skills
+
+Project-scoped OpenCode skills are installed in `.agents/skills/` and pinned in
+`skills-lock.json` (copied files, not symlinks, so the submission ZIP stays portable).
+Refresh them with `npx skills update -p -y`.
+
+| Skill | Use it for |
+| --- | --- |
+| `matplotlib` | Publication-quality plots for the six mandatory benchmark metrics |
+| `paper-writing-studio` | IEEE-profile polishing of the technical manuscript sections |
+| `latex-paper-en` | IEEE LaTeX/Overleaf formatting, citations, tables and compile checks |
+| `mqtt-development` | MQTT/TLS QoS 1, topic and reconnection best practices |
+| `systematic-debugging` | Root-cause investigation for broker, schema and rule-chain faults |
+| `verification-before-completion` | Evidence (tests, logs, measurements) before claiming a task is done |
+
+## Submission package
+
+Build the archive after the tenant captures, saved console logs and benchmark outputs
+are in `evidence/`:
+
+```bash
+python tools/build_submission_zip.py --group <GROUP_NUMBER>
+```
+
+This writes `<GROUP_NUMBER>_Assessment-03_Implementation.zip` at the repository root.
+The script includes source, schema, JSON artifacts, manuscript, IEEE source and PDF,
+generated figures, tests, Appendix A and every file under `evidence/`. It refuses to
+package `.env` files or JWT-like strings and prints a warning if no evidence files are
+present. The current build uses `GroupNo` as the placeholder group identifier.

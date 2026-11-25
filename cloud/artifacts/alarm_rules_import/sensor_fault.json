@@ -1,0 +1,89 @@
+{
+  "name": "Sensor Fault",
+  "type": "ALARM",
+  "configuration": {
+    "type": "ALARM",
+    "arguments": {
+      "active_alarms": {
+        "refEntityKey": {
+          "key": "active_alarms",
+          "type": "TS_LATEST"
+        }
+      }
+    },
+    "createRules": {
+      "CRITICAL": {
+        "condition": {
+          "type": "SIMPLE",
+          "expression": {
+            "type": "SIMPLE",
+            "filters": [
+              {
+                "argument": "active_alarms",
+                "valueType": "STRING",
+                "operation": "AND",
+                "predicates": [
+                  {
+                    "type": "STRING",
+                    "operation": "CONTAINS",
+                    "value": {
+                      "staticValue": "Sensor Fault"
+                    },
+                    "ignoreCase": false
+                  }
+                ]
+              }
+            ],
+            "operation": "AND"
+          },
+          "schedule": {
+            "staticValue": {
+              "type": "ANY_TIME"
+            }
+          }
+        },
+        "alarmDetails": ""
+      }
+    },
+    "clearRule": {
+      "condition": {
+        "type": "SIMPLE",
+        "expression": {
+          "type": "SIMPLE",
+          "filters": [
+            {
+              "argument": "active_alarms",
+              "valueType": "STRING",
+              "operation": "AND",
+              "predicates": [
+                {
+                  "type": "STRING",
+                  "operation": "NOT_CONTAINS",
+                  "value": {
+                    "staticValue": "Sensor Fault"
+                  },
+                  "ignoreCase": false
+                }
+              ]
+            }
+          ],
+          "operation": "AND"
+        },
+        "schedule": {
+          "staticValue": {
+            "type": "ANY_TIME"
+          }
+        }
+      },
+      "alarmDetails": ""
+    },
+    "propagate": false,
+    "propagateToOwner": false,
+    "propagateToOwnerHierarchy": false,
+    "propagateToTenant": false,
+    "propagateRelationTypes": []
+  },
+  "additionalInfo": {
+    "description": "Mirrors the edge-derived Sensor Fault alarm; edge severity is Fault and server severity is CRITICAL."
+  }
+}

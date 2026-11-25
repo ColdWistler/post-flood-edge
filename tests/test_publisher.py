@@ -78,6 +78,7 @@ def test_connect_configures_tls_auth_host_and_loop(fake_client_factory):
     assert fake.tls_kwargs == {"ca_certs": "/etc/ssl/ca.pem"}
     assert (fake.username, fake.password) == ("token-a", None)
     assert fake.connect_args == ("broker.example.org", 8883)
+    assert fake.client_id == "post-flood-node-a"
     assert fake.loop_started is True
 
 
@@ -96,14 +97,14 @@ def test_connect_without_ca_cert_uses_system_trust(fake_client_factory):
 
 
 def test_connect_uses_unique_client_id_per_node(fake_client_factory):
-    """Concurrent node clients must not share paho's empty default client id."""
+    """Concurrent node clients use stable, distinct IDs instead of paho's empty default."""
     ids = []
     for node_id in ("node-a", "node-b", "node-c"):
         p = MqttPublisher(node_id, "host", "tok", client_factory=fake_client_factory)
         assert p.connect() is True
         ids.append(p._client.client_id)
         assert p._client.reconnect_on_failure is False
-    assert all(item.startswith("pf-node-") for item in ids)
+    assert ids == ["post-flood-node-a", "post-flood-node-b", "post-flood-node-c"]
     assert all(len(item) <= 23 for item in ids)  # MQTT 3.1.1 client id limit
     assert len(set(ids)) == 3
 
@@ -235,3 +236,58 @@ def test_reconnect_stops_old_client_before_creating_new_one(fake_client_factory)
     events = fake_client_factory.events
     assert events.index(("loop_stop", id(old))) < events.index(("disconnect", id(old)))
     assert events.index(("disconnect", id(old))) < events.index(("created", id(new)))
+
+
+def test_large_batch_is_split_below_broker_payload_cap(fake_client_factory):
+    p = MqttPublisher("node-a", "host", "tok", client_factory=fake_client_factory)
+    p.connect()
+    p._client.fire_connect(0)
+    batch = [
+        {
+            "id": i,
+            "ts": 1000 + i,
+            "values": {"node_id": "node-a", "note": "x" * 100},
+        }
+        for i in range(20)
+    ]
+
+    assert p.publish_batch(batch) is True
+    payloads = [payload for _, payload, _ in p._client.published]
+    assert len(payloads) > 1
+    assert all(len(payload) <= 1800 for payload in payloads)
+    rows = [row for payload in payloads for row in json.loads(payload)]
+    assert [row["ts"] for row in rows] == [row["ts"] for row in batch]
+    assert p._client.wait_timeouts == [10] * len(payloads)
+    assert p._client.is_published_calls == len(payloads)
+
+
+def test_second_chunk_without_puback_fails_whole_batch(fake_client_factory, caplog):
+    BaseClient = type(fake_client_factory())
+
+    class AckThenFailClient(BaseClient):
+        def publish(self, topic, payload, qos=0):
+            info = super().publish(topic, payload, qos)
+            if len(self.published) == 2:
+                self.ack_ok = False
+            return info
+
+    def factory(**kwargs):
+        return AckThenFailClient(**kwargs)
+
+    p = MqttPublisher("node-a", "host", "tok", client_factory=factory)
+    p.connect()
+    p._client.fire_connect(0)
+    batch = [
+        {
+            "id": i,
+            "ts": 1000 + i,
+            "values": {"node_id": "node-a", "note": "x" * 100},
+        }
+        for i in range(20)
+    ]
+    assert len(p._payload_chunks(batch)) > 1
+
+    assert p.publish_batch(batch) is False
+    assert "NETWORK_FAILURE" in caplog.text
+    assert "PUBLISH" not in caplog.text
+    assert len(p._client.published) == 2
