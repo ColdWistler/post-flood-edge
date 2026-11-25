@@ -131,7 +131,9 @@ def fake_client_factory():
     clients: list[FakeMqttClient] = []
     events: list[tuple[str, int]] = []
 
-    def factory(callback_api_version=None, client_id=None, reconnect_on_failure=True) -> FakeMqttClient:
+    def factory(
+        callback_api_version=None, client_id=None, reconnect_on_failure=True
+    ) -> FakeMqttClient:
         client = FakeMqttClient(
             callback_api_version=callback_api_version,
             client_id=client_id,

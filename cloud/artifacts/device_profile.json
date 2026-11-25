@@ -446,7 +446,7 @@
                 {
                   "key": {
                     "type": "TIME_SERIES",
-                    "key": "active"
+                    "key": "node_inactive"
                   },
                   "valueType": "BOOLEAN",
                   "value": null,
@@ -454,7 +454,7 @@
                     "type": "BOOLEAN",
                     "operation": "EQUAL",
                     "value": {
-                      "defaultValue": false,
+                      "defaultValue": true,
                       "userValue": null,
                       "dynamicValue": null
                     }
@@ -478,7 +478,7 @@
               {
                 "key": {
                   "type": "TIME_SERIES",
-                  "key": "active"
+                  "key": "node_inactive"
                 },
                 "valueType": "BOOLEAN",
                 "value": null,
@@ -486,7 +486,7 @@
                   "type": "BOOLEAN",
                   "operation": "EQUAL",
                   "value": {
-                    "defaultValue": true,
+                    "defaultValue": false,
                     "userValue": null,
                     "dynamicValue": null
                   }

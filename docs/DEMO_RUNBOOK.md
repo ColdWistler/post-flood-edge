@@ -2,8 +2,10 @@
 
 Maps the Assessment Task 3 live-demonstration rubric (steps 1–7) to commands and
 observable evidence. The edge half of the demo is entirely local: the Cloud Track
-presents the ThingsBoard dashboard, alarm table and map. **This repository creates no
-ThingsBoard configuration** (no devices, dashboards, alarm rules or rule chains).
+presents the ThingsBoard dashboard, alarm table and map. The repository contains
+**exportable configuration templates and a credential-gated provisioner**, but the
+runtime itself does not create ThingsBoard objects unless `python -m cloud.provision
+--apply` is explicitly run.
 
 ## Before the demo
 
@@ -12,6 +14,10 @@ ThingsBoard configuration** (no devices, dashboards, alarm rules or rule chains)
   only when `.env` has `TB_HOST` and the three node tokens from `INTEGRATION.md`.
 - Keep one terminal running the CLI at default `--log-level INFO` (the `BUFFER:` lines
   are INFO). Logs are also appended to `logs/edge.log`.
+- Prefer the eight-widget `cloud/artifacts/dashboard_triage.json` for the Cloud Track.
+  It is derived from the six-chart export the user confirmed working; if its import has
+  not been verified on the tenant, use `dashboard_thingsboard_cloud.json` and note the
+  missing gauges/map/alarms table in the evidence log.
 - Terminal commands below read `edge.db` with the Python standard library; run them
   from the repository root in a second terminal.
 - The scripted timeline is `baseline` 60 s → `silt_intrusion` 240 s →

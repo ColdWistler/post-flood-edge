@@ -55,7 +55,7 @@
       "raise": "no generated reading for EDGE_NODE_INACTIVE_S (90 s demo)",
       "clear": "telemetry resumes",
       "debounce": {"type": "time-based", "raise_s": 90.0, "clear_s": 0.0},
-      "implementation": "edge alarm; separate device-profile inactivity timeout is 180 min normal / 45 min burst (work division)",
+      "implementation": "edge alarm; server import file mirrors the published node_inactive boolean; separate device-profile inactivity timeout is 180 min normal / 45 min burst (work division)",
       "note": "These two inactivity mechanisms are distinct and must both be documented."
     },
     {

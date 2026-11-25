@@ -1,0 +1,121 @@
+{
+  "name": "pH Out of Range",
+  "type": "ALARM",
+  "configuration": {
+    "type": "ALARM",
+    "arguments": {
+      "ph": {
+        "refEntityKey": {
+          "key": "ph",
+          "type": "TS_LATEST"
+        }
+      }
+    },
+    "createRules": {
+      "CRITICAL": {
+        "condition": {
+          "type": "REPEATING",
+          "expression": {
+            "type": "SIMPLE",
+            "filters": [
+              {
+                "argument": "ph",
+                "valueType": "NUMERIC",
+                "operation": "AND",
+                "predicates": [
+                  {
+                    "type": "NUMERIC",
+                    "operation": "LESS",
+                    "value": {
+                      "staticValue": 6.5
+                    }
+                  }
+                ]
+              },
+              {
+                "argument": "ph",
+                "valueType": "NUMERIC",
+                "operation": "AND",
+                "predicates": [
+                  {
+                    "type": "NUMERIC",
+                    "operation": "GREATER",
+                    "value": {
+                      "staticValue": 8.5
+                    }
+                  }
+                ]
+              }
+            ],
+            "operation": "OR"
+          },
+          "schedule": {
+            "staticValue": {
+              "type": "ANY_TIME"
+            }
+          },
+          "count": {
+            "staticValue": 3
+          }
+        },
+        "alarmDetails": ""
+      }
+    },
+    "clearRule": {
+      "condition": {
+        "type": "REPEATING",
+        "expression": {
+          "type": "SIMPLE",
+          "filters": [
+            {
+              "argument": "ph",
+              "valueType": "NUMERIC",
+              "operation": "AND",
+              "predicates": [
+                {
+                  "type": "NUMERIC",
+                  "operation": "GREATER_OR_EQUAL",
+                  "value": {
+                    "staticValue": 6.7
+                  }
+                }
+              ]
+            },
+            {
+              "argument": "ph",
+              "valueType": "NUMERIC",
+              "operation": "AND",
+              "predicates": [
+                {
+                  "type": "NUMERIC",
+                  "operation": "LESS_OR_EQUAL",
+                  "value": {
+                    "staticValue": 8.3
+                  }
+                }
+              ]
+            }
+          ],
+          "operation": "AND"
+        },
+        "schedule": {
+          "staticValue": {
+            "type": "ANY_TIME"
+          }
+        },
+        "count": {
+          "staticValue": 3
+        }
+      },
+      "alarmDetails": ""
+    },
+    "propagate": false,
+    "propagateToOwner": false,
+    "propagateToOwnerHierarchy": false,
+    "propagateToTenant": false,
+    "propagateRelationTypes": []
+  },
+  "additionalInfo": {
+    "description": "Three-sample debounce: ph < 6.5 or > 8.5 clears inside 6.7-8.3."
+  }
+}

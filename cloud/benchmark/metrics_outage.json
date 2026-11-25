@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-11-25T17:25:10",
+  "mode": "apply",
+  "window": {
+    "start_ms": 1795599520559,
+    "end_ms": 1795606398195
+  },
+  "rows_read": 708,
+  "outages_observed": 1,
+  "metrics": {
+    "buffer_flush_throughput_rps": {
+      "value": {
+        "count": 1,
+        "mean": 1.5498119278741207,
+        "median": 1.5498119278741207,
+        "p95": 1.5498119278741207,
+        "max": 1.5498119278741207
+      },
+      "unit": "rows/s",
+      "samples": 1,
+      "note": "PUBLISH rows per second during replay after OUTAGE: END"
+    },
+    "recovery_time_s": {
+      "value": {
+        "count": 1,
+        "mean": 61.942999839782715,
+        "median": 61.942999839782715,
+        "p95": 61.942999839782715,
+        "max": 61.942999839782715
+      },
+      "unit": "s",
+      "samples": 1,
+      "note": "OUTAGE: END to BUFFER: total=0 (fallback: last replay PUBLISH)"
+    },
+    "end_to_end_latency_ms": {
+      "value": {
+        "count": 709,
+        "mean": 270767.4880112835,
+        "median": 50593.0,
+        "p95": 627955.8,
+        "max": 5522388.0
+      },
+      "unit": "ms",
+      "samples": 709,
+      "note": "server_received_ms minus original telemetry ts (NTP-synced clocks)"
+    },
+    "message_delivery_ratio_pct": {
+      "value": 99.85875706214689,
+      "unit": "%",
+      "samples": 707,
+      "note": "local generated rows whose original ts appears in ThingsBoard ph telemetry"
+    },
+    "alarm_activation_delay_ms": {
+      "value": {
+        "count": 16,
+        "mean": 62939.5,
+        "median": 26621.5,
+        "p95": 175211.0,
+        "max": 606146.0
+      },
+      "unit": "ms",
+      "samples": 16,
+      "note": "edge alarm transition to matching ThingsBoard alarm creation"
+    },
+    "locally_synced_pct": {
+      "value": 100.0,
+      "unit": "%",
+      "samples": 708,
+      "note": "edge PUBACK-confirmed rows / generated rows (no broker required)"
+    },
+    "data_loss": {
+      "value": {
+        "rows": 1,
+        "pct": 0.14124293785310735
+      },
+      "unit": "rows",
+      "samples": 708,
+      "note": "generated rows absent from ThingsBoard after full sync"
+    }
+  },
+  "notes": []
+}

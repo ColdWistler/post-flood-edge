@@ -1,0 +1,17 @@
+{
+  "tenant": "https://eu.thingsboard.cloud",
+  "date": "2026-11-25",
+  "timezone": "Asia/Kathmandu (UTC+05:45)",
+  "verified_interval": {
+    "start": "2026-11-25T11:51:05+05:45",
+    "end": "2026-11-25T11:52:15+05:45"
+  },
+  "method": "Compared SQLite telemetry_buffer acquisition timestamps with ThingsBoard raw turbidity_ntu history timestamps using agg=NONE and limit=1000; matched by device and timestamp.",
+  "devices": {
+    "node-a": {"sqlite_rows": 35, "cloud_points": 35, "matched_timestamps": 35, "missing_timestamps": 0},
+    "node-b": {"sqlite_rows": 35, "cloud_points": 35, "matched_timestamps": 35, "missing_timestamps": 0},
+    "node-c": {"sqlite_rows": 35, "cloud_points": 35, "matched_timestamps": 35, "missing_timestamps": 0}
+  },
+  "local_buffer_final": {"synced": 549, "pending": 0, "inflight": 0},
+  "qualification": "This verifies timestamp presence in the queried interval, not receipt time, dashboard rendering, or duplicate-free delivery across the entire run."
+}
