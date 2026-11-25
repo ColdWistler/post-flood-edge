@@ -119,21 +119,21 @@ def test_rule_chain_is_thingsboard_v3_importable():
     ]
 
 
-def test_dashboard_widgets_are_bound_to_alias_and_layout():
-    dashboard = json.loads((ARTIFACTS / "dashboard.json").read_text())
+def test_cloud_dashboard_widgets_are_bound_to_devices_and_layout():
+    dashboard = json.loads((ARTIFACTS / "dashboard_thingsboard_cloud.json").read_text())
     configuration = dashboard["configuration"]
-    alias_id = next(iter(configuration["entityAliases"]))
-    assert configuration["entityAliases"][alias_id]["filter"]["entityNameFilter"] == "node-"
     widgets = configuration["widgets"]
     placements = configuration["states"]["default"]["layouts"]["main"]["widgets"]
     assert set(widgets) == set(placements)
-    assert len(widgets) >= 8
-    fqns = {item["typeFullFqn"] for item in widgets.values()}
-    assert "system.maps_v2.openstreetmap" in fqns
-    assert "system.alarm_widgets.alarms_table" in fqns
+    assert len(widgets) >= 6
     for widget in widgets.values():
-        for datasource in widget["config"]["datasources"]:
-            assert datasource["entityAliasId"] == alias_id
+        assert widget["typeFullFqn"] == "system.line_chart"
+        datasources = widget["config"]["datasources"]
+        assert [item["name"] for item in datasources] == ["node-a", "node-b", "node-c"]
+        assert len({item["deviceId"] for item in datasources}) == 3
+        assert all(item["deviceId"] for item in datasources)
+        assert widget["config"]["timewindow"]["aggregation"]["type"] == "NONE"
+        assert widget["config"]["timewindow"]["realtime"]["timewindowMs"] == 86400000
 
 
 class RecordingClient:
@@ -175,7 +175,7 @@ def test_provisioner_uses_v3_endpoints_and_sets_device_credentials():
         profile_id,
         10800000,
     )
-    p.dashboard(json.loads((ARTIFACTS / "dashboard.json").read_text()))
+    p.dashboard(json.loads((ARTIFACTS / "dashboard_thingsboard_cloud.json").read_text()))
     p.rule_chain(json.loads((ARTIFACTS / "wqi_rule_chain.json").read_text()), True)
 
     paths = [path.split("?")[0] for _, path, _ in client.calls]

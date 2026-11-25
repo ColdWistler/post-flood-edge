@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import uuid
 from typing import Any, Callable, Protocol
 
 logger = logging.getLogger(__name__)
@@ -118,7 +119,16 @@ class MqttPublisher:
                 callback_api_version = _CALLBACK_API_VERSION1
             if factory is None:
                 from paho.mqtt.client import Client as factory
-            client = factory(callback_api_version=callback_api_version)
+            # paho's empty default client id collides across the three node
+            # clients (and with stale sessions from earlier runs), so the broker
+            # kicks connections with rc=7. Use a fresh, short id per connection.
+            # Reconnection is owned by the runtime's backoff loop, not paho's
+            # automatic reconnect, which otherwise restarts the kick cycle.
+            client = factory(
+                callback_api_version=callback_api_version,
+                client_id=f"pf-{self.node_id}-{uuid.uuid4().hex[:6]}",
+                reconnect_on_failure=False,
+            )
             self._client = client
             client.reconnect_delay_set(
                 min_delay=_MIN_BACKOFF_S, max_delay=_MAX_BACKOFF_S

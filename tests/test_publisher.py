@@ -95,6 +95,19 @@ def test_connect_without_ca_cert_uses_system_trust(fake_client_factory):
     assert p._client.tls_kwargs == {"ca_certs": None}
 
 
+def test_connect_uses_unique_client_id_per_node(fake_client_factory):
+    """Concurrent node clients must not share paho's empty default client id."""
+    ids = []
+    for node_id in ("node-a", "node-b", "node-c"):
+        p = MqttPublisher(node_id, "host", "tok", client_factory=fake_client_factory)
+        assert p.connect() is True
+        ids.append(p._client.client_id)
+        assert p._client.reconnect_on_failure is False
+    assert all(item.startswith("pf-node-") for item in ids)
+    assert all(len(item) <= 23 for item in ids)  # MQTT 3.1.1 client id limit
+    assert len(set(ids)) == 3
+
+
 def test_publish_batch_sends_json_telemetry_with_qos_and_waits(
     fake_client_factory, caplog
 ):

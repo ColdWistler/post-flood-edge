@@ -17,7 +17,7 @@
             {
               "type": "device",
               "name": "node-a",
-              "deviceId": "81e5b1f0-e883-11f1-ab4e-dfd4fe9de952",
+              "deviceId": "ce4c25d0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "ph",
@@ -107,7 +107,7 @@
             {
               "type": "device",
               "name": "node-b",
-              "deviceId": "01f214e0-e886-11f1-b8ac-4bd49425d19e",
+              "deviceId": "cfb552c0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "ph",
@@ -197,7 +197,7 @@
             {
               "type": "device",
               "name": "node-c",
-              "deviceId": "0bb52a80-e886-11f1-86e5-9755011de358",
+              "deviceId": "d1322ec0-e8a9-11f1-a149-ef0da579dd49",
               "dataKeys": [
                 {
                   "name": "ph",
@@ -631,7 +631,7 @@
             {
               "type": "device",
               "name": "node-a",
-              "deviceId": "81e5b1f0-e883-11f1-ab4e-dfd4fe9de952",
+              "deviceId": "ce4c25d0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "turbidity_ntu",
@@ -721,7 +721,7 @@
             {
               "type": "device",
               "name": "node-b",
-              "deviceId": "01f214e0-e886-11f1-b8ac-4bd49425d19e",
+              "deviceId": "cfb552c0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "turbidity_ntu",
@@ -811,7 +811,7 @@
             {
               "type": "device",
               "name": "node-c",
-              "deviceId": "0bb52a80-e886-11f1-86e5-9755011de358",
+              "deviceId": "d1322ec0-e8a9-11f1-a149-ef0da579dd49",
               "dataKeys": [
                 {
                   "name": "turbidity_ntu",
@@ -1245,7 +1245,7 @@
             {
               "type": "device",
               "name": "node-a",
-              "deviceId": "81e5b1f0-e883-11f1-ab4e-dfd4fe9de952",
+              "deviceId": "ce4c25d0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "tds_ppm",
@@ -1335,7 +1335,7 @@
             {
               "type": "device",
               "name": "node-b",
-              "deviceId": "01f214e0-e886-11f1-b8ac-4bd49425d19e",
+              "deviceId": "cfb552c0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "tds_ppm",
@@ -1425,7 +1425,7 @@
             {
               "type": "device",
               "name": "node-c",
-              "deviceId": "0bb52a80-e886-11f1-86e5-9755011de358",
+              "deviceId": "d1322ec0-e8a9-11f1-a149-ef0da579dd49",
               "dataKeys": [
                 {
                   "name": "tds_ppm",
@@ -1859,7 +1859,7 @@
             {
               "type": "device",
               "name": "node-a",
-              "deviceId": "81e5b1f0-e883-11f1-ab4e-dfd4fe9de952",
+              "deviceId": "ce4c25d0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "water_temp_c",
@@ -2026,7 +2026,7 @@
             {
               "type": "device",
               "name": "node-b",
-              "deviceId": "01f214e0-e886-11f1-b8ac-4bd49425d19e",
+              "deviceId": "cfb552c0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "water_temp_c",
@@ -2193,7 +2193,7 @@
             {
               "type": "device",
               "name": "node-c",
-              "deviceId": "0bb52a80-e886-11f1-86e5-9755011de358",
+              "deviceId": "d1322ec0-e8a9-11f1-a149-ef0da579dd49",
               "dataKeys": [
                 {
                   "name": "water_temp_c",
@@ -2704,7 +2704,7 @@
             {
               "type": "device",
               "name": "node-a",
-              "deviceId": "81e5b1f0-e883-11f1-ab4e-dfd4fe9de952",
+              "deviceId": "ce4c25d0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "wqi",
@@ -2871,7 +2871,7 @@
             {
               "type": "device",
               "name": "node-b",
-              "deviceId": "01f214e0-e886-11f1-b8ac-4bd49425d19e",
+              "deviceId": "cfb552c0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "wqi",
@@ -3038,7 +3038,7 @@
             {
               "type": "device",
               "name": "node-c",
-              "deviceId": "0bb52a80-e886-11f1-86e5-9755011de358",
+              "deviceId": "d1322ec0-e8a9-11f1-a149-ef0da579dd49",
               "dataKeys": [
                 {
                   "name": "wqi",
@@ -3549,7 +3549,7 @@
             {
               "type": "device",
               "name": "node-a",
-              "deviceId": "81e5b1f0-e883-11f1-ab4e-dfd4fe9de952",
+              "deviceId": "ce4c25d0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "severity",
@@ -3716,7 +3716,7 @@
             {
               "type": "device",
               "name": "node-b",
-              "deviceId": "01f214e0-e886-11f1-b8ac-4bd49425d19e",
+              "deviceId": "cfb552c0-e8a9-11f1-bad3-1d251350e257",
               "dataKeys": [
                 {
                   "name": "severity",
@@ -3883,7 +3883,7 @@
             {
               "type": "device",
               "name": "node-c",
-              "deviceId": "0bb52a80-e886-11f1-86e5-9755011de358",
+              "deviceId": "d1322ec0-e8a9-11f1-a149-ef0da579dd49",
               "dataKeys": [
                 {
                   "name": "severity",

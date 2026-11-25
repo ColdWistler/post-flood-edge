@@ -12,7 +12,7 @@ placeholder numbers as results.
 | --- | --- |
 | Device profile JSON | `cloud/artifacts/device_profile.json` (import and re-export from the instance) |
 | Three devices + tokens | `cloud/artifacts/devices.json`, `cloud/provision.py` (fill `.env`, never commit tokens) |
-| Dashboard JSON | `cloud/artifacts/dashboard.json` (import, then re-export after visual tuning) |
+| Dashboard JSON | `cloud/artifacts/dashboard_thingsboard_cloud.json` (import, then re-export after visual tuning) |
 | Rule chain JSON | `cloud/artifacts/wqi_rule_chain.json` |
 | Alarm rule spec | `cloud/artifacts/alarm_rules.json` and `INTEGRATION.md` |
 | Performance tables | `python -m cloud.benchmark --apply --plot` → `cloud/benchmark/metrics.csv` |

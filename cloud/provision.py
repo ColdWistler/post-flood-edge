@@ -230,7 +230,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         profile = load_json("device_profile.json")
         devices = load_json("devices.json")
-        dashboard = load_json("dashboard.json")
+        dashboard = load_json("dashboard_thingsboard_cloud.json")
         chain = load_json("wqi_rule_chain.json")
         if args.apply:
             devices = fill_tokens(devices)
@@ -239,7 +239,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     if not args.apply:
-        for name in ("device_profile.json", "devices.json", "dashboard.json", "wqi_rule_chain.json"):
+        for name in (
+            "device_profile.json",
+            "devices.json",
+            "dashboard_thingsboard_cloud.json",
+            "wqi_rule_chain.json",
+        ):
             print(f"validated {name}")
         print("dry-run: no network calls; tokens remain placeholders")
         return 0

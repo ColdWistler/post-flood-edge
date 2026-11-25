@@ -43,24 +43,22 @@ action on a real instance and no credentials are stored in them.
 | --- | --- | --- |
 | `cloud/artifacts/device_profile.json` | Device profile with **all nine alarm rules** in the native Device Profile → Alarm Rules tab (six direct thresholds + three edge-derived mirrors) | `python -m cloud.provision --apply` |
 | `cloud/artifacts/devices.json` | Three devices with `${TB_TOKEN_*}` placeholders and site coordinates | tokens filled from `.env` by `cloud.provision` |
-| `cloud/artifacts/dashboard.json` | 5-second triage dashboard built only from **native system widgets** (gauges, charts, map, alarms table, entity table); v3.x alias-based template | `python -m cloud.provision --apply` |
-| `cloud/artifacts/dashboard_thingsboard_cloud.json` | **Verified-importable** Cloud version: six native line charts cloned from a real ThingsBoard Cloud export, bound directly to a `deviceId` | UI: **Dashboards → Import** |
-| `cloud/artifacts/dashboard_minimal.json` | Empty dashboard used to confirm import works on a given instance | UI: **Dashboards → Import** |
+| `cloud/artifacts/dashboard_thingsboard_cloud.json` | **Verified-importable** Cloud dashboard: six native line charts cloned from a real ThingsBoard Cloud export, bound directly to a `deviceId` | UI: **Dashboards → Import** or `python -m cloud.provision --apply` |
 | `cloud/artifacts/wqi_rule_chain.json` | Native Rule Chains tab: only the server-side WQI script (explicit Task 3 deliverable) plus `server_received_ms` for latency | `python -m cloud.provision --apply --set-root` (opt-in) |
 | `cloud/artifacts/wqi_server_script.js` | Readable copy of the WQI rule-node script | embedded in the rule chain JSON |
 | `cloud/artifacts/alarm_rules.json` | Declarative nine-rule spec with exact deadbands/debounce | documentation and test fixture |
 
-**Which dashboard to import:** use `dashboard_thingsboard_cloud.json` on ThingsBoard
-Cloud. The generic `dashboard.json` targets CE 3.x and uses `entityAliasId`
-datasources; newer Cloud instances rejected it silently on UI import. The Cloud file
-was generated from a real export from the target instance, so every widget carries the
-rich `settings` and `deviceId` datasource that version expects. It has three datasources
-per chart (node-a `81e5b1f0-e883-11f1-ab4e-dfd4fe9de952`, node-b
-`01f214e0-e886-11f1-b8ac-4bd49425d19e`, node-c
-`0bb52a80-e886-11f1-86e5-9755011de358`), so all live nodes appear on every metric.
-It uses a 24-hour widget timewindow with raw `NONE` aggregation and `showPoints: true`
-(matching a verified single-widget diagnostic), so sparse demo telemetry is visible
-instead of rendering as an empty line chart.
+**Which dashboard to import:** use `dashboard_thingsboard_cloud.json`. It was generated
+from a real export from the target Cloud instance, so every widget carries the rich
+`settings` and `deviceId` datasource that version expects. Each chart has three
+datasources, one per node, bound to the current tenant device IDs (node-a
+`ce4c25d0-e8a9-11f1-bad3-1d251350e257`, node-b
+`cfb552c0-e8a9-11f1-bad3-1d251350e257`, node-c
+`d1322ec0-e8a9-11f1-a149-ef0da579dd49`). Older alias-based `dashboard.json` files were
+silently rejected by Cloud import and are not committed. If devices are recreated,
+refresh these IDs before import — widgets bound to stale IDs render blank even when
+telemetry is flowing. The dashboard uses a 24-hour widget timewindow with raw `NONE`
+aggregation and `showPoints: true`, so sparse demo telemetry stays visible.
 
 ### Native ThingsBoard tabs used
 
@@ -146,8 +144,8 @@ widget settings after import — the artifact supplies the keys, ranges, labels 
 not a pixel-perfect theme. Re-export the tuned dashboard for the submission archive.
 
 - [ ] Add fleet-map to individual-node drill-down states (optional extension).
-- [ ] Import `cloud/artifacts/dashboard.json`, then export the dashboard JSON for the
-      submission archive after any visual tuning.
+- [ ] Import `cloud/artifacts/dashboard_thingsboard_cloud.json`, verify all six charts
+      show data, then re-export the dashboard JSON for the submission archive.
 
 ## Alarm rules (Sambid)
 

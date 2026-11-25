@@ -18,6 +18,8 @@ transport seam and a documented payload so that work can proceed independently.
 | Authentication | Each node has its own paho client; access token is the MQTT username, password is `None`/empty |
 | Certificate | `tls_set(ca_certs=TB_CA_CERT or None)`; blank `TB_CA_CERT` uses system CAs |
 | Delivery confirmation | `wait_for_publish(timeout=10)` followed by `is_published()` (PUBACK) before rows are marked `synced` |
+| Observed Cloud payload limit | On `eu.thingsboard.cloud`, MQTT telemetry messages above ~2 KB (6+ rows) are disconnected with rc=7; keep `EDGE_BATCH_SIZE` ≤ 5 for this tenant |
+| MQTT client identity | Each node connects with a fresh short client id (`pf-<node>-<random>`); paho's empty default collides across nodes and stale sessions; paho auto-reconnect is disabled so the runtime backoff owns retries |
 | Opt-in | `python -m edge.cli --mqtt`; default `--dry-run` emits no network traffic |
 
 Failures are classified as `AUTH_FAILURE` (rc 5 / reason code 135, retries suspended
