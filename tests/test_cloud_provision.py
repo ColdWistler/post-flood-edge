@@ -7,6 +7,7 @@ and the committed Cloud Track artifacts used by the benchmarking and alarm work.
 from __future__ import annotations
 
 import json
+import urllib.parse
 from pathlib import Path
 from typing import Any
 
@@ -389,3 +390,117 @@ def test_provisioner_uses_v3_endpoints_and_sets_device_credentials():
         if path == "/api/ruleChain/metadata"
     )
     assert metadata_body["ruleChainId"]["id"] == "chain-1"
+
+
+class TenantDeviceClient(RecordingClient):
+    """Tenant that already owns the three nodes, with its own UUIDs."""
+
+    DEVICE_IDS = {
+        "node-a": "tenant-a",
+        "node-b": "tenant-b",
+        "node-c": "tenant-c",
+    }
+
+    def request(self, method: str, path: str, payload: dict | None = None):
+        if method == "GET" and path.startswith("/api/tenant/devices?"):
+            name = urllib.parse.parse_qs(path.split("?", 1)[1])["deviceName"][0]
+            return {"id": {"id": self.DEVICE_IDS[name]}}
+        return super().request(method, path, payload)
+
+
+def test_dashboard_is_bound_to_tenant_device_ids():
+    """The imported dashboard must point at this tenant's devices, not the export's."""
+    client = TenantDeviceClient()
+    p = Provisioner(client)
+    devices = {"devices": [{"name": name} for name in TenantDeviceClient.DEVICE_IDS]}
+    p.devices(devices, None, 0)
+    p.dashboard(provision.load_dashboard()[0])
+
+    body = next(
+        payload
+        for method, path, payload in client.calls
+        if method == "POST" and path == "/api/dashboard"
+    )
+    raw = json.dumps(body)
+    assert "81e5b1f0-e883-11f1-ab4e-dfd4fe9de952" not in raw
+    assert "01f214e0-e886-11f1-b8ac-4bd49425d19e" not in raw
+    assert "0bb52a80-e886-11f1-86e5-9755011de358" not in raw
+    for tenant_id in TenantDeviceClient.DEVICE_IDS.values():
+        assert tenant_id in raw
+
+
+class RootChainClient(RecordingClient):
+    """Minimal root chain without the device-profile alarm-rule node."""
+
+    def __init__(self, with_profile_node: bool = False) -> None:
+        super().__init__()
+        self.with_profile_node = with_profile_node
+
+    def request(self, method: str, path: str, payload: dict | None = None):
+        if path.startswith("/api/ruleChains?"):
+            return {
+                "data": [
+                    {"name": "Root Rule Chain", "id": {"id": "root-id"}, "root": True},
+                    {"name": "Post-flood WQI rule chain", "id": {"id": "chain-1"}},
+                ]
+            }
+        if path == "/api/ruleChain/root-id/metadata":
+            nodes = [
+                {
+                    "id": {"id": "save-node"},
+                    "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+                    "name": "Save Timeseries",
+                    "configuration": {},
+                }
+            ]
+            connections = []
+            if self.with_profile_node:
+                nodes.append(
+                    {
+                        "id": {"id": "alarm-node"},
+                        "type": "org.thingsboard.rule.engine.profile.TbDeviceProfileNode",
+                        "name": "Check Alarm Rules",
+                        "configuration": {},
+                    }
+                )
+            return {
+                "ruleChainId": {"entityType": "RULE_CHAIN", "id": "root-id"},
+                "version": 1,
+                "firstNodeIndex": 0,
+                "nodes": nodes,
+                "connections": connections,
+                "ruleChainConnections": [],
+            }
+        return super().request(method, path, payload)
+
+
+def test_root_rule_chain_gets_device_profile_alarm_node():
+    """Alarm rules stay dormant unless the root chain evaluates device profiles."""
+    client = RootChainClient()
+    assert provision.ensure_alarm_rules(client) is True
+
+    metadata = next(
+        payload
+        for method, path, payload in client.calls
+        if method == "POST" and path == "/api/ruleChain/metadata"
+    )
+    assert metadata["ruleChainId"]["id"] == "root-id"
+    nodes = metadata["nodes"]
+    profile = [
+        n for n in nodes
+        if n["type"] == "org.thingsboard.rule.engine.profile.TbDeviceProfileNode"
+    ]
+    assert len(profile) == 1
+    assert any(
+        c["fromIndex"] == 0 and c["toIndex"] == len(nodes) - 1 and c["type"] == "Success"
+        for c in metadata["connections"]
+    )
+
+
+def test_alarm_rule_wiring_is_idempotent():
+    client = RootChainClient(with_profile_node=True)
+    assert provision.ensure_alarm_rules(client) is False
+    assert not any(
+        method == "POST" and path == "/api/ruleChain/metadata"
+        for method, path, _ in client.calls
+    )

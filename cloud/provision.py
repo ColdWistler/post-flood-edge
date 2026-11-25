@@ -73,6 +73,13 @@ BURST_TIMEOUT_MS = 45 * 60 * 1000
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_URL = "https://eu.thingsboard.cloud"
 
+# ThingsBoard evaluates device-profile alarm rules only when the root chain
+# contains this node; some tenant root chains are exported without it.
+ALARM_RULE_NODE_TYPE = "org.thingsboard.rule.engine.profile.TbDeviceProfileNode"
+TIMESERIES_NODE_TYPE = "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode"
+DEVICE_ID_FIELDS = ("deviceId", "dsDeviceId")
+DEVICE_NAME_FIELDS = ("name", "dsLabel")
+
 
 def entity_id(value: dict) -> str:
     return value["id"]["id"]
@@ -115,6 +122,122 @@ def load_dashboard() -> tuple[dict[str, Any], str]:
     raise FileNotFoundError(
         f"missing dashboard artifact: {ARTIFACTS / DASHBOARD_ARTIFACT}"
     )
+
+
+def bind_dashboard_devices(
+    dashboard: dict[str, Any], device_ids: dict[str, str]
+) -> dict[str, Any]:
+    """Point an exported dashboard at this tenant's device UUIDs.
+
+    The committed export carries the device UUIDs of the tenant it came from,
+    so widgets silently show "no data" when imported elsewhere. Device names
+    are stable across tenants; discover the export's UUIDs from datasource and
+    map-marker labels, then replace every occurrence with the tenant's IDs.
+    """
+    if not device_ids:
+        return dashboard
+
+    source_names: dict[str, str] = {}
+
+    def collect(value: Any) -> None:
+        if isinstance(value, dict):
+            names = {
+                str(value[key])
+                for key in DEVICE_NAME_FIELDS
+                if isinstance(value.get(key), str)
+            }
+            if len(names) == 1:
+                for field in DEVICE_ID_FIELDS:
+                    identifier = value.get(field)
+                    if isinstance(identifier, str) and identifier not in source_names:
+                        source_names[identifier] = next(iter(names))
+            for item in value.values():
+                collect(item)
+        elif isinstance(value, list):
+            for item in value:
+                collect(item)
+
+    collect(dashboard)
+    replacements = {
+        old: device_ids[name]
+        for old, name in source_names.items()
+        if name in device_ids and device_ids[name] != old
+    }
+    if not replacements:
+        return dashboard
+
+    def replace(value: Any) -> Any:
+        if isinstance(value, str):
+            return replacements.get(value, value)
+        if isinstance(value, list):
+            return [replace(item) for item in value]
+        if isinstance(value, dict):
+            return {key: replace(item) for key, item in value.items()}
+        return value
+
+    return replace(dashboard)
+
+
+def ensure_alarm_rules(client: ThingsBoardClient) -> bool:
+    """Add the device-profile alarm node to the tenant's root rule chain.
+
+    Returns True when the chain was changed. Idempotent: chains that already
+    evaluate device-profile rules are left untouched.
+    """
+    chains = client.request(
+        "GET", "/api/ruleChains?" + urlencode({"pageSize": 100, "page": 0})
+    )
+    root_id = next(
+        (
+            item["id"]["id"]
+            for item in chains.get("data", [])
+            if item.get("root") and item.get("id", {}).get("id")
+        ),
+        None,
+    )
+    if not root_id:
+        raise ValueError("no root rule chain found; cannot enable alarm rules")
+
+    metadata = client.request("GET", f"/api/ruleChain/{root_id}/metadata")
+    nodes = list(metadata.get("nodes") or [])
+    if any(node.get("type") == ALARM_RULE_NODE_TYPE for node in nodes):
+        return False
+    save_index = next(
+        (
+            index
+            for index, node in enumerate(nodes)
+            if node.get("type") == TIMESERIES_NODE_TYPE
+        ),
+        None,
+    )
+    if save_index is None:
+        raise ValueError("root rule chain has no Save Timeseries node")
+
+    metadata["nodes"] = nodes + [
+        {
+            "type": ALARM_RULE_NODE_TYPE,
+            "name": "Check Alarm Rules",
+            "debugSettings": None,
+            "singletonMode": False,
+            "queueName": None,
+            "configurationVersion": 1,
+            "configuration": {
+                "persistAlarmRulesState": False,
+                "fetchAlarmRulesStateOnStart": False,
+            },
+            "additionalInfo": {
+                "description": "Evaluate the water-quality device-profile alarm rules",
+                "layoutX": 990,
+                "layoutY": 300,
+            },
+        }
+    ]
+    metadata.setdefault("connections", []).append(
+        {"fromIndex": save_index, "toIndex": len(nodes), "type": "Success"}
+    )
+    metadata["ruleChainId"] = {"entityType": "RULE_CHAIN", "id": root_id}
+    client.request("POST", "/api/ruleChain/metadata", metadata)
+    return True
 
 
 def fill_tokens(body: Any, environ: dict[str, str] | None = None) -> Any:
@@ -340,6 +463,7 @@ class Provisioner:
         self.client = client
         self.created: list[str] = []
         self.skipped: list[str] = []
+        self.device_ids: dict[str, str] = {}
 
     def _create(self, label: str, path: str, body: Any, allow_exists: bool = True) -> Any:
         try:
@@ -383,6 +507,9 @@ class Provisioner:
             )
             if isinstance(existing, dict) and existing.get("id"):
                 self.skipped.append(f"device {name} (exists)")
+                identifier = existing.get("id", {}).get("id")
+                if isinstance(identifier, str):
+                    self.device_ids[name] = identifier
                 continue
             token = device.get("accessToken")
             body = {key: value for key, value in device.items() if key != "accessToken"}
@@ -392,6 +519,7 @@ class Provisioner:
             identifier = created.get("id", {}).get("id") if isinstance(created, dict) else None
             if not identifier or not token:
                 raise ValueError(f"cannot set credentials for {name}")
+            self.device_ids[name] = identifier
             self.client.request(
                 "POST",
                 f"/api/device/{identifier}/credentials",
@@ -408,9 +536,10 @@ class Provisioner:
                 )
 
     def dashboard(self, dashboard: dict[str, Any]) -> None:
-        """Import the current-style dashboard export with a plain POST."""
+        """Import the dashboard, rebound to the tenant's actual device IDs."""
         bare = dashboard.get("dashboard", dashboard)
-        self._create("operational dashboard", "/api/dashboard", bare)
+        bound = bind_dashboard_devices(bare, self.device_ids)
+        self._create("operational dashboard", "/api/dashboard", bound)
 
     def rule_chain(self, chain: dict[str, Any], set_root: bool) -> None:
         """Save the chain header and metadata, then optionally set it as root.
@@ -553,6 +682,8 @@ def _apply_artifacts(args: argparse.Namespace) -> int:
         provisioner.devices(devices, profile_id, args.inactivity_ms)
         provisioner.dashboard(dashboard)
         provisioner.rule_chain(chain, args.set_root)
+        if ensure_alarm_rules(provisioner.client):
+            provisioner.created.append("device-profile alarm rules in root chain")
     except (urllib.error.URLError, OSError, ValueError) as exc:
         print(f"provision: request failed: {exc}", file=sys.stderr)
         return 1
