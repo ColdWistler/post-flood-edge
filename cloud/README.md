@@ -1,7 +1,16 @@
-# Cloud Track work plan
+# Cloud track implementation and handoff
 
-This repository implements the **edge** half of the post-flood monitoring system. It
-produces telemetry but creates **no ThingsBoard configuration**. This document is the
+Anushree's detailed ThingsBoard provisioning, eight-widget dashboard specification,
+evidence checklist and manuscript draft are in [ANUSHREE.md](ANUSHREE.md) and
+[ANUSHREE_MANUSCRIPT.md](ANUSHREE_MANUSCRIPT.md). The profile, three devices and dashboard were created on the EU Cloud tenant on 25 November 2026. The API dashboard JSON, redacted profile snapshot and timestamp comparison are in `exports/`; genuine dashboard screenshots and UI import checks are still needed.
+`python -m cloud.provision` previews the repeatable device setup. Save a
+ThingsBoard API key in ignored `.thingsboard-auth` (key only, one line), then
+`python -m cloud.provision --apply` provisions the profile and three devices
+through the tenant REST API. The default URL is the user's
+`https://eu.thingsboard.cloud`; set `TB_URL` to override it. The API snapshot
+it writes is redacted evidence, not a UI export.
+
+This repository implements the edge simulator and now includes provisioning and dashboard configuration for the cloud half. This document is the
 actionable checklist for the Cloud Track members: Anushree Pradhan (provisioning and
 dashboard) and Sambid Shrestha (alarm rules, WQI rule chain and benchmarking).
 
