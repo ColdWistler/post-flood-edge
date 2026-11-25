@@ -84,8 +84,9 @@ def test_connect_configures_tls_auth_host_and_loop(fake_client_factory):
 def test_connect_passes_callback_api_version(fake_client_factory):
     p = MqttPublisher("node-a", "host", "tok", client_factory=fake_client_factory)
     p.connect()
-    # paho 2.0 requires this argument; 2.1+ default to a deprecated API version.
-    assert p._client.callback_api_version == "VERSION1"
+    # paho 2.0 requires this argument; 2.1+ expose it as an enum, older fakes as a string.
+    version = p._client.callback_api_version
+    assert getattr(version, "name", version) == "VERSION1"
 
 
 def test_connect_without_ca_cert_uses_system_trust(fake_client_factory):

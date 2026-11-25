@@ -34,6 +34,59 @@ The edge code already implements everything to the left of ThingsBoard: sensor m
 DSP, alarms, validity gates, store-and-forward, per-node MQTT clients and replay. Cloud
 work starts at the ThingsBoard instance.
 
+## Ready-to-import artifacts
+
+These files are configuration **templates**; importing them is still a Cloud Track
+action on a real instance and no credentials are stored in them.
+
+| Artifact | Purpose | Apply |
+| --- | --- | --- |
+| `cloud/artifacts/device_profile.json` | Device profile with **all nine alarm rules** in the native Device Profile → Alarm Rules tab (six direct thresholds + three edge-derived mirrors) | `python -m cloud.provision --apply` |
+| `cloud/artifacts/devices.json` | Three devices with `${TB_TOKEN_*}` placeholders and site coordinates | tokens filled from `.env` by `cloud.provision` |
+| `cloud/artifacts/dashboard.json` | 5-second triage dashboard built only from **native system widgets** (gauges, charts, map, alarms table, entity table); v3.x alias-based template | `python -m cloud.provision --apply` |
+| `cloud/artifacts/dashboard_thingsboard_cloud.json` | **Verified-importable** Cloud version: six native line charts cloned from a real ThingsBoard Cloud export, bound directly to a `deviceId` | UI: **Dashboards → Import** |
+| `cloud/artifacts/dashboard_minimal.json` | Empty dashboard used to confirm import works on a given instance | UI: **Dashboards → Import** |
+| `cloud/artifacts/wqi_rule_chain.json` | Native Rule Chains tab: only the server-side WQI script (explicit Task 3 deliverable) plus `server_received_ms` for latency | `python -m cloud.provision --apply --set-root` (opt-in) |
+| `cloud/artifacts/wqi_server_script.js` | Readable copy of the WQI rule-node script | embedded in the rule chain JSON |
+| `cloud/artifacts/alarm_rules.json` | Declarative nine-rule spec with exact deadbands/debounce | documentation and test fixture |
+
+**Which dashboard to import:** use `dashboard_thingsboard_cloud.json` on ThingsBoard
+Cloud. The generic `dashboard.json` targets CE 3.x and uses `entityAliasId`
+datasources; newer Cloud instances rejected it silently on UI import. The Cloud file
+was generated from a real export from the target instance, so every widget carries the
+rich `settings` and `deviceId` datasource that version expects. It has three datasources
+per chart (node-a `81e5b1f0-e883-11f1-ab4e-dfd4fe9de952`, node-b
+`01f214e0-e886-11f1-b8ac-4bd49425d19e`, node-c
+`0bb52a80-e886-11f1-86e5-9755011de358`), so all live nodes appear on every metric.
+It uses a 24-hour widget timewindow with raw `NONE` aggregation and `showPoints: true`
+(matching a verified single-widget diagnostic), so sparse demo telemetry is visible
+instead of rendering as an empty line chart.
+
+### Native ThingsBoard tabs used
+
+| Tab | What is configured there |
+| --- | --- |
+| Device Profiles | Profile `post-flood-water-quality` with all nine alarm rules (declarative conditions — no custom alarm scripts) |
+| Devices | `node-a`, `node-b`, `node-c`, their access tokens, and the server-scope `inactivityTimeout` attribute |
+| Dashboards | The triage dashboard; every widget is a built-in `system.*` widget, so no widget bundle is uploaded |
+| Alarms | Native alarm table on the dashboard; alarm state is created by the device-profile rules, so no custom alarm rule chain is needed |
+| Rule Chains | Only the WQI transform chain — required by the assignment for a server-side WQI implementation; all alarms deliberately stay in the Alarm Rules tab |
+
+UI-only workflow (no scripts needed): **Device Profiles → Import** the profile, inspect
+its **Alarm Rules** subtab (nine rules); **Devices → Import** the device inventory and
+paste the three tokens; **Dashboards → Import** the dashboard; **Rule Chains → Import**
+the WQI chain if the server-side WQI evidence is required; then use the **Alarms** tab to
+verify raise/clear events during a demo. `cloud.provision` merely automates these same
+native operations over REST.
+
+`python -m cloud.provision --dry-run` validates all four import files without network
+traffic. `--apply` needs `TB_HOST` plus either `TB_JWT` or
+`TB_ADMIN_USER`/`TB_ADMIN_PASSWORD`, and the three tokens in the environment; it
+never writes credentials to disk. `python -m cloud.benchmark` (optionally `--apply
+--plot`) produces the real-broker measurement table described in
+`cloud/benchmark/README.md`. Manuscript placeholders are collected in
+`cloud/MANUSCRIPT.md`.
+
 ## Connect the edge to ThingsBoard
 
 1. Copy `.env.example` to `.env` and set `TB_HOST`, `TB_CA_CERT` and the three token
@@ -50,13 +103,19 @@ work starts at the ThingsBoard instance.
 ## Provisioning (Anushree)
 
 - [ ] Choose an instance: `demo.thingsboard.io` or self-hosted Docker CE.
-- [ ] Create a Device Profile.
-- [ ] Set the profile inactivity timeout to detect node loss. The work division specifies
+- [ ] Create a Device Profile (import `cloud/artifacts/device_profile.json`, then verify
+      the imported alarm rules in the UI).
+- [ ] Set the inactivity timeout to detect node loss. The work division specifies
       180 min normal / 45 min burst; the edge's own `Node Inactive` alarm uses a 90 s demo
       value. These are separate mechanisms — document both rather than equating them.
+      On ThingsBoard CE 3.x the timeout is a **server-scope device attribute**
+      `inactivityTimeout` in milliseconds, not a profile field; `cloud.provision` sets
+      10800000 ms (180 min) by default and `--inactivity-ms 2700000` selects the 45 min
+      burst value. The profile alarm `"Node Inactive"` watches the resulting `active` key.
 - [ ] Create at least three devices at distinct coordinates, named `node-a`, `node-b`,
       `node-c`. Coordinates published by the edge: 27.7172/85.3240, 27.6790/85.3190 and
-      27.7500/85.3700.
+      27.7500/85.3700. `cloud/artifacts/devices.json` contains this exact inventory with
+      token placeholders.
 - [ ] Generate an access token per device and put them in `.env` as
       `TB_TOKEN_NODE_A`, `TB_TOKEN_NODE_B`, `TB_TOKEN_NODE_C`.
 - [ ] Export the Device Profile JSON for the submission archive.
@@ -80,13 +139,25 @@ now?" within five seconds of opening it. Organise it for operation, not as a wid
 `RSSI` is requested by the assignment but the virtual nodes publish no radio telemetry;
 mark it N/A rather than inventing values. `buffer_depth` is already published per node.
 
+The committed dashboard binds all widgets to a `node-` entity-name alias and uses the
+late-v3.x widget FQNs; verify them against your instance (FQNs drift between versions).
+Colour bands for the gauges and the severity-coloured map markers are finished in the
+widget settings after import — the artifact supplies the keys, ranges, labels and layout,
+not a pixel-perfect theme. Re-export the tuned dashboard for the submission archive.
+
 - [ ] Add fleet-map to individual-node drill-down states (optional extension).
-- [ ] Export the dashboard JSON for the submission archive.
+- [ ] Import `cloud/artifacts/dashboard.json`, then export the dashboard JSON for the
+      submission archive after any visual tuning.
 
 ## Alarm rules (Sambid)
 
-Configure these in Device Profile → Alarm Rules (preferred) or via a custom rule chain.
-The exact deadbands are mandatory; explain the anti-flapping purpose in the manuscript.
+Configure **all nine** rules in the native Device Profile → Alarm Rules tab — no custom
+alarm rule chain is needed. `cloud/artifacts/alarm_rules.json` is the declarative
+specification and `cloud/artifacts/device_profile.json` carries all nine rules under
+`profileData.alarms` (v3.x `DeviceProfileAlarm` format: severity-keyed `createRules`,
+declarative numeric/boolean/string key filters, `REPEATING`/`DURATION` specs for
+debounce). The exact deadbands are mandatory; explain the anti-flapping purpose in the
+manuscript.
 
 | Alarm | Severity | Create | Clear |
 | --- | --- | --- | --- |
@@ -98,17 +169,26 @@ The exact deadbands are mandatory; explain the anti-flapping purpose in the manu
 | Node Inactive | Critical | Device inactivity timeout exceeded | Telemetry resumes |
 
 The edge additionally computes `Rapid Turbidity Rise`, `Severe pH Persistence` and
-`Sensor Fault`, and publishes the resulting `severity` and `active_alarms`. Treat the edge
-values as authoritative on the dashboard (see below); server-side copies exist for rubric
-evidence and must use the same thresholds from `INTEGRATION.md`.
+`Sensor Fault`, and publishes the resulting `severity` and `active_alarms`. Their native
+Device Profile alarm rules mirror those names with `active_alarms CONTAINS <name>` /
+`NOT_CONTAINS <name>` filters, so the built-in Alarms tab and alarms-table widget show
+them without a custom alarm chain. Treat the edge values as authoritative on the
+dashboard (see below); the server copies exist for rubric evidence and use the thresholds
+from `INTEGRATION.md`. `Sensor Fault` is severe as `Fault` on the edge; the closest
+built-in ThingsBoard severity is `CRITICAL`.
 
 ## Server-side WQI rule chain (Sambid)
 
-- [ ] Add a rule-chain script node that computes WQI server-side from incoming telemetry
-      using the Task 2 no-chlorine fallback weights, and stores it as a derived key.
-- [ ] Export the Rule Chain JSON for the submission archive.
-- [ ] Note that the edge already publishes `wqi` and `wqi_band`; keep the server-side value
-      consistent with them or display only the edge values.
+- [ ] Import `cloud/artifacts/wqi_rule_chain.json` (source script:
+      `cloud/artifacts/wqi_server_script.js`), which computes WQI server-side with the
+      Task 2 no-chlorine fallback weights and stores `wqi_server` / `wqi_band_server`.
+      It also writes `server_received_ms` for the latency benchmark. Imported chains are
+      **not** root by default: either use `python -m cloud.provision --apply --set-root`
+      (overwrites the current root chain) or add a Rule Chain node from your existing root
+      to this chain. Without that step no latency telemetry is produced.
+- [ ] Export the Rule Chain JSON for the submission archive after verification.
+- [ ] Note that the edge already publishes `wqi` and `wqi_band`; the dashboard must use
+      those edge values, while the derived `wqi_server` key is demonstration evidence.
 
 ## Benchmarking (Sambid)
 
@@ -125,8 +205,11 @@ ThingsBoard run.
 | Recovery time | connectivity restored → buffer fully drained | Seconds, for a stated buffer depth |
 | Data loss | rows generated vs rows present in ThingsBoard after full sync | Count and percentage |
 
-Plot at least one of these. Determine the optimal batch size empirically using the
-existing CSV as a starting point, and re-measure with a real broker.
+`python -m cloud.benchmark --apply --plot` computes these metrics from `edge.db`,
+`logs/edge.log` and the ThingsBoard REST API, writing `cloud/benchmark/metrics.json`,
+`metrics.csv` and `latency_scatter.svg`. See `cloud/benchmark/README.md` for definitions
+and caveats. Plot at least one of these. Determine the optimal batch size empirically
+using the existing CSV as a starting point, and re-measure with a real broker.
 
 ## Manuscript and live demo (both)
 
@@ -143,7 +226,9 @@ alarms, and a Node-RED flow doing cross-node correlation to localise a breach.
 
 The edge publishes `severity`, `active_alarms`, `node_inactive`, `wqi` and `wqi_band`.
 Computing the same values again server-side is acceptable as assignment evidence, but it
-can produce contradictory alarms if thresholds drift. Recommended rule: dashboard status
-uses the edge-published values; server-side rules and the WQI chain are configured with
-the identical thresholds and kept as demonstration artefacts. If a discrepancy appears in
-the demo, the edge value wins and the server-side configuration is corrected.
+can produce contradictory alarms if thresholds drift. The imported WQI chain therefore
+writes `wqi_server` and `wqi_band_server` instead of overwriting the edge keys. Recommended
+rule: dashboard status uses the edge-published values; server-side rules and the WQI chain
+are configured with identical thresholds and kept as demonstration artefacts. If a
+discrepancy appears in the demo, the edge value wins and the server-side configuration is
+corrected.
