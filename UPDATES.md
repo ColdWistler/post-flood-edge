@@ -36,6 +36,20 @@ Debug dashboards (`dashboard.json`, `dashboard_minimal.json`,
 part of the final committed set. The committed dashboard is
 `dashboard_thingsboard_cloud.json`.
 
+### Where each engine lives (added vs pre-existing)
+
+The edge runtime was **not** changed by this update. Some engines were already present
+and were only exercised during the live runs; the Cloud-side equivalents were added here.
+
+| Engine / tool | Location | Provenance |
+| --- | --- | --- |
+| Hysteresis rule engine | `edge/hysteresis.py` (`HysteresisEngine.evaluate`), wired into `edge/runtime.py` | **Pre-existing** (`a34cc13`, debounce fix in `d2c1a98`). Not added by this update. |
+| Edge WQI engine | `edge/dsp.py` (`brown_wqi`, `process_reading`) | **Pre-existing** (`0e1712d`). Live payloads contained `wqi` / `wqi_band`. |
+| Server-side WQI engine | `cloud/artifacts/wqi_rule_chain.json`, `cloud/artifacts/wqi_server_script.js` | **Added** in `5da96aa`. Writes `wqi_server`, `wqi_band_server`, `server_received_ms`; still needs import/link from root in the tenant. |
+| Server-side alarm / debounce rules | `cloud/artifacts/device_profile.json`, `cloud/artifacts/alarm_rules.json` | **Added** in `5da96aa`. Nine native Alarm Rules with deadbands and `REPEATING` / `DURATION` debounce specs. |
+| Batch-size benchmark | `tools/benchmark_batch_size.py`, `tools/batch_results.csv` | **Pre-existing** (`5193603`, `6704b09`). |
+| Cloud six-metric benchmark | `cloud/benchmark.py`, `cloud/benchmark/README.md`, `cloud/benchmark/.gitignore` | **Added** in `5da96aa`. Computes throughput, recovery time, latency, delivery ratio, alarm delay and data loss. |
+
 ---
 
 ## 2. Live ThingsBoard Cloud status — what was actually done
