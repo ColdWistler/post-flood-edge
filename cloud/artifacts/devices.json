@@ -3,34 +3,34 @@
     {
       "name": "node-a",
       "type": "post-flood-water-quality",
-      "label": "Node A - Kathmandu centre",
+      "label": "Node A - Timure",
       "accessToken": "${TB_TOKEN_NODE_A}",
       "additionalInfo": {
         "description": "Virtual water-quality node A; edge publishes latitude/longitude in telemetry.",
-        "latitude": 27.7172,
-        "longitude": 85.324
+        "latitude": 28.253742,
+        "longitude": 85.366481
       }
     },
     {
       "name": "node-b",
       "type": "post-flood-water-quality",
-      "label": "Node B - south source",
+      "label": "Node B - Syaphru (Syabru Besi)",
       "accessToken": "${TB_TOKEN_NODE_B}",
       "additionalInfo": {
         "description": "Virtual water-quality node B; edge publishes latitude/longitude in telemetry.",
-        "latitude": 27.679,
-        "longitude": 85.319
+        "latitude": 28.163522,
+        "longitude": 85.336325
       }
     },
     {
       "name": "node-c",
       "type": "post-flood-water-quality",
-      "label": "Node C - north-east source",
+      "label": "Node C - Dhunche",
       "accessToken": "${TB_TOKEN_NODE_C}",
       "additionalInfo": {
         "description": "Virtual water-quality node C; edge publishes latitude/longitude in telemetry.",
-        "latitude": 27.75,
-        "longitude": 85.37
+        "latitude": 28.11167,
+        "longitude": 85.29778
       }
     }
   ]

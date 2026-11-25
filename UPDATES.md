@@ -125,7 +125,7 @@ These actions happened in the user's tenant, not in CI:
 
 - MQTT over TLS, port **8883**, topic `v1/devices/me/telemetry`, **QoS 1**; rows are marked synced only after PUBACK.
 - Payload: `{"ts": <epoch ms>, "values": {...}}`; batches are JSON arrays. Original timestamps survive outage replay.
-- Nodes/coordinates: node-a 27.7172/85.3240, node-b 27.6790/85.3190, node-c 27.7500/85.3700.
+- Nodes/coordinates (Rasuwa flood corridor): node-a Timure 28.253742/85.366481, node-b Syaphru (Syabru Besi) 28.163522/85.336325, node-c Dhunche 28.111670/85.297780.
 - WQI constants: standards `(8.5, 5.0, 1000.0)`, ideals `(7.0, 0.0, 0.0)`, weights `(0.3692, 0.6277, 0.0031)`; bands `≤25 Excellent`, `≤50 Good`, `≤75 Poor`, `≤100 Very poor`, `>100 Unsuitable`.
 - Alarm thresholds/deadbands: High Turbidity `>50/<40`; Gross `>200/<150`; pH `<6.5 or >8.5`, clear `6.7–8.3`; TDS `>500/<450`; flow zero 30 s demo; Node Inactive 90 s demo; severe pH `<6.0 or >9.0`, clear `6.2–8.8`; Sensor Fault 3/3; rapid rise `>30 NTU` in 50 s.
 - `RSSI` is **N/A** (virtual nodes publish no radio telemetry). Do not invent values.

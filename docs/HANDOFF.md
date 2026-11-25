@@ -169,9 +169,9 @@ device tokens only to the ignored local `.env`. The dashboard helper scripts are
 
 | Device | Device ID | Coordinates |
 | --- | --- | --- |
-| node-a | `81e5b1f0-e883-11f1-ab4e-dfd4fe9de952` | 27.7172, 85.3240 |
-| node-b | `01f214e0-e886-11f1-b8ac-4bd49425d19e` | 27.6790, 85.3190 |
-| node-c | `0bb52a80-e886-11f1-86e5-9755011de358` | 27.7500, 85.3700 |
+| node-a | `81e5b1f0-e883-11f1-ab4e-dfd4fe9de952` | Timure 28.253742, 85.366481 |
+| node-b | `01f214e0-e886-11f1-b8ac-4bd49425d19e` | Syaphru (Syabru Besi) 28.163522, 85.336325 |
+| node-c | `0bb52a80-e886-11f1-86e5-9755011de358` | Dhunche 28.111670, 85.297780 |
 
 Device profile name: `post-flood-water-quality`.
 

@@ -34,9 +34,10 @@ class EdgeConfig:
 
     nodes: list[NodeConfig] = field(
         default_factory=lambda: [
-            NodeConfig("node-a", 27.7172, 85.3240, 1001, 500, 0.0),
-            NodeConfig("node-b", 27.6790, 85.3190, 1002, 825, 20.0),
-            NodeConfig("node-c", 27.7500, 85.3700, 1003, 1250, 40.0),
+            # Rasuwa flood corridor: Timure, Syaphru (Syabru Besi), Dhunche.
+            NodeConfig("node-a", 28.253742, 85.366481, 1001, 500, 0.0),
+            NodeConfig("node-b", 28.163522, 85.336325, 1002, 825, 20.0),
+            NodeConfig("node-c", 28.111670, 85.297780, 1003, 1250, 40.0),
         ]
     )
     tick_seconds: float = 5.0

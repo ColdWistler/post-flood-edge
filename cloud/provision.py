@@ -64,9 +64,10 @@ NODE_TOKENS = {
 
 PROFILE_NAME = "Post-Flood Water Source"
 NODES = {
-    "node-a": (27.7172, 85.3240),
-    "node-b": (27.6790, 85.3190),
-    "node-c": (27.7500, 85.3700),
+    # Rasuwa flood corridor: Timure, Syaphru (Syabru Besi), Dhunche.
+    "node-a": (28.253742, 85.366481),
+    "node-b": (28.163522, 85.336325),
+    "node-c": (28.111670, 85.297780),
 }
 NORMAL_TIMEOUT_MS = 180 * 60 * 1000
 BURST_TIMEOUT_MS = 45 * 60 * 1000

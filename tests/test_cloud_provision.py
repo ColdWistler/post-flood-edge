@@ -118,6 +118,27 @@ def test_devices_artifact_matches_edge_contract():
         assert device["accessToken"].startswith("${TB_TOKEN_")
 
 
+def test_rasuwa_locations_match_edge_and_cloud_inventory():
+    from edge.models import EdgeConfig
+
+    expected = {
+        "node-a": (28.253742, 85.366481),
+        "node-b": (28.163522, 85.336325),
+        "node-c": (28.111670, 85.297780),
+    }
+    edge_nodes = {node.node_id: (node.latitude, node.longitude) for node in EdgeConfig().nodes}
+    assert edge_nodes == expected
+    assert provision.NODES == expected
+    devices = json.loads((ARTIFACTS / "devices.json").read_text())["devices"]
+    assert {
+        device["name"]: (
+            device["additionalInfo"]["latitude"],
+            device["additionalInfo"]["longitude"],
+        )
+        for device in devices
+    } == expected
+
+
 def test_alarm_rules_match_integration_thresholds():
     rules = json.loads((ARTIFACTS / "alarm_rules.json").read_text())["rules"]
     by_name = {rule["name"]: rule for rule in rules}
@@ -196,6 +217,25 @@ def test_load_dashboard_prefers_eight_widget_triage():
     assert len(dashboard["configuration"]["widgets"]) == 8
 
 
+def test_triage_dashboard_refresh_budget_is_browser_friendly():
+    """Bound live-refresh cost; raw 24h charts at 5s made the UI sluggish."""
+    dashboard, _ = provision.load_dashboard()
+    widgets = dashboard["configuration"]["widgets"]
+    for widget in widgets.values():
+        realtime = (widget["config"].get("timewindow") or {}).get("realtime") or {}
+        if widget["type"] == "timeseries":
+            assert realtime["timewindowMs"] <= 60 * 60 * 1000
+            assert realtime["interval"] >= 15000
+        if widget["type"] == "alarm":
+            assert widget["config"]["alarmsPollingInterval"] >= 15
+            assert widget["config"]["alarmSearchStatus"] == "ACTIVE"
+            assert widget["config"]["timewindow"]["realtime"]["timewindowMs"] <= 60 * 60 * 1000
+    map_widget = next(w for w in widgets.values() if w.get("config", {}).get("settings", {}).get("defaultCenterPosition"))
+    map_realtime = map_widget["config"]["timewindow"]["realtime"]
+    assert map_realtime["interval"] >= 10000
+    assert map_widget["config"]["settings"]["defaultCenterPosition"] == "28.1800,85.3300"
+
+
 def test_triage_dashboard_has_eight_native_widgets():
     dashboard, _ = provision.load_dashboard()
     configuration = dashboard["configuration"]
@@ -204,7 +244,8 @@ def test_triage_dashboard_has_eight_native_widgets():
     assert set(widgets) == set(placements)
     assert len(widgets) == 8
     assert configuration["timewindow"]["aggregation"]["type"] == "NONE"
-    assert configuration["timewindow"]["realtime"]["timewindowMs"] == 24 * 60 * 60 * 1000
+    assert configuration["timewindow"]["realtime"]["timewindowMs"] == 60 * 60 * 1000
+    assert configuration["timewindow"]["realtime"]["interval"] == 15000
     assert set(configuration["entityAliases"]) == {
         "postflood-fleet",
         "postflood-node-a",
@@ -251,7 +292,7 @@ def test_triage_dashboard_has_eight_native_widgets():
     settings = node_map["config"]["settings"]
     assert settings["fitMapBounds"] is True
     assert settings["useDefaultCenterPosition"] is True
-    assert settings["defaultCenterPosition"] == "27.7172,85.3240"
+    assert settings["defaultCenterPosition"] == "28.1800,85.3300"
     markers = settings["markers"]
     assert len(markers) == 3
     assert {marker["dsLabel"] for marker in markers} == {"node-a", "node-b", "node-c"}

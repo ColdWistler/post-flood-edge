@@ -146,9 +146,10 @@ measurements are collected in `cloud/MANUSCRIPT.md`; the compiled IEEE source is
       10800000 ms (180 min) by default and `--inactivity-ms 2700000` selects the 45 min
       burst value. The profile alarm `"Node Inactive"` watches the resulting `active` key.
 - [ ] Create at least three devices at distinct coordinates, named `node-a`, `node-b`,
-      `node-c`. Coordinates published by the edge: 27.7172/85.3240, 27.6790/85.3190 and
-      27.7500/85.3700. `cloud/artifacts/devices.json` contains this exact inventory with
-      token placeholders.
+      `node-c`. Coordinates published by the edge (Rasuwa flood corridor): Timure
+      28.253742/85.366481, Syaphru (Syabru Besi) 28.163522/85.336325 and Dhunche
+      28.111670/85.297780. `cloud/artifacts/devices.json` contains this exact inventory
+      with token placeholders.
 - [ ] Generate an access token per device and put them in `.env` as
       `TB_TOKEN_NODE_A`, `TB_TOKEN_NODE_B`, `TB_TOKEN_NODE_C`.
 - [ ] Export the Device Profile JSON for the submission archive.
