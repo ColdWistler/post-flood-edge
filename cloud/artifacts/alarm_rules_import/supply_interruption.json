@@ -1,0 +1,91 @@
+{
+  "name": "Supply Interruption",
+  "type": "ALARM",
+  "configuration": {
+    "type": "ALARM",
+    "arguments": {
+      "flow_lpm": {
+        "refEntityKey": {
+          "key": "flow_lpm",
+          "type": "TS_LATEST"
+        }
+      }
+    },
+    "createRules": {
+      "MAJOR": {
+        "condition": {
+          "type": "DURATION",
+          "expression": {
+            "type": "SIMPLE",
+            "filters": [
+              {
+                "argument": "flow_lpm",
+                "valueType": "NUMERIC",
+                "operation": "AND",
+                "predicates": [
+                  {
+                    "type": "NUMERIC",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": 0
+                    }
+                  }
+                ]
+              }
+            ],
+            "operation": "AND"
+          },
+          "schedule": {
+            "staticValue": {
+              "type": "ANY_TIME"
+            }
+          },
+          "unit": "SECONDS",
+          "value": {
+            "staticValue": 30
+          }
+        },
+        "alarmDetails": ""
+      }
+    },
+    "clearRule": {
+      "condition": {
+        "type": "SIMPLE",
+        "expression": {
+          "type": "SIMPLE",
+          "filters": [
+            {
+              "argument": "flow_lpm",
+              "valueType": "NUMERIC",
+              "operation": "AND",
+              "predicates": [
+                {
+                  "type": "NUMERIC",
+                  "operation": "GREATER",
+                  "value": {
+                    "staticValue": 0
+                  }
+                }
+              ]
+            }
+          ],
+          "operation": "AND"
+        },
+        "schedule": {
+          "staticValue": {
+            "type": "ANY_TIME"
+          }
+        }
+      },
+      "alarmDetails": ""
+    },
+    "propagate": false,
+    "propagateToOwner": false,
+    "propagateToOwnerHierarchy": false,
+    "propagateToTenant": false,
+    "propagateRelationTypes": []
+  },
+  "additionalInfo": {
+    "description": "Demonstration rule: flow_lpm == 0 for 30 seconds; production window is 1800 seconds."
+  }
+}

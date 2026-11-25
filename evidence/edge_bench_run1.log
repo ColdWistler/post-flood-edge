@@ -1,0 +1,743 @@
+2026-11-25 15:23:35,556 WARNING edge.publisher NETWORK_FAILURE: node=node-a connect error=No module named 'paho'
+2026-11-25 15:23:35,556 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 15:23:35,557 WARNING edge.publisher NETWORK_FAILURE: node=node-b connect error=No module named 'paho'
+2026-11-25 15:23:35,557 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 15:23:35,558 WARNING edge.publisher NETWORK_FAILURE: node=node-c connect error=No module named 'paho'
+2026-11-25 15:23:35,558 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 15:23:35,560 INFO edge.runtime STATE: runtime started nodes=node-a,node-b,node-c
+2026-11-25 15:23:40,584 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 15:23:45,595 WARNING edge.publisher NETWORK_FAILURE: node=node-a publish while disconnected
+2026-11-25 15:23:45,595 INFO edge.publisher BACKOFF: node=node-a seconds=2.0
+2026-11-25 15:23:45,596 WARNING edge.runtime BUFFER: node=node-a rows=2 returned to pending
+2026-11-25 15:23:45,597 WARNING edge.publisher NETWORK_FAILURE: node=node-c publish while disconnected
+2026-11-25 15:23:45,597 INFO edge.publisher BACKOFF: node=node-c seconds=2.0
+2026-11-25 15:23:45,598 WARNING edge.runtime BUFFER: node=node-c rows=2 returned to pending
+2026-11-25 15:23:45,598 WARNING edge.publisher NETWORK_FAILURE: node=node-b publish while disconnected
+2026-11-25 15:23:45,598 INFO edge.publisher BACKOFF: node=node-b seconds=2.0
+2026-11-25 15:23:45,599 WARNING edge.runtime BUFFER: node=node-b rows=2 returned to pending
+2026-11-25 15:23:45,599 INFO edge.runtime BUFFER: total=6 per_node={'node-a': 2, 'node-b': 2, 'node-c': 2}
+2026-11-25 15:23:50,602 WARNING edge.publisher NETWORK_FAILURE: node=node-a publish while disconnected
+2026-11-25 15:23:50,602 INFO edge.publisher BACKOFF: node=node-a seconds=4.0
+2026-11-25 15:23:50,603 WARNING edge.runtime BUFFER: node=node-a rows=3 returned to pending
+2026-11-25 15:23:50,603 WARNING edge.publisher NETWORK_FAILURE: node=node-c publish while disconnected
+2026-11-25 15:23:50,603 INFO edge.publisher BACKOFF: node=node-c seconds=4.0
+2026-11-25 15:23:50,604 WARNING edge.runtime BUFFER: node=node-c rows=3 returned to pending
+2026-11-25 15:23:50,604 WARNING edge.publisher NETWORK_FAILURE: node=node-b publish while disconnected
+2026-11-25 15:23:50,604 INFO edge.publisher BACKOFF: node=node-b seconds=4.0
+2026-11-25 15:23:50,605 WARNING edge.runtime BUFFER: node=node-b rows=3 returned to pending
+2026-11-25 15:23:50,606 INFO edge.runtime BUFFER: total=9 per_node={'node-a': 3, 'node-b': 3, 'node-c': 3}
+2026-11-25 15:23:55,608 WARNING edge.publisher NETWORK_FAILURE: node=node-a publish while disconnected
+2026-11-25 15:23:55,609 INFO edge.publisher BACKOFF: node=node-a seconds=8.0
+2026-11-25 15:23:55,610 WARNING edge.runtime BUFFER: node=node-a rows=4 returned to pending
+2026-11-25 15:23:55,610 WARNING edge.publisher NETWORK_FAILURE: node=node-c publish while disconnected
+2026-11-25 15:23:55,610 INFO edge.publisher BACKOFF: node=node-c seconds=8.0
+2026-11-25 15:23:55,611 WARNING edge.runtime BUFFER: node=node-c rows=4 returned to pending
+2026-11-25 15:23:55,611 WARNING edge.publisher NETWORK_FAILURE: node=node-b publish while disconnected
+2026-11-25 15:23:55,612 INFO edge.publisher BACKOFF: node=node-b seconds=8.0
+2026-11-25 15:23:55,613 WARNING edge.runtime BUFFER: node=node-b rows=4 returned to pending
+2026-11-25 15:23:55,613 INFO edge.runtime BUFFER: total=12 per_node={'node-a': 4, 'node-b': 4, 'node-c': 4}
+2026-11-25 15:24:00,616 WARNING edge.publisher NETWORK_FAILURE: node=node-a publish while disconnected
+2026-11-25 15:24:00,616 INFO edge.publisher BACKOFF: node=node-a seconds=16.0
+2026-11-25 15:24:00,617 WARNING edge.runtime BUFFER: node=node-a rows=5 returned to pending
+2026-11-25 15:24:00,618 WARNING edge.publisher NETWORK_FAILURE: node=node-c publish while disconnected
+2026-11-25 15:24:00,618 INFO edge.publisher BACKOFF: node=node-c seconds=16.0
+2026-11-25 15:24:00,619 WARNING edge.runtime BUFFER: node=node-c rows=5 returned to pending
+2026-11-25 15:24:00,619 WARNING edge.publisher NETWORK_FAILURE: node=node-b publish while disconnected
+2026-11-25 15:24:00,619 INFO edge.publisher BACKOFF: node=node-b seconds=16.0
+2026-11-25 15:24:00,620 WARNING edge.runtime BUFFER: node=node-b rows=5 returned to pending
+2026-11-25 15:24:00,621 INFO edge.runtime BUFFER: total=15 per_node={'node-a': 5, 'node-b': 5, 'node-c': 5}
+2026-11-25 15:24:05,624 WARNING edge.publisher NETWORK_FAILURE: node=node-a publish while disconnected
+2026-11-25 15:24:05,624 INFO edge.publisher BACKOFF: node=node-a seconds=32.0
+2026-11-25 15:24:05,625 WARNING edge.runtime BUFFER: node=node-a rows=6 returned to pending
+2026-11-25 15:24:05,625 WARNING edge.publisher NETWORK_FAILURE: node=node-c publish while disconnected
+2026-11-25 15:24:05,625 INFO edge.publisher BACKOFF: node=node-c seconds=32.0
+2026-11-25 15:24:05,627 WARNING edge.runtime BUFFER: node=node-c rows=6 returned to pending
+2026-11-25 15:24:05,627 WARNING edge.publisher NETWORK_FAILURE: node=node-b publish while disconnected
+2026-11-25 15:24:05,628 INFO edge.publisher BACKOFF: node=node-b seconds=32.0
+2026-11-25 15:24:05,629 WARNING edge.runtime BUFFER: node=node-b rows=6 returned to pending
+2026-11-25 15:24:05,630 INFO edge.runtime BUFFER: total=18 per_node={'node-a': 6, 'node-b': 6, 'node-c': 6}
+2026-11-25 15:24:08,748 INFO __main__ STATE: CLI interrupted
+2026-11-25 15:24:08,749 INFO edge.runtime STATE: runtime stopped
+2026-11-25 16:45:27,939 WARNING edge.publisher NETWORK_FAILURE: node=node-a connect error=[Errno -2] Name or service not known
+2026-11-25 16:45:27,939 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:45:27,952 WARNING edge.publisher NETWORK_FAILURE: node=node-b connect error=[Errno -2] Name or service not known
+2026-11-25 16:45:27,952 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:45:27,964 WARNING edge.publisher NETWORK_FAILURE: node=node-c connect error=[Errno -2] Name or service not known
+2026-11-25 16:45:27,965 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:45:27,969 INFO edge.runtime STATE: runtime started nodes=node-a,node-b,node-c
+2026-11-25 16:45:33,057 WARNING edge.publisher NETWORK_FAILURE: node=node-a publish while disconnected
+2026-11-25 16:45:33,058 INFO edge.publisher BACKOFF: node=node-a seconds=2.0
+2026-11-25 16:45:33,061 WARNING edge.runtime BUFFER: node=node-a rows=6 returned to pending
+2026-11-25 16:45:33,061 WARNING edge.publisher NETWORK_FAILURE: node=node-c publish while disconnected
+2026-11-25 16:45:33,062 INFO edge.publisher BACKOFF: node=node-c seconds=2.0
+2026-11-25 16:45:33,063 WARNING edge.runtime BUFFER: node=node-c rows=6 returned to pending
+2026-11-25 16:45:33,063 WARNING edge.publisher NETWORK_FAILURE: node=node-b publish while disconnected
+2026-11-25 16:45:33,063 INFO edge.publisher BACKOFF: node=node-b seconds=2.0
+2026-11-25 16:45:33,064 WARNING edge.runtime BUFFER: node=node-b rows=7 returned to pending
+2026-11-25 16:45:33,064 INFO edge.runtime BUFFER: total=21 per_node={'node-a': 7, 'node-b': 7, 'node-c': 7}
+2026-11-25 16:45:38,067 WARNING edge.publisher NETWORK_FAILURE: node=node-a publish while disconnected
+2026-11-25 16:45:38,067 INFO edge.publisher BACKOFF: node=node-a seconds=4.0
+2026-11-25 16:45:38,069 WARNING edge.runtime BUFFER: node=node-a rows=8 returned to pending
+2026-11-25 16:45:38,069 WARNING edge.publisher NETWORK_FAILURE: node=node-c publish while disconnected
+2026-11-25 16:45:38,069 INFO edge.publisher BACKOFF: node=node-c seconds=4.0
+2026-11-25 16:45:38,070 WARNING edge.runtime BUFFER: node=node-c rows=8 returned to pending
+2026-11-25 16:45:38,070 WARNING edge.publisher NETWORK_FAILURE: node=node-b publish while disconnected
+2026-11-25 16:45:38,071 INFO edge.publisher BACKOFF: node=node-b seconds=4.0
+2026-11-25 16:45:38,072 WARNING edge.runtime BUFFER: node=node-b rows=8 returned to pending
+2026-11-25 16:45:38,072 INFO edge.runtime BUFFER: total=24 per_node={'node-a': 8, 'node-b': 8, 'node-c': 8}
+2026-11-25 16:45:42,322 INFO edge.runtime STATE: QUIT requested
+2026-11-25 16:45:42,323 INFO __main__ STATE: CLI exiting
+2026-11-25 16:45:42,323 INFO edge.runtime STATE: runtime stopped
+2026-11-25 16:46:41,516 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:46:41,902 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:46:41,975 INFO edge.runtime STATE: runtime started nodes=node-a,node-b,node-c
+2026-11-25 16:46:42,544 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:46:47,327 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:46:47,327 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:46:49,436 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:46:49,709 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:46:49,709 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:46:51,842 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:46:52,120 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:46:52,120 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:46:54,123 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:46:54,372 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:46:54,372 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:46:55,134 INFO edge.runtime STATE: QUIT requested
+2026-11-25 16:46:55,135 INFO __main__ STATE: CLI exiting
+2026-11-25 16:46:56,490 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:46:56,764 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:46:56,764 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:46:57,051 WARNING edge.publisher NETWORK_FAILURE: node=node-a PUBACK not received
+2026-11-25 16:46:57,051 INFO edge.publisher BACKOFF: node=node-a seconds=2.0
+2026-11-25 16:46:57,053 WARNING edge.runtime BUFFER: node=node-a rows=8 returned to pending
+2026-11-25 16:46:57,325 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:46:57,325 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:46:58,884 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:46:59,160 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:46:59,160 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:46:59,436 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:46:59,708 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:46:59,709 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:47:01,363 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:47:01,636 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:47:01,637 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:47:01,879 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:47:02,152 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:47:02,153 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:47:03,774 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:47:04,048 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:47:04,048 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:47:04,414 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:47:04,689 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:47:04,689 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:47:06,167 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:47:06,442 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:47:06,442 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:47:06,792 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:47:07,055 WARNING edge.publisher NETWORK_FAILURE: node=node-c PUBACK not received
+2026-11-25 16:47:07,055 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:47:07,057 WARNING edge.runtime BUFFER: node=node-c rows=8 returned to pending
+2026-11-25 16:47:07,063 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:47:07,063 INFO edge.publisher BACKOFF: node=node-c seconds=2.0
+2026-11-25 16:47:07,295 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:47:07,295 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:47:08,564 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:47:08,836 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:47:08,836 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:47:09,175 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:47:09,274 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:47:09,448 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:47:09,448 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:47:09,515 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:47:09,515 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:47:10,816 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:47:11,054 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:47:11,054 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:47:11,573 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:47:11,646 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:47:11,848 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:47:11,849 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:47:11,925 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:47:11,925 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:47:13,205 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:47:13,485 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:47:13,485 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:47:13,831 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:47:14,062 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:47:14,069 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:47:14,069 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:47:14,338 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:47:14,338 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:47:15,634 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:47:15,915 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:47:15,915 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:47:16,203 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:47:16,463 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:47:16,480 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:47:16,480 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:47:16,741 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:47:16,741 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:47:17,059 WARNING edge.publisher NETWORK_FAILURE: node=node-b PUBACK not received
+2026-11-25 16:47:17,059 INFO edge.publisher BACKOFF: node=node-b seconds=2.0
+2026-11-25 16:47:17,082 WARNING edge.runtime BUFFER: node=node-b rows=8 returned to pending
+2026-11-25 16:47:17,082 INFO edge.runtime BUFFER: total=30 per_node={'node-a': 10, 'node-b': 10, 'node-c': 10}
+2026-11-25 16:47:17,083 INFO edge.runtime STATE: runtime stopped
+2026-11-25 16:49:44,096 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:49:44,658 INFO edge.runtime STATE: runtime started nodes=node-a,node-b,node-c
+2026-11-25 16:49:44,675 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:49:45,221 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:49:50,034 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:49:50,035 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:49:52,141 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:49:52,414 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:49:52,415 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:49:54,546 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:49:54,823 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:49:54,823 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:49:56,969 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:49:57,247 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:49:57,247 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:49:59,382 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:49:59,660 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:49:59,660 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:49:59,760 WARNING edge.publisher NETWORK_FAILURE: node=node-a PUBACK not received
+2026-11-25 16:49:59,760 INFO edge.publisher BACKOFF: node=node-a seconds=2.0
+2026-11-25 16:49:59,763 WARNING edge.runtime BUFFER: node=node-a rows=10 returned to pending
+2026-11-25 16:50:00,037 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:50:00,038 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:50:01,900 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:50:02,173 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:50:02,173 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:50:02,210 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:50:02,487 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:50:02,487 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:50:02,718 INFO edge.runtime STATE: QUIT requested
+2026-11-25 16:50:02,718 INFO __main__ STATE: CLI exiting
+2026-11-25 16:50:04,212 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:50:04,453 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:50:04,453 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:50:04,511 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:50:04,750 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:50:04,751 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:50:06,564 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:50:06,837 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:50:06,838 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:50:06,860 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:50:07,133 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:50:07,133 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:50:08,957 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:50:09,230 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:50:09,230 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:50:09,252 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:50:09,528 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:50:09,529 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:50:09,765 WARNING edge.publisher NETWORK_FAILURE: node=node-c PUBACK not received
+2026-11-25 16:50:09,765 INFO edge.publisher BACKOFF: node=node-c seconds=2.0
+2026-11-25 16:50:09,767 WARNING edge.runtime BUFFER: node=node-c rows=10 returned to pending
+2026-11-25 16:50:10,044 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:50:10,044 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:50:11,358 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:50:11,636 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:50:11,636 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:50:11,647 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:50:11,921 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:50:11,921 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:50:12,150 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:50:12,422 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:50:12,423 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:50:13,751 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:50:13,907 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:50:14,025 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:50:14,026 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:50:14,148 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:50:14,148 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:50:14,546 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:50:14,819 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:50:14,819 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:50:16,138 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:50:16,281 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:50:16,411 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:50:16,412 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:50:16,560 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:50:16,561 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:50:16,807 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:50:17,050 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:50:17,050 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:50:18,526 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:50:18,677 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:50:18,799 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:50:18,800 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:50:18,953 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:50:18,953 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:50:19,051 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:50:19,297 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:50:19,297 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:50:19,770 WARNING edge.publisher NETWORK_FAILURE: node=node-b PUBACK not received
+2026-11-25 16:50:19,770 INFO edge.publisher BACKOFF: node=node-b seconds=2.0
+2026-11-25 16:50:19,772 WARNING edge.runtime BUFFER: node=node-b rows=11 returned to pending
+2026-11-25 16:50:19,772 INFO edge.runtime BUFFER: total=39 per_node={'node-a': 13, 'node-b': 13, 'node-c': 13}
+2026-11-25 16:50:19,773 INFO edge.runtime STATE: runtime stopped
+2026-11-25 16:51:44,612 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:51:45,171 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:51:45,179 INFO edge.runtime STATE: runtime started nodes=node-a,node-b,node-c
+2026-11-25 16:51:45,744 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:51:50,520 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:51:50,520 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:51:52,631 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:51:52,904 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:51:52,904 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:51:55,017 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:51:55,271 INFO edge.runtime STATE: QUIT requested
+2026-11-25 16:51:55,272 INFO __main__ STATE: CLI exiting
+2026-11-25 16:51:55,291 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:51:55,292 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:51:57,438 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:51:57,886 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:51:57,901 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:00,019 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:52:00,243 WARNING edge.publisher NETWORK_FAILURE: node=node-a PUBACK not received
+2026-11-25 16:52:00,244 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:00,246 WARNING edge.runtime BUFFER: node=node-a rows=13 returned to pending
+2026-11-25 16:52:00,293 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:52:00,294 INFO edge.publisher BACKOFF: node=node-a seconds=2.0
+2026-11-25 16:52:00,565 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:52:00,565 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:52:02,501 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:52:02,760 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:52:02,980 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:52:02,980 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:03,035 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:52:03,035 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:52:05,168 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:52:05,172 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:52:05,413 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:52:05,414 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:52:05,441 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:52:05,441 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:07,387 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:52:07,549 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:52:07,625 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:52:07,626 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:52:07,823 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:52:07,823 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:09,607 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:52:09,850 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:52:09,850 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:52:09,951 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:52:10,228 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:52:10,228 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:10,248 WARNING edge.publisher NETWORK_FAILURE: node=node-c PUBACK not received
+2026-11-25 16:52:10,248 INFO edge.publisher BACKOFF: node=node-c seconds=2.0
+2026-11-25 16:52:10,250 WARNING edge.runtime BUFFER: node=node-c rows=13 returned to pending
+2026-11-25 16:52:10,524 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:52:10,525 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:52:11,986 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:52:12,317 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:52:12,317 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:52:12,328 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:52:12,627 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:52:12,627 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:12,661 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:52:12,939 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:52:12,940 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:52:14,287 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:52:14,524 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:52:14,524 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:52:14,598 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:52:14,863 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:52:14,867 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:14,945 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:52:15,191 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:52:15,192 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:52:16,639 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:52:16,913 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:52:16,914 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:52:17,002 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:52:17,299 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:52:17,299 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:17,319 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:52:17,597 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:52:17,597 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:52:19,044 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:52:19,322 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:52:19,323 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:52:19,405 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:52:19,699 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:52:19,700 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:52:19,726 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:52:20,003 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:52:20,004 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:52:20,252 WARNING edge.publisher NETWORK_FAILURE: node=node-b PUBACK not received
+2026-11-25 16:52:20,252 INFO edge.publisher BACKOFF: node=node-b seconds=2.0
+2026-11-25 16:52:20,285 WARNING edge.runtime BUFFER: node=node-b rows=14 returned to pending
+2026-11-25 16:52:20,286 INFO edge.runtime BUFFER: total=45 per_node={'node-a': 15, 'node-b': 15, 'node-c': 15}
+2026-11-25 16:52:20,286 INFO edge.runtime STATE: runtime stopped
+2026-11-25 16:55:18,979 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:55:19,446 INFO edge.runtime STATE: runtime started nodes=node-a,node-b,node-c
+2026-11-25 16:55:19,449 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:55:19,929 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:55:25,002 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:55:25,002 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:55:27,113 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:55:27,663 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:55:27,663 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:55:29,776 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:55:30,322 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 16:55:30,322 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 16:55:32,291 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:55:32,530 INFO edge.publisher PUBLISH node=node-a rows=15 ts=[1795599520559, 1795599525566, 1795599530568, 1795599535570, 1795599540573, 1795599545575, 1795604432968, 1795604438059, 1795604506975, 1795604512051, 1795604689657, 1795604694760, 1795604699762, 1795604810178, 1795604815243]
+2026-11-25 16:55:33,007 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:55:33,008 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:55:34,991 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:55:35,472 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:55:35,472 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:55:37,583 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:55:38,127 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:55:38,147 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:55:40,270 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:55:40,546 INFO edge.publisher PUBLISH node=node-c rows=15 ts=[1795599520560, 1795599525575, 1795599530577, 1795599535580, 1795599540582, 1795599545585, 1795604432970, 1795604438060, 1795604506976, 1795604512052, 1795604689659, 1795604694769, 1795604699771, 1795604810180, 1795604815244]
+2026-11-25 16:55:40,786 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:55:40,787 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:55:42,746 INFO edge.runtime STATE: QUIT requested
+2026-11-25 16:55:42,747 INFO __main__ STATE: CLI exiting
+2026-11-25 16:55:42,763 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:55:43,238 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:55:43,238 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:55:45,206 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:55:45,683 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:55:45,683 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:55:47,796 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:55:48,340 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 16:55:48,340 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 16:55:50,468 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:55:50,743 INFO edge.publisher PUBLISH node=node-b rows=16 ts=[1795599520561, 1795599525584, 1795599530586, 1795599535590, 1795599540592, 1795599545594, 1795604432969, 1795604438055, 1795604506976, 1795604512053, 1795604689658, 1795604694744, 1795604699746, 1795604810179, 1795604815238, 1795605024446]
+2026-11-25 16:55:50,746 INFO edge.runtime BUFFER: total=11 per_node={'node-a': 4, 'node-b': 3, 'node-c': 4}
+2026-11-25 16:55:50,747 INFO edge.runtime STATE: runtime stopped
+2026-11-25 16:56:56,916 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 16:56:57,477 INFO edge.runtime STATE: runtime started nodes=node-a,node-b,node-c
+2026-11-25 16:56:57,555 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 16:56:57,969 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:57:02,789 INFO edge.publisher PUBLISH node=node-a rows=4 ts=[1795605024445, 1795605029519, 1795605034521, 1795605039523]
+2026-11-25 16:57:03,026 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 16:57:03,026 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 16:57:05,215 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 16:57:05,490 INFO edge.publisher PUBLISH node=node-c rows=4 ts=[1795605024447, 1795605029520, 1795605034523, 1795605039524]
+2026-11-25 16:57:05,767 INFO edge.publisher PUBLISH node=node-b rows=4 ts=[1795605029513, 1795605034515, 1795605039517, 1795605122478]
+2026-11-25 16:57:05,769 INFO edge.runtime BUFFER: total=2 per_node={'node-a': 1, 'node-b': 0, 'node-c': 1}
+2026-11-25 16:57:11,009 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605122477, 1795605127550]
+2026-11-25 16:57:11,285 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605122478, 1795605127552]
+2026-11-25 16:57:11,562 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795605127546]
+2026-11-25 16:57:11,563 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 16:57:16,839 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795605132548]
+2026-11-25 16:57:17,080 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795605132552]
+2026-11-25 16:57:17,356 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795605132553]
+2026-11-25 16:57:17,357 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 16:57:17,719 INFO edge.runtime STATE: QUIT requested
+2026-11-25 16:57:17,720 INFO __main__ STATE: CLI exiting
+2026-11-25 16:57:17,720 INFO edge.runtime STATE: runtime stopped
+2026-11-25 17:02:18,376 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 17:02:18,929 INFO edge.runtime STATE: runtime started nodes=node-a,node-b,node-c
+2026-11-25 17:02:18,947 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 17:02:19,480 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 17:02:20,386 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605137550, 1795605439929]
+2026-11-25 17:02:20,663 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795605137554]
+2026-11-25 17:02:20,937 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795605137555]
+2026-11-25 17:02:20,938 INFO edge.runtime BUFFER: total=2 per_node={'node-a': 1, 'node-b': 0, 'node-c': 1}
+2026-11-25 17:02:22,216 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605439928, 1795605441112]
+2026-11-25 17:02:22,489 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605439930, 1795605441113]
+2026-11-25 17:02:22,765 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795605441109]
+2026-11-25 17:02:22,766 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:24,043 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605442111, 1795605443113]
+2026-11-25 17:02:24,320 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605442113, 1795605443115]
+2026-11-25 17:02:24,594 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605442114, 1795605443116]
+2026-11-25 17:02:24,595 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:25,871 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605444115, 1795605445117]
+2026-11-25 17:02:26,148 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605444116, 1795605445118]
+2026-11-25 17:02:26,422 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605444118, 1795605445119]
+2026-11-25 17:02:26,423 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:27,700 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605446119, 1795605447121]
+2026-11-25 17:02:27,977 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605446120, 1795605447123]
+2026-11-25 17:02:28,252 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605446121, 1795605447124]
+2026-11-25 17:02:28,253 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:29,530 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605448123, 1795605449125]
+2026-11-25 17:02:29,806 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605448125, 1795605449126]
+2026-11-25 17:02:30,080 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605448126, 1795605449127]
+2026-11-25 17:02:30,082 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:02:31,359 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795605450127]
+2026-11-25 17:02:31,635 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795605450129]
+2026-11-25 17:02:31,908 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795605450130]
+2026-11-25 17:02:31,909 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:33,186 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605451129, 1795605452132]
+2026-11-25 17:02:33,462 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605451130, 1795605452133]
+2026-11-25 17:02:33,736 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605451131, 1795605452134]
+2026-11-25 17:02:33,738 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:35,015 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605453134, 1795605454136]
+2026-11-25 17:02:35,291 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605453136, 1795605454138]
+2026-11-25 17:02:35,565 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605453137, 1795605454139]
+2026-11-25 17:02:35,567 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:36,842 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605455138, 1795605456141]
+2026-11-25 17:02:37,118 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605455140, 1795605456142]
+2026-11-25 17:02:37,393 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605455141, 1795605456144]
+2026-11-25 17:02:37,394 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:38,670 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605457143, 1795605458145]
+2026-11-25 17:02:38,946 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605457144, 1795605458146]
+2026-11-25 17:02:39,220 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605457145, 1795605458147]
+2026-11-25 17:02:39,221 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:40,499 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605459147, 1795605460149]
+2026-11-25 17:02:40,776 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605459148, 1795605460150]
+2026-11-25 17:02:41,051 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605459149, 1795605460151]
+2026-11-25 17:02:41,052 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:02:42,329 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795605461151]
+2026-11-25 17:02:42,606 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795605461152]
+2026-11-25 17:02:42,879 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795605461153]
+2026-11-25 17:02:42,881 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:44,159 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605462153, 1795605463155]
+2026-11-25 17:02:44,438 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605462155, 1795605463157]
+2026-11-25 17:02:44,712 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605462167, 1795605463173]
+2026-11-25 17:02:44,714 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:45,991 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605464157, 1795605465160]
+2026-11-25 17:02:46,269 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605464160, 1795605465161]
+2026-11-25 17:02:46,543 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605464176, 1795605465178]
+2026-11-25 17:02:46,545 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:47,822 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605466162, 1795605467165]
+2026-11-25 17:02:48,100 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605466164, 1795605467166]
+2026-11-25 17:02:48,375 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605466180, 1795605467182]
+2026-11-25 17:02:48,376 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:49,653 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605468167, 1795605469170]
+2026-11-25 17:02:49,929 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605468169, 1795605469171]
+2026-11-25 17:02:50,203 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605468185, 1795605469188]
+2026-11-25 17:02:50,205 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:51,482 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605470172, 1795605471174]
+2026-11-25 17:02:51,759 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605470173, 1795605471176]
+2026-11-25 17:02:52,034 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605470190, 1795605471192]
+2026-11-25 17:02:52,035 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:02:53,312 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795605472177]
+2026-11-25 17:02:53,588 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795605472178]
+2026-11-25 17:02:53,863 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795605472195]
+2026-11-25 17:02:53,864 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:55,142 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605473179, 1795605474182]
+2026-11-25 17:02:55,419 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605473180, 1795605474184]
+2026-11-25 17:02:55,695 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605473197, 1795605474199]
+2026-11-25 17:02:55,697 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:56,974 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605475185, 1795605476187]
+2026-11-25 17:02:57,251 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605475186, 1795605476188]
+2026-11-25 17:02:57,527 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605475202, 1795605476205]
+2026-11-25 17:02:57,529 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:02:58,807 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605477189, 1795605478192]
+2026-11-25 17:02:59,083 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605477190, 1795605478192]
+2026-11-25 17:02:59,358 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605477207, 1795605478209]
+2026-11-25 17:02:59,360 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:03:00,637 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605479194, 1795605480196]
+2026-11-25 17:03:00,916 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605479196, 1795605480197]
+2026-11-25 17:03:01,191 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605479211, 1795605480214]
+2026-11-25 17:03:01,193 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:03:02,470 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795605481198]
+2026-11-25 17:03:02,747 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795605481199]
+2026-11-25 17:03:03,021 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795605481216]
+2026-11-25 17:03:03,023 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:03:04,301 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605482200, 1795605483203]
+2026-11-25 17:03:04,578 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605482201, 1795605483204]
+2026-11-25 17:03:04,854 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605482218, 1795605483221]
+2026-11-25 17:03:04,856 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:03:06,132 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605484206, 1795605485208]
+2026-11-25 17:03:06,410 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605484209, 1795605485211]
+2026-11-25 17:03:06,689 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605484225, 1795605485228]
+2026-11-25 17:03:06,691 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:03:07,968 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605486211, 1795605487213]
+2026-11-25 17:03:08,246 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605486213, 1795605487216]
+2026-11-25 17:03:08,520 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605486230, 1795605487233]
+2026-11-25 17:03:08,522 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:03:09,799 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605488215, 1795605489217]
+2026-11-25 17:03:10,077 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605488218, 1795605489220]
+2026-11-25 17:03:10,352 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605488235, 1795605489238]
+2026-11-25 17:03:10,354 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:03:11,631 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605490224, 1795605491226]
+2026-11-25 17:03:11,908 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605490225, 1795605491228]
+2026-11-25 17:03:12,183 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605490240, 1795605491242]
+2026-11-25 17:03:12,185 INFO edge.runtime BUFFER: total=0 per_node={'node-a': 0, 'node-b': 0, 'node-c': 0}
+2026-11-25 17:03:13,462 INFO edge.publisher PUBLISH node=node-b rows=1 ts=[1795605492229]
+2026-11-25 17:03:13,741 INFO edge.publisher PUBLISH node=node-a rows=1 ts=[1795605492230]
+2026-11-25 17:03:14,016 INFO edge.publisher PUBLISH node=node-c rows=1 ts=[1795605492245]
+2026-11-25 17:03:14,018 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:03:15,295 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605493231, 1795605494233]
+2026-11-25 17:03:15,573 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605493232, 1795605494234]
+2026-11-25 17:03:15,848 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605493247, 1795605494249]
+2026-11-25 17:03:15,851 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:03:16,972 WARNING edge.runtime OUTAGE: START; continuing local sampling
+2026-11-25 17:03:17,128 INFO edge.publisher PUBLISH node=node-b rows=2 ts=[1795605495235, 1795605496238]
+2026-11-25 17:03:17,406 INFO edge.publisher PUBLISH node=node-a rows=2 ts=[1795605495237, 1795605496240]
+2026-11-25 17:03:17,681 INFO edge.publisher PUBLISH node=node-c rows=2 ts=[1795605495252, 1795605496255]
+2026-11-25 17:03:17,683 INFO edge.runtime BUFFER: total=3 per_node={'node-a': 1, 'node-b': 1, 'node-c': 1}
+2026-11-25 17:03:18,684 INFO edge.scenarios STATE: baseline -> silt_intrusion
+2026-11-25 17:03:22,255 INFO edge.runtime STATE: node=node-b severity=Critical
+2026-11-25 17:03:22,258 INFO edge.runtime STATE: node=node-a severity=Critical
+2026-11-25 17:03:22,272 INFO edge.runtime STATE: node=node-c severity=Critical
+2026-11-25 17:03:28,408 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:03:28,410 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:03:28,623 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:28,623 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:29,411 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.32 substituted=6.32
+2026-11-25 17:03:29,411 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:03:29,626 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:29,626 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:30,628 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:30,628 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:30,630 WARNING edge.runtime FAULT: node=node-c severity=Fault
+2026-11-25 17:03:31,631 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:31,631 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:32,633 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:32,633 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:33,635 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:33,635 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:34,637 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:34,638 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:35,639 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:35,640 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:36,642 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:36,642 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:37,644 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:37,644 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:38,645 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:38,646 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:39,425 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.33 substituted=6.33
+2026-11-25 17:03:39,425 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:03:39,647 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:39,647 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:40,440 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.33 substituted=6.33
+2026-11-25 17:03:40,440 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:03:40,649 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:40,649 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:41,442 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.33 substituted=6.33
+2026-11-25 17:03:41,442 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:03:41,443 WARNING edge.runtime FAULT: node=node-b severity=Fault
+2026-11-25 17:03:41,651 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:41,651 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:42,653 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:42,654 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:43,655 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:43,656 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:44,448 INFO edge.runtime STATE: node=node-b severity=Critical
+2026-11-25 17:03:44,657 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:44,658 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:45,659 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:45,659 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:46,661 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:46,661 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:46,974 WARNING edge.runtime OUTAGE: END; draining buffered rows
+2026-11-25 17:03:46,979 INFO edge.runtime REPLAY: node=node-b rows=16
+2026-11-25 17:03:47,527 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 17:03:47,527 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 17:03:47,663 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:47,663 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:47,694 INFO edge.runtime REPLAY: node=node-b rows=15
+2026-11-25 17:03:47,694 WARNING edge.publisher NETWORK_FAILURE: node=node-b publish while disconnected
+2026-11-25 17:03:47,695 INFO edge.publisher BACKOFF: node=node-b seconds=2.0
+2026-11-25 17:03:47,695 WARNING edge.runtime BUFFER: node=node-b rows=15 returned to pending
+2026-11-25 17:03:47,696 INFO edge.runtime REPLAY: node=node-c rows=15
+2026-11-25 17:03:48,512 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 17:03:48,512 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 17:03:48,665 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:48,665 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:49,635 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 17:03:49,666 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:49,667 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:50,181 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 17:03:50,181 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 17:03:50,468 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 17:03:50,668 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:50,668 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:51,177 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 17:03:51,178 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 17:03:51,457 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.34 substituted=6.34
+2026-11-25 17:03:51,468 INFO edge.runtime VALIDITY: node=node-b flags=STUCK
+2026-11-25 17:03:51,670 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:51,670 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:52,193 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 17:03:52,673 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:52,673 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:52,931 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 17:03:52,931 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 17:03:53,301 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 17:03:53,573 INFO edge.publisher PUBLISH node=node-c rows=15 ts=[1795605513635, 1795605514637, 1795605515639, 1795605516641, 1795605517644, 1795605518645, 1795605519647, 1795605520649, 1795605521651, 1795605522653, 1795605523655, 1795605524657, 1795605525659, 1795605526661, 1795605527663]
+2026-11-25 17:03:53,574 INFO edge.runtime REPLAY: node=node-a rows=15
+2026-11-25 17:03:53,675 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:53,675 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:54,399 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 17:03:54,399 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 17:03:54,677 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.3 substituted=6.3
+2026-11-25 17:03:54,677 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:03:55,039 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 17:03:55,312 INFO edge.publisher PUBLISH node=node-b rows=16 ts=[1795605497241, 1795605498243, 1795605499245, 1795605500248, 1795605501250, 1795605502253, 1795605503256, 1795605504258, 1795605505260, 1795605506263, 1795605507266, 1795605508408, 1795605509411, 1795605510413, 1795605511414, 1795605512415]
+2026-11-25 17:03:55,313 INFO edge.runtime REPLAY: node=node-a rows=16
+2026-11-25 17:03:55,313 WARNING edge.publisher NETWORK_FAILURE: node=node-a publish while disconnected
+2026-11-25 17:03:55,313 INFO edge.publisher BACKOFF: node=node-a seconds=2.0
+2026-11-25 17:03:55,314 WARNING edge.runtime BUFFER: node=node-a rows=16 returned to pending
+2026-11-25 17:03:55,314 INFO edge.runtime REPLAY: node=node-c rows=16
+2026-11-25 17:03:55,860 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 17:03:55,860 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 17:03:56,514 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 17:03:57,338 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 17:03:57,339 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 17:03:57,685 INFO edge.runtime STATE: node=node-c severity=Critical
+2026-11-25 17:03:57,833 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 17:03:58,310 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 17:03:58,310 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 17:03:59,327 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 17:03:59,572 INFO edge.publisher PUBLISH node=node-a rows=15 ts=[1795605513636, 1795605514638, 1795605515640, 1795605516643, 1795605517644, 1795605518646, 1795605519648, 1795605520650, 1795605521652, 1795605522654, 1795605523656, 1795605524658, 1795605525660, 1795605526662, 1795605527664]
+2026-11-25 17:03:59,574 INFO edge.runtime BUFFER: total=81 per_node={'node-a': 27, 'node-b': 27, 'node-c': 27}
+2026-11-25 17:04:00,420 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 17:04:00,819 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 17:04:00,820 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 17:04:01,249 INFO edge.publisher PUBLISH node=node-c rows=16 ts=[1795605497257, 1795605498259, 1795605499262, 1795605500265, 1795605501267, 1795605502270, 1795605503273, 1795605504275, 1795605505279, 1795605506281, 1795605507284, 1795605508623, 1795605509626, 1795605510628, 1795605511631, 1795605512633]
+2026-11-25 17:04:01,251 INFO edge.runtime BUFFER: total=70 per_node={'node-a': 29, 'node-b': 28, 'node-c': 13}
+2026-11-25 17:04:03,058 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 17:04:03,604 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 17:04:03,604 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 17:04:04,695 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:04,695 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:05,573 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 17:04:05,698 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:05,698 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:06,048 WARNING edge.publisher NETWORK_FAILURE: node=node-a disconnect rc=7
+2026-11-25 17:04:06,048 INFO edge.publisher BACKOFF: node=node-a seconds=1.0
+2026-11-25 17:04:06,700 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:06,700 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:06,702 WARNING edge.runtime FAULT: node=node-c severity=Fault
+2026-11-25 17:04:07,702 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:07,703 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:08,179 INFO edge.publisher CONNECTED: node=node-a
+2026-11-25 17:04:08,704 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:08,705 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:09,006 INFO edge.publisher PUBLISH node=node-a rows=16 ts=[1795605497242, 1795605498245, 1795605499247, 1795605500249, 1795605501252, 1795605502254, 1795605503258, 1795605504260, 1795605505262, 1795605506265, 1795605507267, 1795605508624, 1795605509627, 1795605510629, 1795605511632, 1795605512634]
+2026-11-25 17:04:09,707 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:09,707 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:09,827 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 17:04:09,827 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 17:04:10,709 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:10,710 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:11,711 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:11,712 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:11,940 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 17:04:12,714 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:12,714 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:12,760 WARNING edge.publisher NETWORK_FAILURE: node=node-b disconnect rc=7
+2026-11-25 17:04:12,760 INFO edge.publisher BACKOFF: node=node-b seconds=1.0
+2026-11-25 17:04:13,716 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:13,716 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:14,718 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:14,718 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:14,876 INFO edge.publisher CONNECTED: node=node-b
+2026-11-25 17:04:15,425 INFO edge.publisher PUBLISH node=node-b rows=16 ts=[1795605513417, 1795605514418, 1795605515420, 1795605516421, 1795605517422, 1795605518424, 1795605519425, 1795605520440, 1795605521442, 1795605522444, 1795605523445, 1795605524447, 1795605525448, 1795605526450, 1795605527451, 1795605528452]
+2026-11-25 17:04:15,720 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:15,720 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:16,248 WARNING edge.publisher NETWORK_FAILURE: node=node-c disconnect rc=7
+2026-11-25 17:04:16,249 INFO edge.publisher BACKOFF: node=node-c seconds=1.0
+2026-11-25 17:04:16,722 WARNING edge.validity VALIDITY: STUCK channel=ph value=6.31 substituted=6.31
+2026-11-25 17:04:16,722 INFO edge.runtime VALIDITY: node=node-c flags=STUCK
+2026-11-25 17:04:16,977 INFO edge.runtime STATE: QUIT requested
+2026-11-25 17:04:16,977 INFO __main__ STATE: CLI exiting
+2026-11-25 17:04:18,222 INFO edge.publisher CONNECTED: node=node-c
+2026-11-25 17:04:18,699 INFO edge.publisher PUBLISH node=node-c rows=12 ts=[1795605528665, 1795605529666, 1795605530668, 1795605531670, 1795605532673, 1795605533675, 1795605534677, 1795605535680, 1795605536681, 1795605537683, 1795605538685, 1795605539687]
+2026-11-25 17:04:18,701 INFO edge.runtime BUFFER: total=74 per_node={'node-a': 29, 'node-b': 28, 'node-c': 17}
+2026-11-25 17:04:18,701 INFO edge.runtime STATE: runtime stopped

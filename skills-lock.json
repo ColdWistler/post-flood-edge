@@ -1,0 +1,53 @@
+{
+  "version": 2,
+  "skills": {
+    "latex-paper-en": {
+      "source": "bahayonghang/academic-writing-skills",
+      "commit": "3f908f9866b9d086909494c3acdb46fd61a66054",
+      "sourceType": "github",
+      "skillPath": "academic-writing-skills/latex-paper-en/SKILL.md",
+      "computedHash": "39ba7ba2dbf3fbb352427671f372b4528c050ad7f933ac0aabeaa14446320b33",
+      "installMode": "copy"
+    },
+    "matplotlib": {
+      "source": "K-Dense-AI/scientific-agent-skills",
+      "commit": "c21d13b3cc2894680229ba9959a53281acb9200e",
+      "sourceType": "github",
+      "skillPath": "skills/matplotlib/SKILL.md",
+      "computedHash": "d158b5acb8d907abbeea88f2b32914d88a07ac212b5396a8ba50f5082e971c97",
+      "installMode": "copy"
+    },
+    "mqtt-development": {
+      "source": "Mindrally/skills",
+      "commit": "7682ca77710e0971eab4e0ae5dddfa281aea0ba5",
+      "sourceType": "github",
+      "skillPath": "mqtt-development/SKILL.md",
+      "computedHash": "e3e28972f1f38d6dc303bce969b9362a0378efcb3059da92786f7d1069dc8aca",
+      "installMode": "copy"
+    },
+    "paper-writing-studio": {
+      "source": "bahayonghang/academic-writing-skills",
+      "commit": "3f908f9866b9d086909494c3acdb46fd61a66054",
+      "sourceType": "github",
+      "skillPath": "academic-writing-skills/paper-writing-studio/SKILL.md",
+      "computedHash": "4debcfc114da26909116a02868b6d6b6a2ccc8f7384a20e08e282debdafb5aff",
+      "installMode": "copy"
+    },
+    "systematic-debugging": {
+      "source": "obra/superpowers",
+      "commit": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "sourceType": "github",
+      "skillPath": "skills/systematic-debugging/SKILL.md",
+      "computedHash": "79ff0583175346e39431b0dc713b223edd1bd7a7ea2b6c8b78b2fb9a3fed6782",
+      "installMode": "copy"
+    },
+    "verification-before-completion": {
+      "source": "obra/superpowers",
+      "commit": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "sourceType": "github",
+      "skillPath": "skills/verification-before-completion/SKILL.md",
+      "computedHash": "09b0e3a4689c1c38a3b8fc6ef57a1d4165aa33c0013d546dbde9dd348941a319",
+      "installMode": "copy"
+    }
+  }
+}

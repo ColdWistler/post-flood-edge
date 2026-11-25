@@ -2,13 +2,13 @@
 
 Anushree's detailed ThingsBoard provisioning, eight-widget dashboard specification,
 evidence checklist and manuscript draft are in [ANUSHREE.md](ANUSHREE.md) and
-[ANUSHREE_MANUSCRIPT.md](ANUSHREE_MANUSCRIPT.md). The profile, three devices and dashboard were created on the EU Cloud tenant on 25 November 2026. The API dashboard JSON, redacted profile snapshot and timestamp comparison are in `exports/`; genuine dashboard screenshots and UI import checks are still needed.
-`python -m cloud.provision` previews the repeatable device setup. Save a
-ThingsBoard API key in ignored `.thingsboard-auth` (key only, one line), then
-`python -m cloud.provision --apply` provisions the profile and three devices
-through the tenant REST API. The default URL is the user's
-`https://eu.thingsboard.cloud`; set `TB_URL` to override it. The API snapshot
-it writes is redacted evidence, not a UI export.
+[ANUSHREE_MANUSCRIPT.md](ANUSHREE_MANUSCRIPT.md). The profile, three devices and dashboard were created on the EU Cloud tenant on 25 November 2026. The API dashboard JSON, redacted profile snapshot and timestamp comparison are in `exports/`; genuine dashboard screenshots and UI import checks are captured in `cloud/evidence/` and `evidence/`.
+`python -m cloud.provision --dry-run` is the default and validates the committed
+artifacts without network traffic. Anushree's repeatable device setup is now a
+separate mode: save a ThingsBoard API key in ignored `.thingsboard-auth` (key only,
+one line) or set `TB_AUTH`, then run `python -m cloud.provision --device-setup`.
+The default URL is the user's `https://eu.thingsboard.cloud`; set `TB_URL` to
+override it. The API snapshot it writes is redacted evidence, not a UI export.
 
 This repository implements the edge simulator and now includes provisioning and dashboard configuration for the cloud half. This document is the
 actionable checklist for the Cloud Track members: Anushree Pradhan (provisioning and
@@ -52,24 +52,41 @@ action on a real instance and no credentials are stored in them.
 | --- | --- | --- |
 | `cloud/artifacts/device_profile.json` | Device profile with **all nine alarm rules** in the native Device Profile → Alarm Rules tab (six direct thresholds + three edge-derived mirrors) | `python -m cloud.provision --apply` |
 | `cloud/artifacts/devices.json` | Three devices with `${TB_TOKEN_*}` placeholders and site coordinates | tokens filled from `.env` by `cloud.provision` |
-| `cloud/artifacts/dashboard.json` | 5-second triage dashboard built only from **native system widgets** (gauges, charts, map, alarms table, entity table); v3.x alias-based template | `python -m cloud.provision --apply` |
-| `cloud/artifacts/dashboard_thingsboard_cloud.json` | **Verified-importable** Cloud version: six native line charts cloned from a real ThingsBoard Cloud export, bound directly to a `deviceId` | UI: **Dashboards → Import** |
-| `cloud/artifacts/dashboard_minimal.json` | Empty dashboard used to confirm import works on a given instance | UI: **Dashboards → Import** |
+| `cloud/artifacts/dashboard_triage.json` | **Eight-widget triage dashboard**: pH/turbidity radial gauges, TDS digital gauge, multi-parameter chart, temperature/flow chart, severity map, alarms table and node-status entity table | `python -m cloud.provision --apply` (preferred) or UI: **Dashboards → Import** |
+| `cloud/artifacts/dashboard_thingsboard_cloud.json` | **Verified-importable fallback**: six native line charts cloned from a real ThingsBoard Cloud export, bound directly to a `deviceId` | UI fallback if the triage import fails |
 | `cloud/artifacts/wqi_rule_chain.json` | Native Rule Chains tab: only the server-side WQI script (explicit Task 3 deliverable) plus `server_received_ms` for latency | `python -m cloud.provision --apply --set-root` (opt-in) |
 | `cloud/artifacts/wqi_server_script.js` | Readable copy of the WQI rule-node script | embedded in the rule chain JSON |
 | `cloud/artifacts/alarm_rules.json` | Declarative nine-rule spec with exact deadbands/debounce | documentation and test fixture |
+| `cloud/artifacts/alarm_rules_import/` | Nine importable per-rule `ALARM` documents | use **Alarm rules → Import** on current Cloud tenants |
 
-**Which dashboard to import:** use `dashboard_thingsboard_cloud.json` on ThingsBoard
-Cloud. The generic `dashboard.json` targets CE 3.x and uses `entityAliasId`
-datasources; newer Cloud instances rejected it silently on UI import. The Cloud file
-was generated from a real export from the target instance, so every widget carries the
-rich `settings` and `deviceId` datasource that version expects. It has three datasources
-per chart (node-a `81e5b1f0-e883-11f1-ab4e-dfd4fe9de952`, node-b
-`01f214e0-e886-11f1-b8ac-4bd49425d19e`, node-c
-`0bb52a80-e886-11f1-86e5-9755011de358`), so all live nodes appear on every metric.
-It uses a 24-hour widget timewindow with raw `NONE` aggregation and `showPoints: true`
-(matching a verified single-widget diagnostic), so sparse demo telemetry is visible
-instead of rendering as an empty line chart.
+**Which dashboard to import:** use `dashboard_triage.json`. It is derived from the
+verified six-chart Cloud export that the user confirmed is working in ThingsBoard:
+the same widget `settings`, raw `NONE` aggregation, 24-hour timewindow, visible
+sample points and direct `deviceId` datasources are retained. The earlier
+alias-based `dashboard.json` and the `dashboard_minimal.json` diagnostic were used
+during troubleshooting and are not committed final artifacts; that template was
+silently rejected by Cloud UI import. The six-chart
+`dashboard_thingsboard_cloud.json` remains committed as a safe fallback and is used
+by `cloud.provision` only if the triage file is absent.
+
+The three device IDs embedded in both dashboards are node-a
+`81e5b1f0-e883-11f1-ab4e-dfd4fe9de952`, node-b
+`01f214e0-e886-11f1-b8ac-4bd49425d19e` and node-c
+`0bb52a80-e886-11f1-86e5-9755011de358`. The two charts and the three map markers use
+direct device bindings; the gauges are fixed to node-a; the alarms table and
+node-status table use an explicit `entityList` alias containing all three IDs. The map
+colours a marker from the published `severity` key when present. If the tenant has no
+`severity` telemetry, the same colour bands are derived from `active_alarms`,
+`turbidity_ntu`, `ph`, `tds_ppm` and `flow_lpm`, so the markers still draw. This avoids
+the unresolved `stateEntity` and `deviceType` aliases that caused blank widgets on the
+first import.
+
+**Verification status:** the six-chart fallback is confirmed working on the user's
+tenant. The eight-widget triage file is generated from that working export, passes
+offline validation, and its tenant rendering is captured in
+`evidence/Dashboard_8_widgets.png` and `evidence/Last_widget.png`. If a future import
+fails, keep the six-chart file and add the extra widgets manually on the tenant, then
+re-export.
 
 ### Native ThingsBoard tabs used
 
@@ -77,8 +94,8 @@ instead of rendering as an empty line chart.
 | --- | --- |
 | Device Profiles | Profile `post-flood-water-quality` with all nine alarm rules (declarative conditions — no custom alarm scripts) |
 | Devices | `node-a`, `node-b`, `node-c`, their access tokens, and the server-scope `inactivityTimeout` attribute |
-| Dashboards | The triage dashboard; every widget is a built-in `system.*` widget, so no widget bundle is uploaded |
-| Alarms | Native alarm table on the dashboard; alarm state is created by the device-profile rules, so no custom alarm rule chain is needed |
+| Dashboards | `dashboard_triage.json` contains the eight native triage widgets; `dashboard_thingsboard_cloud.json` is the confirmed six-chart fallback |
+| Alarms | Alarm state is created by the device-profile rules; the triage dashboard's native alarms-table widget displays active and cleared alarms. No custom alarm rule chain is needed |
 | Rule Chains | Only the WQI transform chain — required by the assignment for a server-side WQI implementation; all alarms deliberately stay in the Alarm Rules tab |
 
 UI-only workflow (no scripts needed): **Device Profiles → Import** the profile, inspect
@@ -91,10 +108,13 @@ native operations over REST.
 `python -m cloud.provision --dry-run` validates all four import files without network
 traffic. `--apply` needs `TB_HOST` plus either `TB_JWT` or
 `TB_ADMIN_USER`/`TB_ADMIN_PASSWORD`, and the three tokens in the environment; it
-never writes credentials to disk. `python -m cloud.benchmark` (optionally `--apply
+never writes credentials to disk. `--device-setup` is the separate Anushree
+profile/device path and uses `TB_URL` plus `TB_AUTH`/`.thingsboard-auth`; it writes
+device tokens only to the ignored local `.env`. `python -m cloud.benchmark` (optionally `--apply
 --plot`) produces the real-broker measurement table described in
-`cloud/benchmark/README.md`. Manuscript placeholders are collected in
-`cloud/MANUSCRIPT.md`.
+`cloud/benchmark/README.md`. The Cloud Track manuscript text and final two-run
+measurements are collected in `cloud/MANUSCRIPT.md`; the compiled IEEE source is in
+`paper/`.
 
 ## Connect the edge to ThingsBoard
 
@@ -131,41 +151,62 @@ never writes credentials to disk. `python -m cloud.benchmark` (optionally `--app
 
 ## Operational dashboard (Anushree)
 
-Build a 5-second triage view: a duty officer should answer "which source is unsafe right
-now?" within five seconds of opening it. Organise it for operation, not as a widget gallery.
+The eight-widget triage view answers "which source is unsafe right now?" within five
+seconds. The artifact is `cloud/artifacts/dashboard_triage.json`.
 
-| Widget | Type | Bound telemetry | Requirement |
+| Widget | Type in artifact | Bound telemetry | Requirement |
 | --- | --- | --- | --- |
-| pH gauge | Analogue/radial | `ph` | Colour-banded red `<6.5`, green `6.5–8.5`, red `>8.5` |
-| Turbidity gauge | Analogue/radial | `turbidity_ntu` | Log or segmented scale, banded at 5/50/200 NTU |
-| TDS digital gauge | Digital | `tds_ppm` | Banded at 500/1000 ppm |
-| Multi-parameter time series | Time-series, dual axis | `turbidity_ntu`, `ph`, `tds_ppm` | Show the intrusion event and the backfilled gap |
-| Temperature and flow | Time-series | `water_temp_c`, `flow_lpm` | Supply-continuity view |
-| Node map | OpenStreetMap / GIS | `latitude`, `longitude` plus status | Marker colour driven by alarm severity |
-| Alarms table | Alarms widget | — | Active and cleared alarms with severity and duration |
-| Node status | Entity table / card | last activity, `buffer_depth` | Fleet health |
+| pH gauge | `system.analogue_gauges.radial_gauge_canvas_gauges` | node-a `ph` | Red `<6.5`, green `6.5–8.5`, red `>8.5` |
+| Turbidity gauge | `system.analogue_gauges.radial_gauge_canvas_gauges` | node-a `turbidity_ntu` | Banded at 5/50/200 NTU |
+| TDS digital gauge | `system.digital_gauges.gauge_justgage` | node-a `tds_ppm` | Banded at 500/1000 ppm |
+| Multi-parameter time series | `system.line_chart` | `ph`, `turbidity_ntu`, `tds_ppm` for all three nodes | Shows intrusion and backfilled gap |
+| Temperature and flow | `system.line_chart` | `water_temp_c`, `flow_lpm` for all three nodes | Supply-continuity view |
+| Node map | `system.map` | direct device telemetry `latitude`, `longitude` plus raw alarm channels | Severity colouring with raw-telemetry fallback |
+| Alarms table | `system.alarm_widgets.alarms_table` | fleet alias alarm source | Active and cleared alarms with severity and time |
+| Node status | `system.cards.entities_table` | `severity`, `active_alarms`, `buffer_depth`, `wqi` | Fleet health for the three listed devices |
 
 `RSSI` is requested by the assignment but the virtual nodes publish no radio telemetry;
 mark it N/A rather than inventing values. `buffer_depth` is already published per node.
 
-The committed dashboard binds all widgets to a `node-` entity-name alias and uses the
-late-v3.x widget FQNs; verify them against your instance (FQNs drift between versions).
-Colour bands for the gauges and the severity-coloured map markers are finished in the
-widget settings after import — the artifact supplies the keys, ranges, labels and layout,
-not a pixel-perfect theme. Re-export the tuned dashboard for the submission archive.
+The two charts and the three map markers bind directly to the three verified
+`deviceId` datasources. The gauges use a deterministic `singleEntity` alias for node-a;
+the alarms table and entity table use an `entityList` alias containing the three
+verified device IDs. These are standard ThingsBoard alias forms taken from the
+platform's own demo dashboards. The earlier `stateEntity` and `deviceType` aliases
+were replaced because they resolved to nothing on this tenant, and the legacy
+`system.maps_v2.openstreetmap` map was replaced by the current `system.map` marker
+format. The tenant reported that `latitude` and `longitude` exist but `severity` does
+not, so the map marker colour now derives from available raw alarm channels when
+`severity` is absent. If markers still do not appear, check each device's latest
+telemetry for numeric `latitude` and `longitude`, then re-export the dashboard.
 
 - [ ] Add fleet-map to individual-node drill-down states (optional extension).
-- [ ] Import `cloud/artifacts/dashboard.json`, then export the dashboard JSON for the
-      submission archive after any visual tuning.
+- [ ] Import `cloud/artifacts/dashboard_triage.json` and confirm all eight widgets
+      render, including the three gauges, map, alarms table and entity table.
+- [ ] Re-export the tuned dashboard JSON for the submission archive after visual
+      confirmation.
+- [ ] If the import fails, fall back to `cloud/artifacts/dashboard_thingsboard_cloud.json`
+      and record which widgets had to be added manually.
 
 ## Alarm rules (Sambid)
 
-Configure **all nine** rules in the native Device Profile → Alarm Rules tab — no custom
-alarm rule chain is needed. `cloud/artifacts/alarm_rules.json` is the declarative
-specification and `cloud/artifacts/device_profile.json` carries all nine rules under
-`profileData.alarms` (v3.x `DeviceProfileAlarm` format: severity-keyed `createRules`,
-declarative numeric/boolean/string key filters, `REPEATING`/`DURATION` specs for
-debounce). The exact deadbands are mandatory; explain the anti-flapping purpose in the
+Configure **all nine** rules through the native Alarm Rules interface — no custom
+alarm rule chain is needed. Two representations are supplied because ThingsBoard Cloud
+versions differ:
+
+- `cloud/artifacts/alarm_rules.json` is the human-readable specification. It is
+  **documentation, not an import file**.
+- `cloud/artifacts/device_profile.json` carries all nine rules under
+  `profileData.alarms` in the older v3.x `DeviceProfileAlarm` format (severity-keyed
+  `createRules`, declarative numeric/boolean/string key filters and
+  `REPEATING`/`DURATION` debounce). Some current Cloud tenants accept this profile but
+  hide the deprecated list, so the **Alarm Rules** tab appears empty.
+- `cloud/artifacts/alarm_rules_import/` contains nine importable `CalculatedField`
+  documents of type `ALARM`, one per rule. Use **Alarm rules → Import** for each file
+  and assign it to the `post-flood-water-quality` profile when prompted. This is the
+  compatible route when the profile tab is empty.
+
+The exact deadbands are mandatory; explain the anti-flapping purpose in the
 manuscript.
 
 | Alarm | Severity | Create | Clear |
@@ -175,7 +216,7 @@ manuscript.
 | pH Out of Range | Critical | `ph < 6.5` or `> 8.5` | `6.7 ≤ ph ≤ 8.3` |
 | High TDS | Critical | `tds_ppm > 500` | `< 450` ppm |
 | Supply Interruption | Major | `flow_lpm == 0` sustained | `flow_lpm > 0` |
-| Node Inactive | Critical | Device inactivity timeout exceeded | Telemetry resumes |
+| Node Inactive | Critical | `node_inactive == true` (edge 90 s demo flag) | `node_inactive == false` |
 
 The edge additionally computes `Rapid Turbidity Rise`, `Severe pH Persistence` and
 `Sensor Fault`, and publishes the resulting `severity` and `active_alarms`. Their native

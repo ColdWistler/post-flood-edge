@@ -40,8 +40,9 @@ class FakeClock:
 class FakeMqttClient:
     """In-memory stand-in for a paho client; no broker or paho install needed."""
 
-    def __init__(self, callback_api_version=None, events=None) -> None:
+    def __init__(self, callback_api_version=None, events=None, client_id=None) -> None:
         self.callback_api_version = callback_api_version
+        self.client_id = client_id
         self.tls_kwargs: dict = {}
         self.username: str | None = None
         self.password: str | None = None
@@ -123,8 +124,10 @@ def fake_client_factory():
     clients: list[FakeMqttClient] = []
     events: list[tuple[str, int]] = []
 
-    def factory(callback_api_version=None) -> FakeMqttClient:
-        client = FakeMqttClient(callback_api_version=callback_api_version, events=events)
+    def factory(callback_api_version=None, client_id=None) -> FakeMqttClient:
+        client = FakeMqttClient(
+            callback_api_version=callback_api_version, events=events, client_id=client_id
+        )
         clients.append(client)
         events.append(("created", id(client)))
         return client

@@ -1,15 +1,28 @@
-"""Provision the three ThingsBoard devices for Anushree's cloud track.
+"""Provision the ThingsBoard artifacts and the repeatable device inventory.
 
-No external packages are needed. The script is idempotent and uses the tenant's
-existing default device profile as the version-compatible template. It never
-prints access tokens or the administrator credential.
+Dry-run is the default and performs no network calls. ``--apply`` reads a JWT
+from ``TB_JWT`` (or logs in with ``TB_ADMIN_USER``/``TB_ADMIN_PASSWORD``), fills
+the token placeholders in ``devices.json`` from the environment, and creates the
+device profile, three devices, dashboard and WQI rule chain. Secrets are never
+written to disk or printed.
 
-Preview: python -m cloud.provision
-Apply:   python -m cloud.provision --apply
+A separate ``--device-setup`` path preserves the version-compatible device
+provisioning used by the dashboard workstream. It reuses the tenant's default
+profile schema, creates the three nodes with coordinates and the normal
+inactivity attribute, saves a redacted profile snapshot, and writes device
+tokens only to the ignored local ``.env``. It accepts an API key from the
+ignored ``.thingsboard-auth`` file or ``TB_AUTH``; never pass secrets as CLI
+arguments.
 
-The user's tenant defaults to https://eu.thingsboard.cloud. Put only the API key
-in the ignored .thingsboard-auth file in the repository root. Alternatively set
-TB_AUTH='ApiKey ...' in the environment. Never pass secrets as CLI arguments.
+The dashboard imported by ``--apply`` is the eight-widget triage dashboard
+(``dashboard_triage.json``), built from the verified ThingsBoard Cloud export.
+If that file is absent, the verified six-chart export
+(``dashboard_thingsboard_cloud.json``) is used; the older alias-based
+``dashboard.json`` remains only as a CE 3.x fallback.
+
+    python -m cloud.provision --dry-run
+    python -m cloud.provision --apply
+    python -m cloud.provision --device-setup
 """
 
 from __future__ import annotations
@@ -17,11 +30,29 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
+from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
+from .benchmark import ThingsBoardClient
+
+ARTIFACTS = Path(__file__).resolve().parent / "artifacts"
+DASHBOARD_ARTIFACT = "dashboard_triage.json"
+CLOUD_DASHBOARD_ARTIFACT = "dashboard_thingsboard_cloud.json"
+LEGACY_DASHBOARD_ARTIFACT = "dashboard.json"
+TOKEN_PATTERN = re.compile(r"\$\{(TB_TOKEN_[A-Z0-9_]+)\}")
+NODE_TOKENS = {
+    "TB_TOKEN_NODE_A": "node-a",
+    "TB_TOKEN_NODE_B": "node-b",
+    "TB_TOKEN_NODE_C": "node-c",
+}
 
 PROFILE_NAME = "Post-Flood Water Source"
 NODES = {
@@ -44,7 +75,8 @@ def redact_sensitive(value):
     if isinstance(value, dict):
         return {
             key: "[REDACTED]" if any(
-                word in key.lower() for word in ("secret", "password", "token", "provisiondevicekey")
+                word in key.lower()
+                for word in ("secret", "password", "token", "provisiondevicekey")
             ) else redact_sensitive(item)
             for key, item in value.items()
         }
@@ -53,7 +85,82 @@ def redact_sensitive(value):
     return value
 
 
+def load_json(name: str) -> Any:
+    """Load one committed artifact."""
+    path = ARTIFACTS / name
+    if not path.exists():
+        raise FileNotFoundError(f"missing artifact: {path}")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_dashboard() -> tuple[dict[str, Any], str]:
+    """Load the eight-widget triage dashboard with verified fallbacks.
+
+    The alias-based ``dashboard.json`` was rejected by ThingsBoard Cloud on UI
+    import. ``dashboard_triage.json`` is derived from the verified Cloud export
+    and adds the native gauges, map, alarms table and entity table required by
+    the rubric; the six-chart export is retained as a safe fallback.
+    """
+    for name in (DASHBOARD_ARTIFACT, CLOUD_DASHBOARD_ARTIFACT, LEGACY_DASHBOARD_ARTIFACT):
+        if (ARTIFACTS / name).exists():
+            return load_json(name), name
+    raise FileNotFoundError(
+        f"missing dashboard artifact: {ARTIFACTS / DASHBOARD_ARTIFACT}"
+    )
+
+
+def fill_tokens(body: Any, environ: dict[str, str] | None = None) -> Any:
+    """Replace ``${TB_TOKEN_*}`` placeholders, refusing empty credentials."""
+    env = os.environ if environ is None else environ
+    missing = [
+        name
+        for name in NODE_TOKENS
+        if name not in env or not str(env[name]).strip()
+    ]
+    if missing:
+        raise ValueError("missing access tokens: " + ", ".join(sorted(missing)))
+
+    def replace(value: Any) -> Any:
+        if isinstance(value, str):
+            def substitute(match: re.Match[str]) -> str:
+                name = match.group(1)
+                if name not in env or not str(env[name]).strip():
+                    raise ValueError(f"empty access token: {name}")
+                return str(env[name])
+
+            return TOKEN_PATTERN.sub(substitute, value)
+        if isinstance(value, list):
+            return [replace(item) for item in value]
+        if isinstance(value, dict):
+            return {key: replace(item) for key, item in value.items()}
+        return value
+
+    return replace(body)
+
+
+def admin_login(host: str, user: str, password: str, ca_cert: str | None = None) -> str:
+    """Obtain a JWT from the public admin login endpoint."""
+    base = host if "://" in host else "https://" + host
+    request = Request(
+        base.rstrip("/") + "/api/auth/login",
+        data=json.dumps({"username": user, "password": password}).encode("utf-8"),
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+        method="POST",
+    )
+    import ssl
+
+    context = ssl.create_default_context(cafile=ca_cert or None)
+    with urlopen(request, timeout=20, context=context) as response:
+        data = json.loads(response.read().decode("utf-8"))
+    token = data.get("token") if isinstance(data, dict) else None
+    if not token:
+        raise ValueError("admin login response contains no token")
+    return str(token)
+
+
 class ThingsBoard:
+    """Version-compatible REST client for the dashboard workstream."""
+
     def __init__(self, url: str, auth: str):
         parsed = urlparse(url)
         if parsed.scheme not in {"https", "http"} or not parsed.hostname:
@@ -80,9 +187,13 @@ class ThingsBoard:
                 raw = response.read()
         except HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")[:500]
-            raise RuntimeError(f"ThingsBoard {method} {path}: HTTP {exc.code}: {detail}") from exc
+            raise RuntimeError(
+                f"ThingsBoard {method} {path}: HTTP {exc.code}: {detail}"
+            ) from exc
         except URLError as exc:
-            raise RuntimeError(f"Cannot reach ThingsBoard at {self.url}: {exc.reason}") from exc
+            raise RuntimeError(
+                f"Cannot reach ThingsBoard at {self.url}: {exc.reason}"
+            ) from exc
         return json.loads(raw) if raw else None
 
     def pages(self, path: str):
@@ -97,6 +208,7 @@ class ThingsBoard:
 
 
 def ensure_profile(tb: ThingsBoard) -> dict:
+    """Create or reuse the version-compatible water-source device profile."""
     profiles = list(tb.pages("/api/deviceProfiles"))
     existing = next((p for p in profiles if p.get("name") == PROFILE_NAME), None)
     if existing:
@@ -129,6 +241,7 @@ def ensure_profile(tb: ThingsBoard) -> dict:
 
 
 def ensure_device(tb: ThingsBoard, name: str, profile_id: str) -> dict:
+    """Create one device without changing a device already under another profile."""
     candidates = tb.pages("/api/tenant/devices")
     existing = next((d for d in candidates if d.get("name") == name), None)
     if existing:
@@ -151,6 +264,7 @@ def ensure_device(tb: ThingsBoard, name: str, profile_id: str) -> dict:
 
 
 def update_local_env(tokens: dict[str, str], host: str) -> None:
+    """Write device tokens only to the ignored local .env file."""
     path = REPO_ROOT / ".env"
     if path.exists():
         old = path.read_text(encoding="utf-8")
@@ -177,6 +291,7 @@ def update_local_env(tokens: dict[str, str], host: str) -> None:
 
 
 def apply(tb: ThingsBoard) -> None:
+    """Provision the profile and three devices using the tenant's own schema."""
     profile = ensure_profile(tb)
     pid = entity_id(profile)
     tokens = {}
@@ -198,7 +313,10 @@ def apply(tb: ThingsBoard) -> None:
     export_dir = REPO_ROOT / "cloud" / "exports"
     export_dir.mkdir(exist_ok=True)
     snapshot = export_dir / "post-flood-device-profile-api.json"
-    snapshot.write_text(json.dumps(redact_sensitive(actual_profile), indent=2) + "\n", encoding="utf-8")
+    snapshot.write_text(
+        json.dumps(redact_sensitive(actual_profile), indent=2) + "\n",
+        encoding="utf-8",
+    )
     print(f"Saved redacted profile API snapshot: {snapshot.relative_to(REPO_ROOT)}")
     host = urlparse(tb.url).hostname
     assert host is not None
@@ -207,17 +325,206 @@ def apply(tb: ThingsBoard) -> None:
     print("Next: run the edge MQTT simulator, build dashboard, export it in ThingsBoard UI")
 
 
-def main() -> None:
+class Provisioner:
+    """Create artifact resources idempotently enough for a repeatable demo setup."""
+
+    def __init__(self, client: ThingsBoardClient) -> None:
+        self.client = client
+        self.created: list[str] = []
+        self.skipped: list[str] = []
+
+    def _create(self, label: str, path: str, body: Any, allow_exists: bool = True) -> Any:
+        try:
+            result = self.client.request("POST", path, body)
+        except urllib.error.HTTPError as exc:
+            if allow_exists and exc.code in (400, 409):
+                self.skipped.append(f"{label} (already exists or rejected: {exc.code})")
+                return None
+            raise
+        self.created.append(label)
+        return result
+
+    def device_profile(self, profile: dict[str, Any]) -> str | None:
+        """Create the water-quality device profile with its alarm rules."""
+        name = profile.get("name", "water-quality-node")
+        query = urllib.parse.urlencode({"deviceProfileName": name})
+        existing = self.client.request("GET", "/api/deviceProfiles?" + query)
+        if isinstance(existing, dict) and existing.get("data"):
+            self.skipped.append(f"device profile {name} (exists)")
+            found = existing["data"][0].get("id", {})
+            return found.get("id") if isinstance(found, dict) else None
+        saved = self._create(f"device profile {name}", "/api/deviceProfile", profile)
+        identifier = saved.get("id", {}).get("id") if isinstance(saved, dict) else None
+        return identifier
+
+    def devices(
+        self,
+        devices: dict[str, Any],
+        profile_id: str | None,
+        inactivity_ms: int,
+    ) -> None:
+        """Create one device per node with its token, profile and inactivity timeout."""
+        for device in devices.get("devices", []):
+            name = device.get("name", "")
+            existing = self.client.request(
+                "GET", "/api/tenant/devices?" + urllib.parse.urlencode({"deviceName": name})
+            )
+            if isinstance(existing, dict) and existing.get("id"):
+                self.skipped.append(f"device {name} (exists)")
+                continue
+            token = device.get("accessToken")
+            body = {key: value for key, value in device.items() if key != "accessToken"}
+            if profile_id:
+                body["deviceProfileId"] = {"entityType": "DEVICE_PROFILE", "id": profile_id}
+            created = self._create(f"device {name}", "/api/device", body, allow_exists=False)
+            identifier = created.get("id", {}).get("id") if isinstance(created, dict) else None
+            if not identifier or not token:
+                raise ValueError(f"cannot set credentials for {name}")
+            self.client.request(
+                "POST",
+                f"/api/device/{identifier}/credentials",
+                {"credentialsType": "ACCESS_TOKEN", "credentialsId": token},
+            )
+
+            # Inactivity timeout is a SERVER_SCOPE device attribute in ThingsBoard v3,
+            # not a device-profile field. Milliseconds: 180 min normal, 45 min burst.
+            if identifier and inactivity_ms > 0:
+                self.client.request(
+                    "POST",
+                    f"/api/plugins/telemetry/DEVICE/{identifier}/attributes/SERVER_SCOPE",
+                    {"inactivityTimeout": int(inactivity_ms)},
+                )
+
+    def dashboard(self, dashboard: dict[str, Any]) -> None:
+        """Import the current-style dashboard export with a plain POST."""
+        bare = dashboard.get("dashboard", dashboard)
+        self._create("operational dashboard", "/api/dashboard", bare)
+
+    def rule_chain(self, chain: dict[str, Any], set_root: bool) -> None:
+        """Save the chain header and metadata, then optionally set it as root.
+
+        The exported envelope is importable directly in the UI. The REST API
+        splits that import into two calls so the returned UUID is known.
+        """
+        header = dict(chain.get("ruleChain", {}))
+        metadata = dict(chain.get("metadata", {}))
+        name = header.get("name", "WQI rule chain")
+        existing = self.client.request("GET", "/api/ruleChains")
+        if isinstance(existing, dict) and any(
+            item.get("name") == name for item in existing.get("data", [])
+        ):
+            self.skipped.append(f"rule chain {name} (exists)")
+            return
+        saved = self.client.request("POST", "/api/ruleChain", header)
+        identifier = saved.get("id", {}).get("id") if isinstance(saved, dict) else None
+        if not identifier:
+            raise ValueError("rule-chain save returned no id")
+        metadata["ruleChainId"] = {"entityType": "RULE_CHAIN", "id": identifier}
+        self.client.request("POST", "/api/ruleChain/metadata", metadata)
+        self.created.append(f"rule chain {name}")
+        if not set_root:
+            return
+        try:
+            self.client.request("POST", f"/api/ruleChain/{identifier}/root")
+            self.created.append("WQI rule chain set as root")
+        except urllib.error.HTTPError as exc:
+            print(
+                f"warning: could not set root rule chain ({exc.code}); "
+                "activate it from the rule-chains UI",
+                file=sys.stderr,
+            )
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """Define the provisioning CLI."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--apply", action="store_true", help="create/update tenant resources")
-    args = parser.parse_args()
+    transport = parser.add_mutually_exclusive_group()
+    transport.add_argument("--dry-run", action="store_true", help="validate only (default)")
+    transport.add_argument(
+        "--apply",
+        action="store_true",
+        help="import the committed artifacts over REST using TB_HOST and TB_JWT",
+    )
+    transport.add_argument(
+        "--device-setup",
+        action="store_true",
+        help="create/reuse the profile and devices using TB_URL and TB_AUTH",
+    )
+    parser.add_argument("--host", default=os.environ.get("TB_HOST", ""))
+    parser.add_argument("--jwt", default=os.environ.get("TB_JWT", ""))
+    parser.add_argument("--ca-cert", default=os.environ.get("TB_CA_CERT", ""))
+    parser.add_argument("--tb-url", default=os.environ.get("TB_URL", DEFAULT_URL))
+    parser.add_argument(
+        "--set-root",
+        action="store_true",
+        help="make the imported WQI chain the root chain (overwrites the current root)",
+    )
+    parser.add_argument(
+        "--inactivity-ms",
+        type=int,
+        default=NORMAL_TIMEOUT_MS,
+        help="device inactivity timeout in ms (180 min normal; use 2700000 for 45 min burst)",
+    )
+    return parser
+
+
+def _apply_artifacts(args: argparse.Namespace) -> int:
+    """Validate and optionally import the four committed artifact files."""
+    try:
+        profile = load_json("device_profile.json")
+        devices = load_json("devices.json")
+        dashboard, dashboard_name = load_dashboard()
+        chain = load_json("wqi_rule_chain.json")
+        if args.apply:
+            devices = fill_tokens(devices)
+    except (FileNotFoundError, ValueError, json.JSONDecodeError) as exc:
+        print(f"provision: {exc}", file=sys.stderr)
+        return 2
+
     if not args.apply:
-        print("Plan: create/reuse profile, provision node-a/b/c, set coordinates and 180-min")
-        print("inactivity attributes, save an API profile snapshot and ignored local .env.")
-        print("Save an API key in ignored .thingsboard-auth, then run --apply.")
-        print(f"Tenant URL: {DEFAULT_URL} (override with TB_URL if needed)")
-        return
-    url = os.environ.get("TB_URL", DEFAULT_URL)
+        for name in ("device_profile.json", "devices.json", dashboard_name, "wqi_rule_chain.json"):
+            print(f"validated {name}")
+        print("dry-run: no network calls; tokens remain placeholders")
+        return 0
+
+    if not args.host:
+        print("provision: --apply needs TB_HOST", file=sys.stderr)
+        return 2
+    jwt = args.jwt
+    if not jwt:
+        user = os.environ.get("TB_ADMIN_USER", "")
+        password = os.environ.get("TB_ADMIN_PASSWORD", "")
+        if not user or not password:
+            print(
+                "provision: --apply needs TB_JWT or TB_ADMIN_USER/TB_ADMIN_PASSWORD",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            jwt = admin_login(args.host, user, password, args.ca_cert or None)
+        except (urllib.error.URLError, OSError, ValueError) as exc:
+            print(f"provision: login failed: {exc}", file=sys.stderr)
+            return 2
+
+    provisioner = Provisioner(ThingsBoardClient(args.host, jwt, args.ca_cert or None))
+    try:
+        profile_id = provisioner.device_profile(profile)
+        provisioner.devices(devices, profile_id, args.inactivity_ms)
+        provisioner.dashboard(dashboard)
+        provisioner.rule_chain(chain, args.set_root)
+    except (urllib.error.URLError, OSError, ValueError) as exc:
+        print(f"provision: request failed: {exc}", file=sys.stderr)
+        return 1
+
+    for item in provisioner.created:
+        print(f"created: {item}")
+    for item in provisioner.skipped:
+        print(f"skipped: {item}")
+    return 0
+
+
+def _device_setup(args: argparse.Namespace) -> int:
+    """Provision the profile and devices with an API key, never a CLI secret."""
     auth = os.environ.get("TB_AUTH", "")
     if not auth:
         key_file = REPO_ROOT / ".thingsboard-auth"
@@ -226,9 +533,26 @@ def main() -> None:
             if auth and not auth.startswith(("ApiKey ", "Bearer ")):
                 auth = "ApiKey " + auth
     if not auth:
-        parser.error("--apply requires an ignored .thingsboard-auth file or TB_AUTH")
-    apply(ThingsBoard(url, auth))
+        print(
+            "provision: --device-setup needs TB_AUTH or an ignored .thingsboard-auth file",
+            file=sys.stderr,
+        )
+        return 2
+    try:
+        apply(ThingsBoard(args.tb_url, auth))
+    except (RuntimeError, ValueError, OSError) as exc:
+        print(f"provision: device setup failed: {exc}", file=sys.stderr)
+        return 1
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Load, validate and optionally provision the Cloud Track resources."""
+    args = build_parser().parse_args(argv)
+    if args.device_setup:
+        return _device_setup(args)
+    return _apply_artifacts(args)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
