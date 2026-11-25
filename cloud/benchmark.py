@@ -267,7 +267,9 @@ class ThingsBoardClient:
 
     def device_id(self, name: str) -> str | None:
         """Return the UUID of a device by name, or ``None`` when absent."""
-        path = "/api/tenant/devices?" + urllib.parse.urlencode({"deviceName": name})
+        path = "/api/tenant/devices?" + urllib.parse.urlencode(
+            {"deviceName": name, "pageSize": 100, "page": 0}
+        )
         found = self.request("GET", path)
         if not isinstance(found, dict):
             return None

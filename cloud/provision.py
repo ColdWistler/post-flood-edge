@@ -355,7 +355,9 @@ class Provisioner:
     def device_profile(self, profile: dict[str, Any]) -> str | None:
         """Create the water-quality device profile with its alarm rules."""
         name = profile.get("name", "water-quality-node")
-        query = urllib.parse.urlencode({"deviceProfileName": name})
+        query = urllib.parse.urlencode(
+            {"deviceProfileName": name, "pageSize": 100, "page": 0}
+        )
         existing = self.client.request("GET", "/api/deviceProfiles?" + query)
         if isinstance(existing, dict) and existing.get("data"):
             self.skipped.append(f"device profile {name} (exists)")
@@ -375,7 +377,9 @@ class Provisioner:
         for device in devices.get("devices", []):
             name = device.get("name", "")
             existing = self.client.request(
-                "GET", "/api/tenant/devices?" + urllib.parse.urlencode({"deviceName": name})
+                "GET",
+                "/api/tenant/devices?"
+                + urllib.parse.urlencode({"deviceName": name, "pageSize": 100, "page": 0}),
             )
             if isinstance(existing, dict) and existing.get("id"):
                 self.skipped.append(f"device {name} (exists)")
@@ -417,7 +421,10 @@ class Provisioner:
         header = dict(chain.get("ruleChain", {}))
         metadata = dict(chain.get("metadata", {}))
         name = header.get("name", "WQI rule chain")
-        existing = self.client.request("GET", "/api/ruleChains")
+        existing = self.client.request(
+            "GET",
+            "/api/ruleChains?" + urllib.parse.urlencode({"pageSize": 100, "page": 0}),
+        )
         if isinstance(existing, dict) and any(
             item.get("name") == name for item in existing.get("data", [])
         ):

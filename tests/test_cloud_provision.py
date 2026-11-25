@@ -340,6 +340,25 @@ class RecordingClient:
         return {}
 
 
+def test_provisioner_list_queries_include_pagination():
+    """ThingsBoard Cloud rejects paginated list calls without pageSize/page."""
+    client = RecordingClient()
+    p = Provisioner(client)
+    p.device_profile(json.loads((ARTIFACTS / "device_profile.json").read_text()))
+    p.devices(
+        {"devices": [{"name": "node-a", "accessToken": "token-a"}]}, None, 0
+    )
+    p.rule_chain(json.loads((ARTIFACTS / "wqi_rule_chain.json").read_text()), False)
+
+    get_paths = [path for method, path, _ in client.calls if method == "GET"]
+    profile_query = next(p for p in get_paths if p.startswith("/api/deviceProfiles?"))
+    device_query = next(p for p in get_paths if p.startswith("/api/tenant/devices?"))
+    chain_query = next(p for p in get_paths if p.startswith("/api/ruleChains"))
+    assert "pageSize=" in profile_query and "page=" in profile_query
+    assert "pageSize=" in device_query and "page=" in device_query
+    assert "pageSize=" in chain_query and "page=" in chain_query
+
+
 def test_provisioner_uses_v3_endpoints_and_sets_device_credentials():
     client = RecordingClient()
     p = Provisioner(client)

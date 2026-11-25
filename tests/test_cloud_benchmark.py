@@ -194,3 +194,17 @@ def test_alarms_uses_per_device_endpoint_on_current_tenants(monkeypatch):
     assert alarms is not None
     assert alarms[0]["type"] == "High Turbidity"
     assert calls == ["/api/alarm/DEVICE/uuid-a?pageSize=5000&page=0&startTime=0&endTs=1000".replace("endTs", "endTime")]
+
+
+def test_device_id_lookup_includes_pagination(monkeypatch):
+    """The tenant device lookup must send pageSize/page like other list calls."""
+    client = ThingsBoardClient("https://tb.example", jwt="test-jwt")
+    captured: list[str] = []
+
+    def fake_request(method, path, payload=None):
+        captured.append(path)
+        return {"id": {"id": "uuid-a"}}
+
+    monkeypatch.setattr(client, "request", fake_request)
+    assert client.device_id("node-a") == "uuid-a"
+    assert "pageSize=" in captured[0] and "page=" in captured[0]
