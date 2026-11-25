@@ -159,12 +159,13 @@ def build_session(args: argparse.Namespace, console_handler: bool = True) -> Ses
 def main(argv: list[str] | None = None) -> int:
     """Run until `q` or KeyboardInterrupt; return a process exit status."""
     args = build_parser().parse_args(argv)
-    session = build_session(args)
-    runtime = session.runtime
-    publishers = session.publishers
-    store = session.store
-    handlers = session.handlers
+    session: Session | None = None
     try:
+        session = build_session(args)
+        runtime = session.runtime
+        publishers = session.publishers
+        store = session.store
+        handlers = session.handlers
         runtime.start()
         threading.Thread(
             target=_read_commands, args=(runtime,), name="commands", daemon=True
@@ -177,14 +178,15 @@ def main(argv: list[str] | None = None) -> int:
         logger.info("STATE: CLI interrupted")
         return 130
     finally:
-        runtime.stop()
-        for publisher in publishers.values():
-            publisher.disconnect()
-        store.close()
-        root = logging.getLogger()
-        for handler in handlers:
-            root.removeHandler(handler)
-            handler.close()
+        if session is not None:
+            runtime.stop()
+            for publisher in publishers.values():
+                publisher.disconnect()
+            store.close()
+            root = logging.getLogger()
+            for handler in handlers:
+                root.removeHandler(handler)
+                handler.close()
 
 
 if __name__ == "__main__":
