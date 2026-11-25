@@ -78,10 +78,12 @@ verify raise/clear events during a demo. `cloud.provision` merely automates thes
 native operations over REST.
 
 `python -m cloud.provision --dry-run` validates all four import files without network
-traffic. `--apply` needs `TB_HOST` plus either `TB_JWT` or
+traffic. `--apply` needs `TB_HOST` (or `TB_BASE_URL`) plus `TB_JWT`, `TB_API_KEY`, or
 `TB_ADMIN_USER`/`TB_ADMIN_PASSWORD`, and the three tokens in the environment; it
-never writes credentials to disk. `python -m cloud.benchmark` (optionally `--apply
---plot`) produces the real-broker measurement table described in
+never writes credentials to disk. The dashboard artifact is auto-selected, with
+`dashboard_thingsboard_cloud.json` preferred; use `--dashboard <filename>` to override.
+`python -m cloud.benchmark` (optionally `--apply --plot`, with `TB_JWT` or `TB_API_KEY`)
+produces the real-broker measurement table described in
 `cloud/benchmark/README.md`. Manuscript placeholders are collected in
 `cloud/MANUSCRIPT.md`.
 

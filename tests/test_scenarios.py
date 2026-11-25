@@ -28,6 +28,14 @@ def test_manual_override_and_reset_elapsed(fake_clock):
     assert c.elapsed_s == 0
 
 
+def test_duration_s_matches_current_phase(fake_clock):
+    controller = ScenarioController(load_scenario(DEMO), now_fn=fake_clock)
+    assert controller.phase == "baseline"
+    assert controller.duration_s == 60.0
+    controller.set_phase("recovery")
+    assert controller.duration_s == 180.0
+
+
 def test_tick_keeps_elapsed_phase_local(fake_clock):
     c = ScenarioController(load_scenario(DEMO), now_fn=fake_clock)
     fake_clock.advance(65)

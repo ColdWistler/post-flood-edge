@@ -6,10 +6,12 @@ import argparse
 import logging
 import sys
 import threading
+from dataclasses import dataclass
 from pathlib import Path
 
 from .config import load_config
 from .hysteresis import HysteresisEngine
+from .models import EdgeConfig
 from .publisher import MqttPublisher, NullPublisher, Publisher
 from .runtime import EdgeRuntime
 from .scenarios import ScenarioController, load_scenario
@@ -37,7 +39,9 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _configure_logging(level_name: str) -> list[logging.Handler]:
+def _configure_logging(
+    level_name: str, console_handler: bool = True
+) -> list[logging.Handler]:
     """Attach console/file handlers and return them for cleanup."""
     level = getattr(logging, str(level_name).upper(), logging.INFO)
     formatter = logging.Formatter(_FORMAT)
@@ -45,7 +49,9 @@ def _configure_logging(level_name: str) -> list[logging.Handler]:
     root.setLevel(level)
     added: list[logging.Handler] = []
 
-    if not any(isinstance(handler, logging.StreamHandler) for handler in root.handlers):
+    if console_handler and not any(
+        isinstance(handler, logging.StreamHandler) for handler in root.handlers
+    ):
         console = logging.StreamHandler()
         console.setFormatter(formatter)
         root.addHandler(console)
@@ -92,39 +98,74 @@ def _read_commands(runtime: EdgeRuntime) -> None:
         runtime.handle_command(line.strip())
 
 
+@dataclass
+class Session:
+    """The fully assembled demo runtime components handed to a driver."""
+
+    config: EdgeConfig
+    controller: ScenarioController
+    store: BufferStore
+    publishers: dict[str, Publisher]
+    engines: dict[str, HysteresisEngine]
+    runtime: EdgeRuntime
+    handlers: list[logging.Handler]
+
+
+def build_session(args: argparse.Namespace, console_handler: bool = True) -> Session:
+    """Assemble config, controllers, sinks, engines and the runtime.
+
+    Shared by the CLI (`console_handler=True`) and the demo TUI
+    (`console_handler=False`, which keeps only the `logs/edge.log` file
+    handler). The runtime is assembled but not started here; callers own the
+    start/stop lifecycle.
+    """
+    handlers = _configure_logging(args.log_level, console_handler=console_handler)
+    db_path = Path(args.db)
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    config = load_config(
+        None,
+        tick_seconds=args.tick_seconds,
+        batch_size=args.batch_size,
+        db_path=db_path,
+        use_mqtt=args.mqtt,
+        log_level=args.log_level,
+    )
+    controller = ScenarioController(load_scenario(Path(args.scenario)))
+    store = BufferStore(config.db_path, config.buffer_max_rows, config.batch_size)
+    publishers = _build_publishers(
+        [node.node_id for node in config.nodes], args.mqtt, config
+    )
+    engines = {
+        node_id: HysteresisEngine(
+            flow_zero_sustained_s=config.flow_zero_sustained_s,
+            node_inactive_s=config.node_inactive_s,
+            derivative_window_s=config.derivative_window_s,
+            fault_samples=config.validity_fault_samples,
+        )
+        for node_id in publishers
+    }
+    runtime = EdgeRuntime(config, controller, store, publishers, engines)
+    return Session(
+        config=config,
+        controller=controller,
+        store=store,
+        publishers=publishers,
+        engines=engines,
+        runtime=runtime,
+        handlers=handlers,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run until `q` or KeyboardInterrupt; return a process exit status."""
     args = build_parser().parse_args(argv)
-    handlers = _configure_logging(args.log_level)
-    store: BufferStore | None = None
-    publishers: dict[str, Publisher] = {}
-    runtime: EdgeRuntime | None = None
+    session: Session | None = None
     try:
-        db_path = Path(args.db)
-        db_path.parent.mkdir(parents=True, exist_ok=True)
-        config = load_config(
-            None,
-            tick_seconds=args.tick_seconds,
-            batch_size=args.batch_size,
-            db_path=db_path,
-            use_mqtt=args.mqtt,
-            log_level=args.log_level,
-        )
-        controller = ScenarioController(load_scenario(Path(args.scenario)))
-        store = BufferStore(config.db_path, config.buffer_max_rows, config.batch_size)
-        publishers = _build_publishers(
-            [node.node_id for node in config.nodes], args.mqtt, config
-        )
-        engines = {
-            node_id: HysteresisEngine(
-                flow_zero_sustained_s=config.flow_zero_sustained_s,
-                node_inactive_s=config.node_inactive_s,
-                derivative_window_s=config.derivative_window_s,
-                fault_samples=config.validity_fault_samples,
-            )
-            for node_id in publishers
-        }
-        runtime = EdgeRuntime(config, controller, store, publishers, engines)
+        session = build_session(args)
+        runtime = session.runtime
+        publishers = session.publishers
+        store = session.store
+        handlers = session.handlers
         runtime.start()
         threading.Thread(
             target=_read_commands, args=(runtime,), name="commands", daemon=True
@@ -137,16 +178,15 @@ def main(argv: list[str] | None = None) -> int:
         logger.info("STATE: CLI interrupted")
         return 130
     finally:
-        if runtime is not None:
+        if session is not None:
             runtime.stop()
-        for publisher in publishers.values():
-            publisher.disconnect()
-        if store is not None:
+            for publisher in publishers.values():
+                publisher.disconnect()
             store.close()
-        root = logging.getLogger()
-        for handler in handlers:
-            root.removeHandler(handler)
-            handler.close()
+            root = logging.getLogger()
+            for handler in handlers:
+                root.removeHandler(handler)
+                handler.close()
 
 
 if __name__ == "__main__":
