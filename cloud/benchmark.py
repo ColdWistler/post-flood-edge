@@ -210,16 +210,23 @@ def alarm_transitions(rows: list[dict[str, Any]]) -> list[tuple[str, str, int]]:
 
 
 class ThingsBoardClient:
-    """Minimal JWT-authenticated REST client using only the standard library."""
+    """Minimal authenticated REST client using only the standard library."""
 
     def __init__(
-        self, host: str, jwt: str, ca_cert: str | None = None, timeout: float = 20.0
+        self,
+        host: str,
+        jwt: str | None = None,
+        ca_cert: str | None = None,
+        timeout: float = 20.0,
+        api_key: str | None = None,
     ) -> None:
-        if not host or not jwt:
-            raise ValueError("ThingsBoard host and JWT are required")
+        secret = (api_key or jwt or "").strip()
+        if not host or not secret:
+            raise ValueError("ThingsBoard host and JWT/API key are required")
         base = host if "://" in host else "https://" + host
         self.base = base.rstrip("/")
-        self.jwt = jwt
+        self.jwt = jwt.strip() if jwt else None
+        self.api_key = api_key.strip() if api_key else None
         self.ca_cert = ca_cert or None
         self.timeout = timeout
 
@@ -228,10 +235,14 @@ class ThingsBoardClient:
     ) -> Any:
         """Issue one authenticated request and decode its JSON response."""
         data = json.dumps(payload).encode("utf-8") if payload is not None else None
+        if self.api_key:
+            auth = "ApiKey " + self.api_key
+        else:
+            auth = "Bearer " + str(self.jwt)
         headers = {
             "Accept": "application/json",
-            "Authorization": "Bearer " + self.jwt,
-            "X-Authorization": "Bearer " + self.jwt,
+            "Authorization": auth,
+            "X-Authorization": auth,
         }
         if data is not None:
             headers["Content-Type"] = "application/json"
@@ -562,8 +573,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--start-ts", type=int, default=None, help="window start, epoch ms")
     parser.add_argument("--end-ts", type=int, default=None, help="window end, epoch ms")
     parser.add_argument("--apply", action="store_true", help="query ThingsBoard over REST")
-    parser.add_argument("--host", default=os.environ.get("TB_HOST", ""))
+    parser.add_argument("--host", default=os.environ.get("TB_HOST", os.environ.get("TB_BASE_URL", "")))
     parser.add_argument("--jwt", default=os.environ.get("TB_JWT", ""))
+    parser.add_argument("--api-key", default=os.environ.get("TB_API_KEY", ""))
     parser.add_argument("--ca-cert", default=os.environ.get("TB_CA_CERT", ""))
     parser.add_argument("--plot", action="store_true", help="write latency_scatter.svg")
     return parser
@@ -585,10 +597,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     points: list[tuple[int, float]] = []
     if args.apply:
-        if not args.host or not args.jwt:
-            print("benchmark: --apply needs TB_HOST and TB_JWT", file=sys.stderr)
+        if not args.host or not (args.jwt or args.api_key):
+            print("benchmark: --apply needs TB_HOST/TB_BASE_URL and TB_JWT or TB_API_KEY", file=sys.stderr)
             return 2
-        client = ThingsBoardClient(args.host, args.jwt, args.ca_cert or None)
+        client = ThingsBoardClient(args.host, jwt=args.jwt, api_key=args.api_key, ca_cert=args.ca_cert or None)
         window = report["window"]
         if window["start_ms"] is None or window["end_ms"] is None:
             print("benchmark: no telemetry rows in the selected window", file=sys.stderr)
@@ -599,7 +611,7 @@ def main(argv: list[str] | None = None) -> int:
         report["metrics"].update(cloud)
     else:
         report["notes"].append(
-            "dry-run: broker-dependent metrics need --apply, TB_HOST and TB_JWT"
+            "dry-run: broker-dependent metrics need --apply with TB_HOST and TB_JWT/TB_API_KEY"
         )
 
     write_outputs(report, args.out, points if args.plot else [])

@@ -1,13 +1,14 @@
 """Provision the ThingsBoard artifacts with the REST API.
 
-Dry-run is the default and performs no network calls. ``--apply`` reads a JWT
-from ``TB_JWT`` (or logs in with ``TB_ADMIN_USER``/``TB_ADMIN_PASSWORD``), fills
-the token placeholders in ``devices.json`` from the environment, and creates the
-device profile, three devices, dashboard and WQI rule chain. Secrets are never
-written to disk or printed.
+Dry-run is the default and performs no network calls. ``--apply`` authenticates
+with ``TB_JWT``/``TB_API_KEY`` (or logs in with ``TB_ADMIN_USER``/
+``TB_ADMIN_PASSWORD``), fills the token placeholders in ``devices.json`` from the
+environment, and creates the device profile, three devices, dashboard and WQI rule
+chain. Secrets are never written to disk or printed.
 
     python -m cloud.provision --dry-run
     python -m cloud.provision --apply --jwt "$TB_JWT"
+    python -m cloud.provision --apply --api-key "$TB_API_KEY"
 """
 
 from __future__ import annotations
@@ -24,6 +25,12 @@ from pathlib import Path
 from typing import Any
 
 from .benchmark import ThingsBoardClient
+
+DASHBOARD_CANDIDATES = (
+    "dashboard_thingsboard_cloud.json",
+    "dashboard.json",
+    "dashboard_minimal.json",
+)
 
 ARTIFACTS = Path(__file__).resolve().parent / "artifacts"
 TOKEN_PATTERN = re.compile(r"\$\{(TB_TOKEN_[A-Z0-9_]+)\}")
@@ -201,15 +208,34 @@ class Provisioner:
             )
 
 
+def select_dashboard() -> str:
+    """Pick the best available dashboard artifact, preferring Cloud-verified JSON."""
+    for name in DASHBOARD_CANDIDATES:
+        if (ARTIFACTS / name).exists():
+            return name
+    raise FileNotFoundError(
+        "missing dashboard artifact; expected one of: " + ", ".join(DASHBOARD_CANDIDATES)
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Define the provisioning CLI."""
     parser = argparse.ArgumentParser(description=__doc__)
     transport = parser.add_mutually_exclusive_group()
     transport.add_argument("--apply", action="store_true", help="call ThingsBoard REST")
     transport.add_argument("--dry-run", action="store_true", help="validate only (default)")
-    parser.add_argument("--host", default=os.environ.get("TB_HOST", ""))
+    parser.add_argument(
+        "--host",
+        default=os.environ.get("TB_HOST", os.environ.get("TB_BASE_URL", "")),
+    )
     parser.add_argument("--jwt", default=os.environ.get("TB_JWT", ""))
+    parser.add_argument("--api-key", default=os.environ.get("TB_API_KEY", ""))
     parser.add_argument("--ca-cert", default=os.environ.get("TB_CA_CERT", ""))
+    parser.add_argument(
+        "--dashboard",
+        default="",
+        help="dashboard artifact filename in cloud/artifacts (default: auto-select)",
+    )
     parser.add_argument(
         "--set-root",
         action="store_true",
@@ -228,9 +254,10 @@ def main(argv: list[str] | None = None) -> int:
     """Load, validate and optionally provision the Cloud Track artifacts."""
     args = build_parser().parse_args(argv)
     try:
+        dashboard_name = args.dashboard or select_dashboard()
         profile = load_json("device_profile.json")
         devices = load_json("devices.json")
-        dashboard = load_json("dashboard.json")
+        dashboard = load_json(dashboard_name)
         chain = load_json("wqi_rule_chain.json")
         if args.apply:
             devices = fill_tokens(devices)
@@ -239,21 +266,22 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     if not args.apply:
-        for name in ("device_profile.json", "devices.json", "dashboard.json", "wqi_rule_chain.json"):
+        for name in ("device_profile.json", "devices.json", dashboard_name, "wqi_rule_chain.json"):
             print(f"validated {name}")
         print("dry-run: no network calls; tokens remain placeholders")
         return 0
 
     if not args.host:
-        print("provision: --apply needs TB_HOST", file=sys.stderr)
+        print("provision: --apply needs TB_HOST/TB_BASE_URL", file=sys.stderr)
         return 2
+    api_key = args.api_key
     jwt = args.jwt
-    if not jwt:
+    if not api_key and not jwt:
         user = os.environ.get("TB_ADMIN_USER", "")
         password = os.environ.get("TB_ADMIN_PASSWORD", "")
         if not user or not password:
             print(
-                "provision: --apply needs TB_JWT or TB_ADMIN_USER/TB_ADMIN_PASSWORD",
+                "provision: --apply needs TB_API_KEY, TB_JWT, or TB_ADMIN_USER/TB_ADMIN_PASSWORD",
                 file=sys.stderr,
             )
             return 2
@@ -263,7 +291,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"provision: login failed: {exc}", file=sys.stderr)
             return 2
 
-    provisioner = Provisioner(ThingsBoardClient(args.host, jwt, args.ca_cert or None))
+    provisioner = Provisioner(
+        ThingsBoardClient(args.host, jwt=jwt, api_key=api_key, ca_cert=args.ca_cert or None)
+    )
     try:
         profile_id = provisioner.device_profile(profile)
         provisioner.devices(devices, profile_id, args.inactivity_ms)
