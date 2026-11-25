@@ -1,0 +1,78 @@
+{
+  "ruleChain": {
+    "name": "Post-flood WQI rule chain",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null,
+    "additionalInfo": {
+      "description": "Server-side Brown WQI (Task 2 no-chlorine weights) and server_received_ms for the cloud latency benchmark. Edge-published wqi/wqi_band remain authoritative."
+    }
+  },
+  "metadata": {
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 160,
+          "layoutY": 160
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Has WQI inputs?",
+        "singletonMode": false,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return msgType === 'POST_TELEMETRY_REQUEST' && typeof msg.ph_25 !== 'undefined' && typeof msg.turbidity_ntu !== 'undefined' && typeof msg.tds_ppm !== 'undefined';"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 480,
+          "layoutY": 160
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Compute WQI server-side",
+        "singletonMode": false,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "/*\n * ThingsBoard transformation Script body for cloud/artifacts/wqi_rule_chain.json.\n *\n * Runs on every telemetry message from a node. The edge already publishes `wqi`\n * and `wqi_band`; this node stores its own values under `wqi_server` and\n * `wqi_band_server` so the authoritative edge values are never overwritten.\n * `server_received_ms` is the broker-side receipt clock used by `cloud.benchmark`\n * to measure end-to-end latency against the original acquisition `ts`.\n *\n * Task 2 Brown WQI, no-chlorine fallback:\n *   standards S = (8.5 pH, 5 NTU, 1000 ppm), ideals V0 = (7, 0, 0)\n *   weights  w = (0.3692, 0.6277, 0.0031)\n */\n\nvar ph = Number(msg.ph_25);\nvar turbidity = Number(msg.turbidity_ntu);\nvar tds = Number(msg.tds_ppm);\n\nif (isFinite(ph) && isFinite(turbidity) && isFinite(tds)) {\n    var qPh = Math.max(0.0, 100.0 * (ph - 7.0) / (8.5 - 7.0));\n    var qTurbidity = Math.max(0.0, 100.0 * (turbidity - 0.0) / (5.0 - 0.0));\n    var qTds = Math.max(0.0, 100.0 * (tds - 0.0) / (1000.0 - 0.0));\n\n    var wqi = qPh * 0.3692 + qTurbidity * 0.6277 + qTds * 0.0031;\n    var band;\n    if (wqi <= 25.0) {\n        band = \"Excellent\";\n    } else if (wqi <= 50.0) {\n        band = \"Good\";\n    } else if (wqi <= 75.0) {\n        band = \"Poor\";\n    } else if (wqi <= 100.0) {\n        band = \"Very poor\";\n    } else {\n        band = \"Unsuitable\";\n    }\n\n    msg.wqi_server = Math.round(wqi * 100.0) / 100.0;\n    msg.wqi_band_server = band;\n}\n\nmsg.server_received_ms = new Date().getTime();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};\n"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 820,
+          "layoutY": 160
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save derived telemetry",
+        "singletonMode": false,
+        "configurationVersion": 0,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "True"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": []
+  }
+}

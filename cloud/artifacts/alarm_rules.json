@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "source": "INTEGRATION.md (edge alarm contract) and cloud/README.md (server-side scope)",
+  "severity_order": ["Normal", "Warning", "Major", "Critical", "Fault"],
+  "principles": [
+    "Deadband samples hold the current alarm state and do not advance clear progress.",
+    "Debounce counts consecutive qualifying samples, not accumulated ones.",
+    "The edge publishes severity and active_alarms; dashboard status uses those values.",
+    "Server-side copies use identical thresholds and exist as rubric evidence only."
+  ],
+  "rules": [
+    {
+      "name": "High Turbidity",
+      "severity": "Warning",
+      "raise": "turbidity_ntu > 50",
+      "clear": "turbidity_ntu < 40",
+      "debounce": {"raise_samples": 1, "clear_samples": 1},
+      "implementation": "device profile alarm rule (server-side copy)"
+    },
+    {
+      "name": "Gross Contamination",
+      "severity": "Critical",
+      "raise": "turbidity_ntu > 200",
+      "clear": "turbidity_ntu < 150",
+      "debounce": {"raise_samples": 1, "clear_samples": 1},
+      "implementation": "device profile alarm rule (server-side copy)"
+    },
+    {
+      "name": "pH Out of Range",
+      "severity": "Critical",
+      "raise": "ph < 6.5 or ph > 8.5",
+      "clear": "6.7 <= ph <= 8.3",
+      "debounce": {"raise_samples": 3, "clear_samples": 3},
+      "implementation": "device profile alarm rule (server-side copy)"
+    },
+    {
+      "name": "High TDS",
+      "severity": "Critical",
+      "raise": "tds_ppm > 500",
+      "clear": "tds_ppm < 450",
+      "debounce": {"raise_samples": 3, "clear_samples": 3},
+      "implementation": "device profile alarm rule (server-side copy)"
+    },
+    {
+      "name": "Supply Interruption",
+      "severity": "Major",
+      "raise": "flow_lpm == 0 sustained for EDGE_FLOW_ZERO_SUSTAINED_S (30 s demo, 1800 s production)",
+      "clear": "flow_lpm > 0",
+      "debounce": {"type": "time-based", "raise_s": 30.0, "clear_s": 0.0},
+      "implementation": "edge alarm; server rule uses device inactivity/time window"
+    },
+    {
+      "name": "Node Inactive",
+      "severity": "Critical",
+      "raise": "no generated reading for EDGE_NODE_INACTIVE_S (90 s demo)",
+      "clear": "telemetry resumes",
+      "debounce": {"type": "time-based", "raise_s": 90.0, "clear_s": 0.0},
+      "implementation": "edge alarm; separate device-profile inactivity timeout is 180 min normal / 45 min burst (work division)",
+      "note": "These two inactivity mechanisms are distinct and must both be documented."
+    },
+    {
+      "name": "Rapid Turbidity Rise",
+      "severity": "Warning",
+      "raise": "Hampel-cleaned turbidity rise > 30 NTU within EDGE_DERIVATIVE_WINDOW_S (50 s demo)",
+      "clear": "in-window rise < 30 NTU",
+      "debounce": {"raise_samples": 1, "clear_samples": 1},
+      "implementation": "device profile alarm rule (native Alarm Rules tab) mirroring the edge-derived alarm via active_alarms CONTAINS; dashboard uses edge-published severity"
+    },
+    {
+      "name": "Severe pH Persistence",
+      "severity": "Critical",
+      "raise": "ph < 6.0 or ph > 9.0",
+      "clear": "6.2 <= ph <= 8.8",
+      "debounce": {"raise_samples": 3, "clear_samples": 3},
+      "implementation": "device profile alarm rule (native Alarm Rules tab) mirroring the edge-derived alarm via active_alarms CONTAINS"
+    },
+    {
+      "name": "Sensor Fault",
+      "severity": "Fault",
+      "raise": "3 consecutive validity-gate failures (SATURATION, OPEN_SHORT, STUCK or SANITY)",
+      "clear": "3 consecutive valid samples",
+      "debounce": {"raise_samples": 3, "clear_samples": 3},
+      "implementation": "device profile alarm rule (native Alarm Rules tab) mirroring active_alarms CONTAINS 'Sensor Fault'; edge severity is Fault, server severity CRITICAL"
+    }
+  ]
+}

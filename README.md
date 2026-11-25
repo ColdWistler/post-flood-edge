@@ -3,8 +3,9 @@
 Python edge half of the ITS67404 Assessment Task 3 prototype: three virtual ESP32-S3
 water-source nodes generate coupled contamination telemetry, process it locally and
 store every reading in SQLite before an optional MQTT/TLS publish. The cloud side is
-a separate track; **this repository creates no ThingsBoard configuration** (no devices,
-dashboards, alarm rules or rule chains).
+a separate track: `cloud/` holds **importable configuration templates** and measurement
+tools, but this repository never provisions a live ThingsBoard instance (no devices,
+dashboards, alarm rules or rule chains are created here).
 
 ## Quickstart
 
@@ -74,11 +75,16 @@ Commands are read from stdin while the simulator runs. Phase keys log a
 | `tools/benchmark_batch_size.py` | Store-and-forward batch-size throughput measurement for the manuscript | Edge Track; results consumed by Cloud Track benchmarking |
 | `INTEGRATION.md` | Cloud handoff contract | Edge → Cloud Track |
 | `docs/DEMO_RUNBOOK.md` | 15-minute demonstration script mapped to the rubric | Both tracks |
-| `tests/` | pytest suite; no broker required | Edge Track |
+| `cloud/artifacts/` | Device profile (all nine alarms in the native Alarm Rules tab), devices, native-widget dashboard and WQI rule chain templates | Cloud Track |
+| `cloud/provision.py`, `cloud/benchmark.py` | REST provisioning helper and Task 3 metric measurement | Cloud Track |
+| `cloud/MANUSCRIPT.md` | Manuscript/demo deliverable placeholders | Both tracks |
+| `tests/` | pytest suite; no broker required | Both tracks |
 
 Cloud Track owners (Anushree: ThingsBoard provisioning/dashboard; Sambid: alarm rules,
-rule chain and broader benchmarking) work outside this repository. Nothing here
-provisions or configures ThingsBoard.
+rule chain and broader benchmarking) import the templates into their own instance.
+`python -m cloud.provision --dry-run` and `python -m cloud.benchmark` are broker-free;
+`--apply` needs a real ThingsBoard instance and credentials. Nothing here provisions
+or configures ThingsBoard automatically.
 
 ## Tests
 
